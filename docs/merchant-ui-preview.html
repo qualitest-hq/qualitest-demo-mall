@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>衡物 · 商家端预览（移动）</title>
+  <style>
+    :root {
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --ink: #1a1a1a;
+      --muted: #8c8c8c;
+      --line: #eeeeee;
+      --brand: #2f6f5e;
+      --brand-deep: #245a4c;
+      --price: #e24b3b;
+      --warn: #d96b2b;
+      --radius: 10px;
+      --shadow: 0 16px 36px rgba(0,0,0,.14);
+      --font: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--font); color: var(--ink); background: #ececec; min-height: 100vh; }
+    .page { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
+    .layout {
+      display: flex; gap: 28px; align-items: flex-start; justify-content: center; flex-wrap: wrap;
+    }
+    .aside {
+      width: 260px; flex-shrink: 0; position: sticky; top: 16px;
+    }
+    .aside h1 { margin: 0 0 8px; font-size: 20px; line-height: 1.35; }
+    .aside .brief { margin: 0; color: #666; font-size: 13px; line-height: 1.55; }
+    .aside .meta { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: #777; }
+    .aside .meta a, .aside .meta span {
+      background: #fff; border: 1px solid #e5e5e5; border-radius: 999px; padding: 4px 10px; color: inherit; text-decoration: none;
+    }
+    .aside .meta a { color: var(--brand); }
+    .aside .note { margin-top: 14px; color: #888; font-size: 12px; line-height: 1.55; }
+
+    /* .tabs 见 hengwu-preview-shared.css */
+    .stage { flex-shrink: 0; }
+    .phone {
+      width: 375px; height: 812px; background: var(--bg); border-radius: 40px;
+      border: 11px solid #111; box-shadow: var(--shadow); overflow: hidden;
+      position: relative; display: flex; flex-direction: column;
+    }
+    .notch {
+      position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      width: 118px; height: 28px; background: #111; border-radius: 16px; z-index: 5; pointer-events: none;
+    }
+    .status {
+      height: 44px; padding: 14px 18px 0; display: flex; justify-content: space-between;
+      font-size: 12px; font-weight: 600; flex-shrink: 0; position: relative; z-index: 2;
+    }
+    .scroll { flex: 1; overflow: auto; padding-bottom: 8px; }
+    .scroll.with-tab { padding-bottom: 72px; }
+    .scroll::-webkit-scrollbar { width: 0; }
+
+    /* .subnav 样式见 hengwu-preview-shared.css */
+
+    .tabbar {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 62px;
+      background: #fff; border-top: 1px solid #eee;
+      display: grid; grid-template-columns: repeat(4, 1fr); padding-bottom: 10px; z-index: 4;
+    }
+    .tabbar span {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; font-size: 10px; color: #888; position: relative; cursor: pointer;
+    }
+    .tabbar span.on { color: var(--brand); font-weight: 650; }
+    .tabbar .ico { width: 22px; height: 22px; border-radius: 7px; background: #ececec; }
+    .tabbar span.on .ico { background: var(--brand); }
+    .tabbar .badge {
+      position: absolute; top: 4px; right: 10px; min-width: 14px; height: 14px;
+      background: var(--price); color: #fff; border-radius: 8px; font-size: 9px;
+      line-height: 14px; text-align: center; padding: 0 3px;
+    }
+
+    .toast {
+      position: absolute; left: 50%; bottom: 100px; transform: translateX(-50%) translateY(8px);
+      background: rgba(0,0,0,.78); color: #fff; font-size: 13px; padding: 10px 14px;
+      border-radius: 8px; opacity: 0; pointer-events: none; transition: .18s ease; z-index: 40;
+      white-space: nowrap; max-width: 86%; overflow: hidden; text-overflow: ellipsis;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .sheet-mask {
+      position: absolute; inset: 0; background: rgba(0,0,0,.45); z-index: 30; display: none;
+    }
+    .sheet-mask.show { display: block; }
+    .sheet {
+      position: absolute; left: 0; right: 0; bottom: 0; background: #fff;
+      border-radius: 16px 16px 0 0; padding: 14px 14px 28px; z-index: 31;
+      transform: translateY(105%); transition: transform .22s ease;
+    }
+    .sheet-mask.show .sheet { transform: translateY(0); }
+    .sheet h3 { margin: 0 0 12px; font-size: 16px; }
+    .sheet .acts { display: flex; gap: 8px; margin-top: 14px; }
+    .sheet .acts .btn { flex: 1; }
+
+    .btn {
+      border: 0; border-radius: 999px; padding: 12px 0; font: inherit; font-size: 14px; font-weight: 650; cursor: pointer;
+    }
+    .btn.solid { background: var(--brand); color: #fff; }
+    .btn.outline { background: transparent; border: 1px solid var(--brand); color: var(--brand); }
+    .btn.ghost { background: #fff; border: 1px solid #ddd; color: #444; }
+    .btn.warn { background: #fff7f0; border: 1px solid #f0d2ba; color: var(--warn); }
+    .btn.danger { background: #fff; border: 1px solid #f0b4ae; color: var(--price); }
+    .btn.block { width: 100%; }
+    .btn.sm { padding: 6px 12px; font-size: 12px; border-radius: 999px; }
+
+    .panel { background: #fff; margin: 10px; border-radius: 12px; padding: 14px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .field input, .field textarea {
+      width: 100%; border: 1px solid #e5e5e5; border-radius: 10px; padding: 12px 14px;
+      font: inherit; font-size: 15px; outline: none; background: #fafafa;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--brand); background: #fff; }
+    /* 下拉 / 上传见 hengwu-preview-shared.css */
+
+    .muted { color: var(--muted); font-size: 12px; }
+    .tag {
+      display: inline-block; font-size: 11px; border-radius: 4px; padding: 2px 6px; background: #f0f0f0; color: #666;
+    }
+    .tag.on { background: #eaf4f0; color: var(--brand); }
+    .tag.off { background: #f5f5f5; color: #999; }
+    .tag.wait { background: #fff7f0; color: var(--warn); }
+    .tag.ok { background: #eaf4f0; color: var(--brand); }
+    .tag.bad { background: #fdeceb; color: var(--price); }
+
+    .dash-head {
+      background: linear-gradient(180deg, var(--brand) 0%, #3a8572 62%, var(--bg) 100%);
+      padding: 0 14px 16px; color: #fff; flex-shrink: 0;
+    }
+    .dash-head .status { color: #fff; }
+    .dash-shop { margin-top: 4px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .dash-shop .name { font-size: 18px; font-weight: 750; }
+    .dash-shop .sub { font-size: 12px; opacity: .9; margin-top: 4px; }
+
+    /* 店铺 Tab：类「我的」，更密 */
+    .shop-head {
+      background: linear-gradient(180deg, var(--brand), #3f8a76);
+      color: #fff; padding: 0 14px 16px; flex-shrink: 0;
+    }
+    .shop-head .status { color: #fff; }
+    .shop-user { margin-top: 6px; display: flex; align-items: center; gap: 10px; }
+    .shop-user .av {
+      width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,.22);
+      display: grid; place-items: center; font-weight: 750; font-size: 18px; flex-shrink: 0;
+    }
+    .shop-user .name { font-size: 17px; font-weight: 750; line-height: 1.25; }
+    .shop-user .sub { font-size: 11px; opacity: .88; margin-top: 3px; }
+    .shop-body { padding: 10px 10px 72px; display: flex; flex-direction: column; gap: 10px; }
+    .shop-panel { background: #fff; border-radius: 10px; padding: 10px 8px 8px; }
+    .shop-panel .phd {
+      display: flex; justify-content: space-between; align-items: center;
+      margin: 0 4px 8px; font-size: 13px; font-weight: 650;
+    }
+    .shop-panel .phd span { font-size: 11px; color: var(--muted); font-weight: 500; cursor: pointer; }
+    .shop-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); text-align: center;
+      font-size: 11px; color: #555; gap: 2px 0;
+    }
+    .shop-grid > div { cursor: pointer; padding: 6px 0 4px; position: relative; }
+    .shop-grid .ico {
+      width: 32px; height: 32px; margin: 0 auto 4px; border-radius: 9px;
+      background: #eef5f2; color: var(--brand); display: grid; place-items: center;
+      font-size: 13px; font-weight: 700;
+    }
+    .shop-grid .gb {
+      position: absolute; top: 2px; right: calc(50% - 22px); min-width: 14px; height: 14px;
+      padding: 0 3px; background: var(--price); color: #fff; border-radius: 8px;
+      font-size: 9px; line-height: 14px; text-align: center;
+    }
+    .shop-menu { background: #fff; border-radius: 10px; overflow: hidden; }
+    .shop-cell {
+      margin: 0; padding: 11px 12px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; cursor: pointer; border-bottom: 1px solid #f3f3f3; background: #fff;
+    }
+    .shop-cell:last-child { border-bottom: 0; }
+    .shop-cell span { color: #bbb; font-size: 12px; }
+    .shop-review {
+      padding: 10px 0; border-bottom: 1px solid #f5f5f5;
+    }
+    .shop-review:last-child { border-bottom: 0; }
+    .shop-review .who { font-size: 12px; color: #888; display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .shop-review .stars { color: #f0a35a; letter-spacing: 1px; }
+    .shop-review .prod { font-size: 12px; color: var(--brand); margin-bottom: 4px; }
+    .shop-review .txt { font-size: 13px; color: #333; line-height: 1.45; }
+    .shop-review .pics { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .shop-review .pics .rp.thumb { width: 56px; height: 56px; border-radius: 6px; flex-shrink: 0; }
+    .stats {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 12px 0;
+    }
+    .stat {
+      background: #fff; border-radius: 12px; padding: 14px; cursor: pointer;
+      box-shadow: 0 1px 0 rgba(0,0,0,.02);
+    }
+    .stat .lab { font-size: 12px; color: var(--muted); }
+    .stat .num { font-size: 26px; font-weight: 750; margin-top: 6px; }
+    .stat .num.price { color: var(--price); font-size: 22px; }
+    .stat .hint { font-size: 12px; color: var(--brand); margin-top: 8px; }
+
+    .seg {
+      display: flex; gap: 0; margin: 10px 12px 0; background: #fff; border-radius: 10px; padding: 4px; overflow: auto;
+    }
+    .seg button {
+      flex: 1; border: 0; background: transparent; border-radius: 8px; padding: 8px 6px;
+      font: inherit; font-size: 12px; color: #666; cursor: pointer; white-space: nowrap;
+    }
+    .seg button.on { background: #eaf4f0; color: var(--brand); font-weight: 650; }
+    .goods-body {
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+      padding-bottom: 62px;
+    }
+    .goods-body .seg { flex-shrink: 0; }
+    .goods-split {
+      flex: 1; min-height: 0; display: grid; grid-template-columns: 88px 1fr; margin-top: 8px;
+    }
+    .goods-side {
+      background: #f7f7f7; overflow: auto;
+    }
+    .goods-side .item {
+      padding: 14px 8px; text-align: center; font-size: 12px; color: #666;
+      cursor: pointer; border-left: 3px solid transparent;
+    }
+    .goods-side .item.on {
+      background: #fff; color: var(--brand); font-weight: 650; border-left-color: var(--brand);
+    }
+    .goods-main {
+      background: #fff; overflow: auto; padding: 8px 10px 16px;
+    }
+    .goods-main .h {
+      font-size: 13px; font-weight: 650; margin: 2px 2px 10px; color: #333;
+    }
+    .goods-main .list-card { margin: 0 0 10px; }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      border: 1px solid #e5e5e5; background: #fff; border-radius: 999px;
+      padding: 5px 8px 5px 10px; font-size: 12px; color: #444;
+    }
+    .chip button {
+      border: 0; background: transparent; color: #999; cursor: pointer;
+      font: inherit; font-size: 14px; line-height: 1; padding: 0 2px;
+    }
+    .chip-add {
+      display: flex; gap: 6px; margin-top: 8px; align-items: center;
+    }
+    .chip-add input {
+      flex: 1; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 10px;
+      font: inherit; font-size: 13px; background: #fafafa; outline: none;
+    }
+    .chip-add input:focus { border-color: var(--brand); background: #fff; }
+    .param-row {
+      display: grid; grid-template-columns: 88px 1fr 28px; gap: 6px; margin-bottom: 8px; align-items: center;
+    }
+    .param-row input {
+      width: 100%; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 10px;
+      font: inherit; font-size: 13px; background: #fafafa; outline: none;
+    }
+    .param-row input:focus { border-color: var(--brand); background: #fff; }
+    .edit-sec-title {
+      font-size: 13px; font-weight: 650; margin: 4px 0 10px; color: #333;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .edit-sec-title .hint { font-size: 11px; font-weight: 500; color: var(--muted); }
+    .spec-block {
+      border: 1px solid #eee; border-radius: 10px; padding: 10px; margin-bottom: 10px; background: #fafafa;
+    }
+    .spec-head { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .spec-name {
+      flex: 1; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 10px;
+      font: inherit; font-size: 13px; font-weight: 650; background: #fff; outline: none;
+    }
+    .spec-name:focus { border-color: var(--brand); }
+
+    .list-card {
+      background: #fff; margin: 10px 12px; border-radius: 12px; padding: 12px;
+    }
+    .list-card .hd {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px;
+    }
+    .list-card .body { display: flex; gap: 10px; }
+    .thumb {
+      width: 64px; height: 64px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(160deg, #f4f1ea, #cfd9d2 40%, #9eb5a8);
+    }
+    .thumb.mug { background: linear-gradient(160deg, #f4f1ea, #cfd9d2 40%, #9eb5a8); }
+    .thumb.book { background: linear-gradient(160deg, #f7f0e4, #e2cba8 45%, #b98c5a); }
+    .thumb.bag { background: linear-gradient(160deg, #efece8, #d5d8d3 40%, #8f9a93); }
+    .thumb.kettle { background: linear-gradient(160deg, #f0eeea, #d2cdc4 42%, #8d8780); }
+    .thumb.lamp { background: linear-gradient(160deg, #f6f3ec, #e8dfc8 40%, #c4ad78); }
+    .thumb.soap { background: linear-gradient(160deg, #f2f7f4, #cfe0d7 45%, #7fa891); }
+    .list-card .info { flex: 1; min-width: 0; }
+    .list-card .title { font-size: 14px; font-weight: 600; line-height: 1.35; }
+    .list-card .meta-line { margin-top: 4px; font-size: 12px; color: var(--muted); }
+    .list-card .price { margin-top: 6px; color: var(--price); font-weight: 750; font-size: 15px; }
+    .list-card .ft {
+      display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f5f5f5;
+    }
+
+    .status-block { text-align: center; padding: 40px 20px 24px; }
+    .status-block .ico {
+      width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center;
+      font-size: 28px; font-weight: 700;
+    }
+    .status-block .ico.wait { background: #fff7f0; color: var(--warn); }
+    .status-block .ico.bad { background: #fdeceb; color: var(--price); }
+    .status-block h2 { margin: 0 0 8px; font-size: 20px; }
+    .status-block p { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    .empty { text-align: center; color: var(--muted); padding: 36px 12px; font-size: 13px; }
+    code { font-family: ui-monospace, Consolas, monospace; font-size: 12px; background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 1px 5px; }
+    @media (max-width: 900px) {
+      .aside { position: static; width: 100%; max-width: 375px; }
+    }
+
+    .acct-bar {
+      margin: 10px 12px 0; background: #fff; border-radius: 12px; padding: 12px 14px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 13px;
+    }
+    .acct-bar a { color: var(--brand); text-decoration: none; cursor: pointer; }
+
+    /* .msg-entry 见 hengwu-preview-shared.css */
+    .im-row {
+      display: flex; gap: 10px; align-items: center; background: #fff; margin: 0 0 1px; padding: 12px 14px; cursor: pointer;
+    }
+    .im-ava {
+      width: 44px; height: 44px; border-radius: 12px; background: #5a9e88; color: #fff;
+      display: grid; place-items: center; font-weight: 700; flex-shrink: 0; font-size: 14px;
+    }
+    .im-ava.sys { background: #6d8fbf; }
+    .im-row .body { flex: 1; min-width: 0; }
+    .im-row .t1 { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 650; }
+    .im-row .t1 time { font-size: 11px; color: var(--muted); font-weight: 400; }
+    .im-row .t2 { margin-top: 4px; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .im-row .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--price); flex-shrink: 0; }
+    .im-row .tag {
+      display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 3px;
+      background: #eef6f2; color: var(--brand); margin-right: 4px; font-weight: 650;
+    }
+
+    .wallet-head {
+      margin: 10px 12px 0; background: linear-gradient(135deg, var(--brand), #3a8572);
+      border-radius: 12px; padding: 16px; color: #fff;
+    }
+    .wallet-head .lab { font-size: 12px; opacity: .9; }
+    .wallet-head .num { font-size: 28px; font-weight: 750; margin: 6px 0 12px; }
+    .wallet-head .acts { display: flex; gap: 8px; }
+    .wallet-head .acts button {
+      border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 12px; font-weight: 650; cursor: pointer;
+    }
+    .ledger-item {
+      background: #fff; margin: 0 12px 8px; border-radius: 10px; padding: 12px;
+    }
+    .ledger-item .row { display: flex; justify-content: space-between; font-size: 14px; }
+    .ledger-item .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .amt-plus { color: var(--brand); font-weight: 700; }
+    .amt-minus { color: var(--price); font-weight: 700; }
+  </style>
+  <link rel="stylesheet" href="./hengwu-preview-shared.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="layout">
+      <aside class="aside">
+        <h1>衡物 · 商家端</h1>
+        <p class="brief">移动经营后台：入驻 → 工作台 / 商品 / 订单 / 店铺；售后在订单内处理。消息为经营通知。与 C 端同一账号，无单独登录。</p>
+        <div id="preview-switchers"></div>
+        <div class="meta">
+          <span>单账号双端</span>
+          <a href="?reset=1" id="reset-settle">重置入驻</a>
+        </div>
+        <div class="tabs" id="tabs"></div>
+        <p class="note">左侧可切换角色与客户端，点屏快捷跳转；右侧机框可一眼看全。审核页可用「通过 / 驳回」推进演示。</p>
+      </aside>
+      <div class="stage">
+        <div class="phone" id="phone"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./hengwu-preview-shared.js"></script>
+  <script>
+    const HP = window.HengwuPreview;
+    const ACCOUNT = { phone: "13800000001", name: "林晓薇" };
+    const STORE_KEY = "hengwu-merchant-v2";
+    const PRODUCT_CATEGORIES = HP.PRODUCT_CATEGORIES;
+    const BUSINESS_CATEGORIES = HP.BUSINESS_CATEGORIES;
+    const EXPRESS_COMPANIES = HP.EXPRESS_COMPANIES;
+    const REFUND_REJECT_REASONS = HP.REFUND_REJECT_REASONS;
+    const GOODS_SHELF_OPTIONS = HP.GOODS_SHELF_OPTIONS;
+    const SEED_VER = 13;
+    let authChannel = HP.getPreviewChannel();
+
+    function syncPreviewSwitchers() {
+      HP.mountPreviewSwitchers({ side: "m", channel: authChannel, resetId: "reset-settle" });
+    }
+    function applyAuthChannel(ch) {
+      authChannel = HP.setPreviewChannel(ch);
+      syncPreviewSwitchers();
+      render();
+    }
+    const defaultState = () => ({
+      seedVer: SEED_VER,
+      settleStatus: "none",
+      shop: {
+        name: "衡物官方旗舰店",
+        category: "家居日用",
+        contact: ACCOUNT.name,
+        phone: ACCOUNT.phone,
+        notice: "工作日 16:00 前付款当日发货，顺丰/中通；破损包赔，支持 7 天无理由（定制款除外）。",
+        open: true
+      },
+      /** 店铺可提现余额（订单结算入账） */
+      balance: 2864.5,
+      selectedWithdrawAccountId: 1,
+      withdrawAccounts: [
+        { id: 1, type: "bank", bank: "招商银行", mask: "8891", holder: "衡物（深圳）贸易有限公司", def: true },
+        { id: 2, type: "wechat", bank: "", mask: "", holder: "衡物官方旗舰店", def: false },
+        { id: 3, type: "alipay", bank: "", mask: "138****0001", holder: "衡物（深圳）贸易有限公司", def: false }
+      ],
+      ledgers: [
+        { id: 1, title: "订单结算 HW261030203455", time: "昨天 22:10", amount: 84, type: "plus" },
+        { id: 2, title: "订单结算 HW261008091255", time: "10-11 09:40", amount: 48, type: "plus" },
+        { id: 3, title: "提现至招商银行（卡号 8891）", time: "10-05 15:18", amount: -500, type: "minus", tip: "到账 ¥497.00，手续费 ¥3.00" },
+        { id: 4, title: "订单结算 HW260928114422", time: "09-29 11:02", amount: 169, type: "plus" }
+      ],
+      apply: { name: "", category: "家居日用", contact: ACCOUNT.name, phone: ACCOUNT.phone, rejectReason: "" },
+      goodsTab: "全部",
+      goodsStatusTab: "全部",
+      /** 与 C 端 CATALOG 对齐：价格/分类/卖点/标签/自定义规格/参数 */
+      goods: [
+        { id: 1, title: "雾面陶瓷马克杯 350ml 哑光釉", cat: "咖啡", price: 68, old: 88, stock: 326, on: true, pic: "mug", sales: 1283,
+          sub: "哑光釉面 可微波 耐热易清洗", tags: ["满99减10", "包邮"], colors: ["雾白", "墨灰"], sizes: ["350ml", "500ml"],
+          params: [{ k: "材质", v: "陶瓷" }, { k: "工艺", v: "哑光釉" }, { k: "是否可微波", v: "是" }, { k: "产地", v: "广东深圳" }] },
+        { id: 2, title: "304 不锈钢细口手冲壶 600ml", cat: "咖啡", price: 169, old: 199, stock: 0, on: false, pic: "kettle", sales: 452,
+          sub: "细嘴控流 食品级不锈钢", tags: ["包邮", "热销"], colors: ["原色", "磨砂黑"], sizes: ["600ml"],
+          params: [{ k: "材质", v: "304 不锈钢" }, { k: "容量", v: "600ml" }, { k: "适用", v: "手冲咖啡" }] },
+        { id: 3, title: "棉纸方格手帐本 A5 160页", cat: "文具", price: 42, old: 52, stock: 518, on: true, pic: "book", sales: 906,
+          sub: "轻薄棉纸 方格内页", tags: ["新品"],
+          specs: [{ name: "封面", values: ["米白", "浅灰"] }, { name: "尺寸", values: ["A5", "A6"] }],
+          params: [{ k: "纸张", v: "棉纸" }, { k: "页数", v: "160 页" }, { k: "尺寸", v: "A5" }] },
+        { id: 4, title: "水洗棉托特包 中号 可机洗", cat: "收纳", price: 128, old: 158, stock: 0, on: false, pic: "bag", sales: 906,
+          sub: "水洗棉 可机洗 日常通勤", tags: ["满99减10"], colors: ["米色", "卡其"], sizes: ["中号"],
+          params: [{ k: "面料", v: "水洗棉" }, { k: "洗涤", v: "可机洗" }, { k: "尺码", v: "中号" }] },
+        { id: 5, title: "胡桃木氛围台灯 三档调光", cat: "灯光", price: 199, old: 259, stock: 86, on: true, pic: "lamp", sales: 211,
+          sub: "三档触控 暖光护眼", tags: ["满199减20"], colors: ["原木色"], sizes: ["标准"],
+          params: [{ k: "灯体", v: "胡桃木" }, { k: "调光", v: "三档触控" }, { k: "光源", v: "暖光 LED" }] },
+        { id: 6, title: "雪松香氛洗手皂 3 块装", cat: "香氛", price: 39, old: 49, stock: 1204, on: true, pic: "soap", sales: 3402,
+          sub: "植物油脂 清爽不紧绷", tags: ["买赠"],
+          specs: [{ name: "香型", values: ["雪松", "白茶"] }, { name: "包装", values: ["单块", "3块装"] }],
+          params: [{ k: "香型", v: "雪松" }, { k: "成分", v: "植物油脂" }, { k: "包装", v: "3 块装" }] },
+        { id: 7, title: "日式粗陶茶杯 150ml", cat: "茶具", price: 48, old: 58, stock: 260, on: true, pic: "mug", sales: 1208,
+          sub: "手工粗陶 复古杯型", tags: ["包邮"], colors: ["原色", "釉青"], sizes: ["150ml"],
+          params: [{ k: "材质", v: "粗陶" }, { k: "容量", v: "150ml" }, { k: "工艺", v: "手工" }] },
+        { id: 8, title: "亚麻收纳篮 大号 可折叠", cat: "家居", price: 59, old: 79, stock: 140, on: false, shelf: "pending", pic: "bag", sales: 884,
+          sub: "可折叠 桌面收纳", tags: ["满99减10"], colors: ["原麻", "浅咖"], sizes: ["大号"],
+          params: [{ k: "材质", v: "亚麻" }, { k: "规格", v: "大号" }, { k: "特性", v: "可折叠" }] }
+      ],
+      orders: [
+        { id: "HW261031162233", buyer: "周敏 138****6621", status: "待发货", paidAt: "今天 16:22", amount: 116,
+          items: [
+            { title: "雾面陶瓷马克杯 350ml", sku: "雾白 / 350ml", price: 68, qty: 1, pic: "mug" },
+            { title: "日式粗陶茶杯 150ml", sku: "原色 / 150ml", price: 48, qty: 1, pic: "mug" }
+          ] },
+        { id: "HW261031150918", buyer: "陈浩 139****8810", title: "304 不锈钢细口手冲壶", amount: 169, qty: 1, status: "待发货", paidAt: "今天 15:09", pic: "kettle" },
+        { id: "HW261030203455", buyer: "何雨桐 137****2048", status: "待收货", express: "SF3128904412", paidAt: "昨天 20:34", amount: 152,
+          items: [
+            { title: "棉纸方格手帐本 A5", sku: "米白 / A5", price: 42, qty: 2, pic: "book" },
+            { title: "雪松香氛洗手皂 3 块装", sku: "雪松 / 3块装", price: 39, qty: 1, pic: "soap" },
+            { title: "雾面陶瓷马克杯 350ml", sku: "墨灰 / 350ml", price: 68, qty: 1, pic: "mug" }
+          ] },
+        { id: "HW261028184732", buyer: "林晓薇 138****0001", title: "雾面陶瓷马克杯 350ml 哑光釉", amount: 68, qty: 1, status: "待收货", express: "SF3128965741", paidAt: "10-28 18:47", pic: "mug" },
+        { id: "HW261027152201", buyer: "林晓薇 138****0001", title: "304 不锈钢细口手冲壶 600ml", amount: 169, qty: 1, status: "待收货", express: "786512349012", paidAt: "10-27 15:22", pic: "kettle" },
+        { id: "HW261024091144", buyer: "林晓薇 138****0001", title: "胡桃木氛围台灯 三档调光", amount: 199, qty: 1, status: "待发货", paidAt: "10-24 09:11", pic: "lamp" },
+        { id: "HW261008091255", buyer: "林晓薇 138****0001", title: "日式粗陶茶杯 150ml", amount: 48, qty: 1, status: "已完成", express: "YT8844211563", paidAt: "10-08 09:12", pic: "mug" },
+        { id: "HW261012140902", buyer: "林晓薇 138****0001", title: "雪松香氛洗手皂 3 块装", amount: 39, qty: 1, status: "退款", refundStatus: "待收货", paidAt: "10-12 14:09", pic: "soap" },
+        { id: "HW260918203311", buyer: "赵倩 158****3340", title: "亚麻收纳篮 大号", amount: 59, qty: 1, status: "退款", refundStatus: "已同意", paidAt: "09-18 20:33", express: "YT7711002291", pic: "bag" }
+      ],
+      refunds: [
+        { id: "RF261012143301", orderId: "HW261012140902", title: "雪松香氛洗手皂 3 块装", amount: 39, status: "待收货",
+          reason: "香味与描述不符，未拆封申请退货", buyer: "林晓薇 138****0001",
+          returnCompany: "顺丰速运", returnExpressNo: "SF9988776655" },
+        { id: "RF261006112208", orderId: "HW260918203311", title: "亚麻收纳篮 大号", amount: 59, status: "已同意", reason: "快递外箱压损，内物变形", buyer: "赵倩 158****3340" }
+      ],
+      orderTab: "待发货",
+      editingGoodsId: null
+    });
+
+    let state = load();
+    let screen = gateScreen();
+    let sheet = null;
+    let agreeApply = false;
+    let editingWithdrawAccountId = null;
+    let withdrawPickReturn = null;
+    let waEditDraft = null;
+    let goodsEditDraft = null;
+    let viewingOrderId = null;
+
+    function normalizeShelf(g) {
+      if (g?.shelf === "pending" || g?.shelf === "on" || g?.shelf === "off") return g.shelf;
+      return g?.on === false ? "off" : "on";
+    }
+
+    function normalizeGoods(g) {
+      const price = Number(g?.price) || 0;
+      const shelf = normalizeShelf(g);
+      const specs = HP.normalizeProductSpecs(g).map((s) => ({
+        name: s.name,
+        values: s.values.length ? s.values : ["默认"]
+      }));
+      return {
+        id: g?.id ?? null,
+        title: g?.title || "",
+        sub: g?.sub || "",
+        cat: g?.cat && PRODUCT_CATEGORIES.includes(g.cat) ? g.cat : "家居",
+        price,
+        old: g?.old != null ? Number(g.old) : price + 20,
+        stock: Number(g?.stock) || 0,
+        shelf,
+        on: shelf === "on",
+        pic: g?.pic || "mug",
+        sales: Number(g?.sales) || 0,
+        tags: Array.isArray(g?.tags) ? g.tags.filter(Boolean) : [],
+        specs,
+        /* 兼容旧字段展示 */
+        colors: specs[0]?.values || ["默认"],
+        sizes: specs[1]?.values || specs[0]?.values || ["标准"],
+        params: Array.isArray(g?.params)
+          ? g.params.map((p) => ({ k: p?.k || "", v: p?.v || "" })).filter((p) => p.k || p.v)
+          : []
+      };
+    }
+
+    function goodsStatusOf(g) {
+      const shelf = normalizeShelf(g);
+      if (shelf === "pending") return "审核中";
+      if (shelf === "off") return "已下架";
+      if (Number(g.stock) <= 0) return "售罄";
+      return "在售";
+    }
+
+    function ensureGoodsDraft() {
+      if (goodsEditDraft) return goodsEditDraft;
+      const existing = state.goods.find((x) => x.id === state.editingGoodsId);
+      goodsEditDraft = normalizeGoods(existing || {
+        id: null, title: "", sub: "", cat: "咖啡", price: 99, old: 129, stock: 100,
+        shelf: "pending", on: false, pic: "mug", sales: 0,
+        tags: ["包邮"],
+        specs: [{ name: "颜色", values: ["默认"] }, { name: "尺码/容量", values: ["标准"] }],
+        params: [{ k: "材质", v: "" }, { k: "产地", v: "广东深圳" }]
+      });
+      return goodsEditDraft;
+    }
+
+    function chipEditorHtml(kind, list, placeholder) {
+      return `
+        <div class="chip-row">
+          ${(list || []).map((t, i) => `
+            <span class="chip">${t}<button type="button" data-action="remove-goods-chip" data-kind="${kind}" data-idx="${i}" aria-label="删除">×</button></span>
+          `).join("") || `<span class="muted">暂无，请添加</span>`}
+        </div>
+        <div class="chip-add">
+          <input id="chip-input-${kind}" placeholder="${placeholder}" />
+          <button type="button" class="btn outline sm" data-action="add-goods-chip" data-kind="${kind}">添加</button>
+        </div>`;
+    }
+
+    function specEditorHtml(specs) {
+      const list = specs || [];
+      return `
+        ${list.map((s, i) => `
+          <div class="spec-block">
+            <div class="spec-head">
+              <input class="spec-name" data-spec-name="${i}" value="${s.name || ""}" placeholder="规格名，如：颜色" />
+              <button type="button" class="btn ghost sm" data-action="remove-goods-spec" data-idx="${i}">删除</button>
+            </div>
+            <div class="chip-row">
+              ${(s.values || []).map((t, j) => `
+                <span class="chip">${t}<button type="button" data-action="remove-goods-spec-value" data-idx="${i}" data-vidx="${j}" aria-label="删除">×</button></span>
+              `).join("") || `<span class="muted">暂无选项</span>`}
+            </div>
+            <div class="chip-add">
+              <input id="spec-val-${i}" placeholder="添加选项，如：雾白" />
+              <button type="button" class="btn outline sm" data-action="add-goods-spec-value" data-idx="${i}">添加</button>
+            </div>
+          </div>
+        `).join("") || `<div class="muted" style="margin-bottom:8px">暂无规格，请点右上角加类型</div>`}
+        <div class="muted" style="margin-top:4px">可自定义「颜色 / 容量 / 香型」等，C 端按此展示选购。</div>`;
+    }
+
+    function syncGoodsDraftFromForm() {
+      if (screen !== "goodsEdit") return;
+      const d = ensureGoodsDraft();
+      const titleEl = document.getElementById("g-title");
+      if (!titleEl) return;
+      d.title = titleEl.value ?? d.title;
+      d.sub = document.getElementById("g-sub")?.value ?? d.sub;
+      d.cat = document.getElementById("g-cat")?.value || d.cat;
+      {
+        const shelfVal = document.getElementById("g-shelf")?.value;
+        if (shelfVal === "on" || shelfVal === "off" || shelfVal === "pending") {
+          d.shelf = shelfVal;
+          d.on = shelfVal === "on";
+        }
+      }
+      const price = Number(document.getElementById("g-price")?.value);
+      const old = Number(document.getElementById("g-old")?.value);
+      const stock = Number(document.getElementById("g-stock")?.value);
+      if (!Number.isNaN(price)) d.price = price;
+      if (!Number.isNaN(old)) d.old = old;
+      if (!Number.isNaN(stock)) d.stock = stock;
+      if (!Array.isArray(d.specs)) d.specs = [];
+      document.querySelectorAll("[data-spec-name]").forEach((el) => {
+        const i = Number(el.getAttribute("data-spec-name"));
+        if (d.specs[i]) d.specs[i].name = (el.value || "").trim() || d.specs[i].name || "规格";
+      });
+      d.params = Array.from(document.querySelectorAll("[data-param-k]")).map((el) => {
+        const i = el.getAttribute("data-param-k");
+        const vEl = document.querySelector(`[data-param-v="${i}"]`);
+        return { k: (el.value || "").trim(), v: (vEl?.value || "").trim() };
+      }).filter((p) => p.k || p.v);
+    }
+
+    const SCREEN_LABELS = {
+      apply: "入驻申请",
+      pending: "审核中",
+      rejected: "审核驳回",
+      dash: "工作台",
+      goods: "商品",
+      goodsEdit: "编辑商品",
+      orders: "订单",
+      orderDetail: "订单详情",
+      shop: "店铺",
+      shopEdit: "店铺资料",
+      shopReviews: "店铺评价",
+      wallet: "店铺资金",
+      withdraw: "提现",
+      withdrawAccounts: "提现账户",
+      withdrawAccountEdit: "编辑提现账户",
+      msgList: "消息通知"
+    };
+
+    function syncAsideTabs() {
+      const el = document.getElementById("tabs");
+      if (el) el.innerHTML = HP.asideTabsHtml(SCREEN_LABELS, screen);
+    }
+
+    /** 左侧屏列表跳转：不拦入驻状态，便于预览各页 */
+    function goAside(name) {
+      if (!SCREEN_LABELS[name]) return;
+      screen = name;
+      sheet = null;
+      if (name === "goodsEdit") {
+        if (state.editingGoodsId == null) state.editingGoodsId = state.goods[0]?.id ?? null;
+        goodsEditDraft = null;
+      }
+      if (name === "orderDetail") {
+        viewingOrderId = viewingOrderId || state.orders[0]?.id || null;
+      }
+      if (name === "withdrawAccountEdit") {
+        waEditDraft = null;
+        if (editingWithdrawAccountId == null) {
+          const first = (state.withdrawAccounts || [])[0];
+          editingWithdrawAccountId = first ? first.id : null;
+        }
+      }
+      if (name === "withdrawAccounts") withdrawPickReturn = "wallet";
+      render();
+    }
+
+    const normalizeWithdrawType = HP.normalizeWithdrawType;
+    const withdrawAccountIcon = (a) => HP.withdrawAccountIcon(a);
+    const withdrawAccountTitle = (a) => HP.withdrawAccountTitle(a, "merchant");
+    const withdrawAccountSub = (a) => HP.withdrawAccountSub(a);
+    const withdrawLedgerTitle = (a) => HP.withdrawLedgerTitle(a, "merchant");
+    const withdrawTypeLabel = (type) => HP.withdrawTypeMeta("merchant", type).pick;
+    const allowedWithdrawTypes = () => HP.allowedWithdrawTypes(authChannel);
+    const withdrawChannelTip = () => HP.withdrawChannelTip("merchant", authChannel);
+    function currentWithdrawAccount() {
+      const acc = HP.pickWithdrawAccount(state.withdrawAccounts, state.selectedWithdrawAccountId, allowedWithdrawTypes());
+      if (acc && state.selectedWithdrawAccountId !== acc.id) state.selectedWithdrawAccountId = acc.id;
+      return acc;
+    }
+    function statusHtml(opts) {
+      return HP.statusBarHtml({ channel: authChannel, mid: "●●● 5G", ...(opts || {}) });
+    }
+    function defaultNotifs() {
+      return [
+        { id: "m1", cat: "订单", title: "待发货待办", body: "今日新增待发货订单 3 笔，请在 24 小时内处理。", time: "今天 08:30", unread: true, go: "orders", tab: "待发货" },
+        { id: "m2", cat: "售后", title: "退货待收货", body: "订单 HW261012140902 买家已寄回（SF9988776655），确认收货后才能退款。", time: "今天 09:05", unread: true, go: "orders", tab: "售后" },
+        { id: "m3", cat: "订单", title: "新订单提醒", body: "订单 HW261031162233 雾面马克杯已支付，待发货。", time: "今天 16:22", unread: false, go: "orders", tab: "待发货" },
+        { id: "m4", cat: "经营", title: "提现到账提示", body: "对公提现预计 T+1 到账，可在店铺资金查看明细。", time: "10-05 15:20", unread: false, go: "wallet" }
+      ];
+    }
+    const loadNotifsM = () => HP.loadNotifs("m", defaultNotifs);
+    const notifUnreadM = () => HP.notifUnread(loadNotifsM());
+    const syncRefundToC = HP.upsertRefundSync;
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        const base = defaultState();
+        const staleSeed = parsed.seedVer !== SEED_VER;
+        const goods = (staleSeed ? base.goods : (Array.isArray(parsed.goods) ? parsed.goods : base.goods))
+          .map(normalizeGoods);
+        return Object.assign(base, parsed, {
+          seedVer: SEED_VER,
+          shop: Object.assign(base.shop, parsed.shop || {}),
+          apply: Object.assign(base.apply, parsed.apply || {}),
+          balance: staleSeed ? base.balance : (parsed.balance != null ? Number(parsed.balance) : base.balance),
+          ledgers: staleSeed ? base.ledgers : (Array.isArray(parsed.ledgers) ? parsed.ledgers : base.ledgers),
+          withdrawAccounts: staleSeed
+            ? base.withdrawAccounts
+            : (Array.isArray(parsed.withdrawAccounts)
+              ? parsed.withdrawAccounts.map((a) => ({ ...a, type: normalizeWithdrawType(a.type) }))
+              : base.withdrawAccounts),
+          selectedWithdrawAccountId: staleSeed
+            ? base.selectedWithdrawAccountId
+            : (parsed.selectedWithdrawAccountId != null ? parsed.selectedWithdrawAccountId : base.selectedWithdrawAccountId),
+          goods,
+          goodsTab: parsed.goodsTab || "全部",
+          goodsStatusTab: parsed.goodsStatusTab || "全部",
+          orders: staleSeed ? base.orders : (Array.isArray(parsed.orders) ? parsed.orders : base.orders),
+          refunds: staleSeed ? base.refunds : (Array.isArray(parsed.refunds) ? parsed.refunds : base.refunds)
+        });
+      } catch {
+        return defaultState();
+      }
+    }
+    function save() {
+      localStorage.setItem(STORE_KEY, JSON.stringify({
+        seedVer: SEED_VER,
+        settleStatus: state.settleStatus,
+        shop: state.shop,
+        apply: state.apply,
+        balance: state.balance,
+        ledgers: state.ledgers,
+        withdrawAccounts: state.withdrawAccounts,
+        selectedWithdrawAccountId: state.selectedWithdrawAccountId,
+        goodsTab: state.goodsTab,
+        goodsStatusTab: state.goodsStatusTab || "全部",
+        goods: state.goods.map(normalizeGoods),
+        orders: state.orders,
+        refunds: state.refunds
+      }));
+    }
+
+    function refundForOrder(orderId) {
+      return state.refunds.find((r) => String(r.orderId) === String(orderId));
+    }
+
+    function applyOrderRefundStatus(orderId, statusM) {
+      const o = state.orders.find((x) => String(x.id) === String(orderId));
+      if (!o) return;
+      o.status = "退款";
+      o.refundStatus = HP.mapRefundStatus("m", statusM);
+    }
+
+    function afterSaleLabel(statusM) {
+      const rs = HP.mapRefundStatus("m", statusM);
+      return rs ? `售后${rs}` : "售后";
+    }
+
+    function orderDisplayStatus(o) {
+      if (o.status === "退款") {
+        const rs = o.refundStatus || refundForOrder(o.id)?.status;
+        return afterSaleLabel(rs);
+      }
+      return o.status;
+    }
+
+    function orderStatusTagClass(o) {
+      if (o.status === "退款") {
+        const rs = o.refundStatus || refundForOrder(o.id)?.status;
+        if (rs === "已拒绝") return "bad";
+        if (rs === "已同意") return "ok";
+        return "wait";
+      }
+      return o.status === "待发货" ? "wait" : "ok";
+    }
+
+    function syncRefundsFromC() {
+      HP.loadRefundSync().forEach((row) => {
+        if (!row?.id) return;
+        const statusM = HP.mapRefundStatus("m", row.status);
+        const existing = state.refunds.find((x) => x.id === row.id);
+        if (existing) {
+          existing.status = statusM;
+          if (row.rejectReason) existing.rejectReason = row.rejectReason;
+          if (row.reason) existing.reason = row.reason;
+          if (row.buyer) existing.buyer = row.buyer;
+          if (row.returnCompany != null) existing.returnCompany = row.returnCompany;
+          if (row.returnExpressNo != null) existing.returnExpressNo = row.returnExpressNo;
+        } else {
+          state.refunds.unshift({
+            id: row.id,
+            orderId: row.orderId,
+            title: row.title || "退款商品",
+            amount: row.amount || 0,
+            status: statusM,
+            reason: row.reason || "",
+            buyer: row.buyer || "买家",
+            rejectReason: row.rejectReason || "",
+            returnCompany: row.returnCompany || "",
+            returnExpressNo: row.returnExpressNo || ""
+          });
+        }
+        if (row.orderId) applyOrderRefundStatus(row.orderId, statusM);
+      });
+    }
+    function gateScreen() {
+      if (state.settleStatus === "approved") return "dash";
+      if (state.settleStatus === "pending") return "pending";
+      if (state.settleStatus === "rejected") return "rejected";
+      return "apply";
+    }
+    function counts() {
+      return {
+        ship: state.orders.filter((o) => o.status === "待发货").length,
+        refund: state.refunds.filter((r) => r.status === "待处理" || r.status === "待收货").length,
+        onSale: state.goods.filter((g) => goodsStatusOf(g) === "在售").length,
+        pendingGoods: state.goods.filter((g) => goodsStatusOf(g) === "审核中").length,
+        gmv: state.orders.filter((o) => o.status !== "待发货").reduce((s, o) => s + HP.orderGoodsAmount(o), 0)
+      };
+    }
+    function toast(msg) {
+      const el = document.querySelector("#phone .toast");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove("show"), 1400);
+    }
+
+    function shell(inner, { title, back, tab = false, right = "" } = {}) {
+      const c = counts();
+      const orderBadge = (c.ship || 0) + (c.refund || 0);
+      const tabs = [
+        ["dash", "工作台"],
+        ["goods", "商品"],
+        ["orders", "订单", orderBadge || 0],
+        ["shop", "店铺"]
+      ];
+      return `
+        <div class="notch"></div>
+        ${title ? `
+          ${statusHtml()}
+          ${HP.subnavHtml({ title, back: !!back, backNav: back || "", right: right || "" })}` : ""}
+        ${inner}
+        ${tab ? `
+          <div class="tabbar">
+            ${tabs.map(([k, label, badge]) => `
+              <span class="${screen === k || (k === "goods" && screen === "goodsEdit") || (k === "shop" && (screen === "shopEdit" || screen === "shopReviews")) ? "on" : ""}" data-nav="${k}">
+                <i class="ico"></i>${label}
+                ${badge ? `<b class="badge">${badge}</b>` : ""}
+              </span>`).join("")}
+          </div>` : ""}
+        <div class="toast"></div>
+        <div class="sheet-mask ${sheet ? "show" : ""}" data-action="close-sheet">
+          ${sheet ? `<div class="sheet" data-stop>${renderSheet()}</div>` : `<div class="sheet"></div>`}
+        </div>`;
+    }
+
+    function renderSheet() {
+      if (sheet?.type === "ship") {
+        const o = state.orders.find((x) => x.id === sheet.orderId);
+        const co = sheet.company || EXPRESS_COMPANIES[0];
+        return `
+          <h3>填写运单发货</h3>
+          <div class="muted" style="margin-bottom:10px">${o?.id} · ${HP.orderTitleSummary(o || {})}</div>
+          <div class="field"><label>物流公司</label>
+            ${HP.hwSelectHtml("ship-co", EXPRESS_COMPANIES, co)}
+          </div>
+          <div class="field"><label>运单号</label>
+            <input id="ship-no" placeholder="请输入运单号" value="SF${Date.now().toString().slice(-10)}" />
+          </div>
+          <div class="acts">
+            <button class="btn ghost" data-action="close-sheet">取消</button>
+            <button class="btn solid" data-action="confirm-ship">确认发货</button>
+          </div>`;
+      }
+      if (sheet?.type === "reject-refund") {
+        const r = state.refunds.find((x) => x.id === sheet.refundId);
+        const reason = sheet.reason || REFUND_REJECT_REASONS[0];
+        return `
+          <h3>拒绝退款</h3>
+          <div class="muted" style="margin-bottom:10px">${r?.id} · ${r?.title}</div>
+          <div class="field"><label>拒绝原因</label>
+            ${HP.hwSelectHtml("reject-reason", REFUND_REJECT_REASONS, reason)}
+          </div>
+          <div class="acts">
+            <button class="btn ghost" data-action="close-sheet">取消</button>
+            <button class="btn danger" data-action="confirm-reject-refund">确认拒绝</button>
+          </div>`;
+      }
+      if (sheet?.type === "legal") {
+        const docs = {
+          settle: { title: "商家入驻协议", body: "入驻后须保证商品信息真实、发货时效达标，并配合平台售后规则处理退款与纠纷。严重违规将被清退。" },
+          trade: { title: "平台交易规则", body: "订单支付后请在约定时效内发货；协商一致后方可关闭交易。虚假发货、骚扰买家等行为将被处罚。" },
+          privacy: { title: "隐私政策", body: "我们仅在经营所需范围内处理买家收货信息与订单数据，不会向无关第三方出售个人信息。" }
+        };
+        const d = docs[sheet.doc] || docs.settle;
+        return `
+          <h3>${d.title}</h3>
+          <div style="font-size:13px;line-height:1.65;color:#444;margin:8px 0 14px">${d.body}</div>
+          <div class="acts">
+            <button class="btn solid" data-action="close-sheet" style="flex:1">我知道了</button>
+          </div>`;
+      }
+      return "";
+    }
+
+    function renderApply() {
+      const a = state.apply;
+      return shell(`
+        <div class="scroll">
+          <div class="panel" style="margin-top:12px">
+            <div class="muted" style="margin-bottom:12px">使用当前登录账号申请开店。</div>
+            <div class="field"><label>店铺名称</label><input id="ap-name" value="${a.name}" placeholder="例如：衡物官方旗舰店" /></div>
+            <div class="field"><label>经营类目</label>
+              ${HP.hwSelectHtml("ap-cat", BUSINESS_CATEGORIES, a.category || BUSINESS_CATEGORIES[0])}
+            </div>
+            <div class="field"><label>联系人</label><input id="ap-contact" value="${a.contact}" /></div>
+            <div class="field"><label>联系电话</label><input id="ap-phone" value="${a.phone}" /></div>
+            <div class="field"><label>资质材料</label>
+              <div class="upload" data-action="toast" data-msg="请上传资质图片">+</div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;margin:4px 0 14px;font-size:12px;color:#888;line-height:1.5">
+              <div id="agree-apply" data-action="toggle-agree-apply" style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;margin-top:1px;cursor:pointer;${agreeApply ? "border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 3px #fff" : ""}"></div>
+              <div>已阅读并同意 <a data-action="open-legal" data-doc="settle" style="color:var(--brand)">《商家入驻协议》</a>、<a data-action="open-legal" data-doc="trade" style="color:var(--brand)">《平台交易规则》</a> 及 <a data-action="open-legal" data-doc="privacy" style="color:var(--brand)">《隐私政策》</a></div>
+            </div>
+            <button class="btn solid block" data-action="submit-apply">提交申请</button>
+          </div>
+          <div class="acct-bar">
+            <span>${ACCOUNT.name}</span>
+            <a href="./c-end-ui-preview.html">回 C 端</a>
+          </div>
+        </div>
+      `, { title: "商家入驻" });
+    }
+
+    function renderPending() {
+      return shell(`
+        <div class="scroll">
+          <div class="panel status-block">
+            <div class="ico wait">…</div>
+            <h2>入驻审核中</h2>
+            <p>店铺「${state.apply.name || state.shop.name}」已提交，预计 1–2 个工作日完成审核。</p>
+            <button class="btn solid block" data-action="approve" style="margin-bottom:10px">审核通过</button>
+            <button class="btn warn block" data-action="reject">审核驳回</button>
+          </div>
+        </div>
+      `, { title: "审核进度" });
+    }
+
+    function renderRejected() {
+      return shell(`
+        <div class="scroll">
+          <div class="panel status-block">
+            <div class="ico bad">!</div>
+            <h2>入驻未通过</h2>
+            <p>${state.apply.rejectReason || "资料不完整，请修改后重新提交。"}</p>
+            <button class="btn solid block" data-action="reapply">修改并重提</button>
+          </div>
+        </div>
+      `, { title: "审核结果" });
+    }
+
+    function renderDash() {
+      const c = counts();
+      const unread = notifUnreadM();
+      return shell(`
+        <div class="dash-head">
+          ${statusHtml({ color: "#fff" })}
+          <div class="dash-shop">
+            <div>
+              <div class="name">${state.shop.name}</div>
+              <div class="sub">${state.shop.open ? "营业中" : "已打烊"} · ${ACCOUNT.phone}</div>
+            </div>
+            <div class="msg-entry" data-nav="msgList" title="消息通知" aria-label="消息通知">${HP.bellEntryHtml(unread)}</div>
+          </div>
+        </div>
+        <div class="scroll with-tab">
+          <div class="wallet-head" data-nav="wallet">
+            <div class="lab">店铺可提现余额（元）</div>
+            <div class="num">${Number(state.balance || 0).toFixed(2)}</div>
+            <div class="acts">
+              <button type="button" style="background:#fff;color:var(--brand)" data-nav="withdraw">提现</button>
+              <button type="button" style="background:rgba(255,255,255,.2);color:#fff" data-nav="withdrawAccounts">提现账户</button>
+              <button type="button" style="background:rgba(255,255,255,.2);color:#fff" data-nav="wallet">明细 ›</button>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat" data-nav="orders"><div class="lab">待发货</div><div class="num">${c.ship}</div><div class="hint">去处理 ›</div></div>
+            <div class="stat" data-nav="orders" data-order-tab="售后"><div class="lab">待售后</div><div class="num">${c.refund}</div><div class="hint">去处理 ›</div></div>
+            <div class="stat" data-nav="goods"><div class="lab">在售商品</div><div class="num">${c.onSale}</div><div class="hint">去管理 ›</div></div>
+            <div class="stat" data-nav="msgList"><div class="lab">未读通知</div><div class="num">${unread}</div><div class="hint">去查看 ›</div></div>
+          </div>
+          <div class="panel">
+            <div style="font-weight:650;margin-bottom:6px;font-size:14px">经营提示</div>
+            <div class="muted">新订单请及时发货；退货需审核同意 → 买家寄回 → 确认收货后才退款。提现${HP.withdrawFeeText()}。</div>
+          </div>
+          <div class="acct-bar">
+            <span>${ACCOUNT.name}</span>
+            <a href="./c-end-ui-preview.html">回 C 端逛逛</a>
+          </div>
+        </div>
+      `, { tab: true });
+    }
+
+    function renderMsgList() {
+      const list = loadNotifsM();
+      const unread = HP.notifUnread(list);
+      return shell(`
+        <div class="scroll">
+          ${list.length ? list.map((n) => `
+            <div class="im-row" data-action="open-notif" data-id="${n.id}">
+              <div class="im-ava ${n.cat === "经营" || n.cat === "系统" ? "sys" : ""}">${HP.notifCatGlyph(n.cat)}</div>
+              <div class="body">
+                <div class="t1"><span><span class="tag">${n.cat}</span>${n.title}</span><time>${n.time || ""}</time></div>
+                <div class="t2">${n.body || ""}</div>
+              </div>
+              ${n.unread ? `<i class="dot"></i>` : ""}
+            </div>`).join("") : `<div class="empty">暂无通知</div>`}
+        </div>
+      `, {
+        title: "消息通知",
+        back: "dash",
+        right: unread ? `<span data-action="read-all-notifs">全部已读</span>` : ""
+      });
+    }
+
+    function renderGoods() {
+      const statusTab = state.goodsStatusTab || "全部";
+      const catTab = state.goodsTab || "全部";
+      const statusTabs = ["全部", "在售", "审核中", "已下架", "售罄"];
+      const catTabs = ["全部", ...PRODUCT_CATEGORIES];
+      const list = state.goods.filter((g) => {
+        const st = goodsStatusOf(g);
+        if (statusTab !== "全部" && st !== statusTab) return false;
+        if (catTab !== "全部" && g.cat !== catTab) return false;
+        return true;
+      });
+      return shell(`
+        <div class="goods-body">
+          <div class="seg">
+            ${statusTabs.map((t) =>
+              `<button class="${statusTab === t ? "on" : ""}" data-action="goods-status-tab" data-tab="${t}">${t}</button>`
+            ).join("")}
+          </div>
+          <div class="goods-split">
+            <div class="goods-side">
+              ${catTabs.map((t) =>
+                `<div class="item ${catTab === t ? "on" : ""}" data-action="goods-tab" data-tab="${t}">${t}</div>`
+              ).join("")}
+            </div>
+            <div class="goods-main">
+              <div class="h">${catTab}${statusTab !== "全部" ? ` · ${statusTab}` : ""} · ${list.length} 件</div>
+              ${list.map((g) => {
+                const st = goodsStatusOf(g);
+                const specs = HP.normalizeProductSpecs(g);
+                const skuHint = specs.map((s) => `${s.name}:${(s.values || []).join("/") || "-"}`).join(" · ");
+                return `
+                <div class="list-card">
+                  <div class="body">
+                    <div class="thumb ${g.pic}"></div>
+                    <div class="info">
+                      <div class="title">${g.title}</div>
+                      <div class="meta-line">${g.cat || "未分类"} · ${skuHint}</div>
+                      <div class="meta-line">库存 ${g.stock}${g.sales != null ? ` · 已售 ${g.sales}` : ""} · <span class="tag ${st === "在售" ? "on" : st === "审核中" || st === "售罄" ? "wait" : "off"}">${st}</span></div>
+                      <div class="price">¥${g.price}${g.old ? ` <span class="muted" style="text-decoration:line-through;font-weight:400">¥${g.old}</span>` : ""}</div>
+                    </div>
+                  </div>
+                  <div class="ft">
+                    ${st === "审核中"
+                      ? `<button class="btn ghost sm" data-action="goods-withdraw-audit" data-id="${g.id}">撤销审核</button>`
+                      : `<button class="btn ghost sm" data-action="toggle-goods" data-id="${g.id}">${st === "在售" ? "下架" : "提交审核"}</button>`}
+                    <button class="btn outline sm" data-action="edit-goods" data-id="${g.id}">编辑</button>
+                  </div>
+                </div>`;
+              }).join("") || `<div class="empty">暂无符合条件的商品</div>`}
+            </div>
+          </div>
+        </div>
+      `, {
+        title: "商品管理",
+        tab: true,
+        right: `<span data-action="edit-goods" data-id="">新建</span>`
+      });
+    }
+
+    function renderGoodsEdit() {
+      const d = ensureGoodsDraft();
+      const cat = d.cat && PRODUCT_CATEGORIES.includes(d.cat) ? d.cat : "家居";
+      return shell(`
+        <div class="scroll with-tab" style="padding-bottom:24px">
+          <div class="panel">
+            <div class="edit-sec-title">基础信息 <span class="hint">对齐 C 端详情</span></div>
+            <div class="field"><label>商品名称</label><input id="g-title" value="${d.title}" /></div>
+            <div class="field"><label>卖点副标题</label><input id="g-sub" value="${d.sub || ""}" placeholder="如：哑光釉面 可微波" /></div>
+            <div class="field"><label>商品分类</label>
+              ${HP.hwSelectHtml("g-cat", PRODUCT_CATEGORIES, cat)}
+            </div>
+            <div class="field"><label>主图</label>
+              <div class="upload" data-action="toast" data-msg="请上传商品主图">+</div>
+            </div>
+            <div class="field"><label>商品状态</label>
+              ${HP.hwSelectHtml("g-shelf", GOODS_SHELF_OPTIONS, d.shelf || "pending")}
+            </div>
+            <div class="muted" style="margin-top:-6px">新建默认「审核中」；通过后才会在 C 端展示为可售。</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">价格与库存</div>
+            <div class="field"><label>售价（元）</label><input id="g-price" type="number" step="0.01" value="${d.price}" /></div>
+            <div class="field"><label>划线价（元）</label><input id="g-old" type="number" step="0.01" value="${d.old}" /></div>
+            <div class="field"><label>总库存</label><input id="g-stock" type="number" value="${d.stock}" /></div>
+            <div class="muted">已售 ${d.sales}（由订单累计，编辑页只读示意）</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">销售规格 <span class="hint">类型可自定义</span>
+              <button type="button" class="btn ghost sm" data-action="add-goods-spec">加类型</button>
+            </div>
+            ${specEditorHtml(d.specs)}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">营销标签 <span class="hint">详情页角标</span></div>
+            ${chipEditorHtml("tags", d.tags, "如：包邮")}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">商品参数 <span class="hint">材质 / 工艺等</span>
+              <button type="button" class="btn ghost sm" data-action="add-goods-param">加一行</button>
+            </div>
+            ${(d.params || []).length ? d.params.map((p, i) => `
+              <div class="param-row">
+                <input data-param-k="${i}" value="${p.k || ""}" placeholder="参数名" />
+                <input data-param-v="${i}" value="${p.v || ""}" placeholder="参数值" />
+                <button type="button" class="btn ghost sm" data-action="remove-goods-param" data-idx="${i}">×</button>
+              </div>`).join("") : `<div class="muted" style="margin-bottom:8px">暂无参数，可点击加一行</div>`}
+          </div>
+          <div class="panel">
+            <button class="btn solid block" data-action="save-goods">保存商品</button>
+          </div>
+        </div>
+      `, { title: d.id ? "编辑商品" : "新建商品", back: "goods", tab: true });
+    }
+
+    function renderAfterSaleList() {
+      const list = state.refunds || [];
+      return `
+        <div class="scroll with-tab">
+          ${list.length ? list.map((r) => `
+            <div class="list-card">
+              <div class="hd">
+                <span class="muted">${r.orderId || r.id}</span>
+                <span class="tag ${r.status === "待处理" || r.status === "待收货" || r.status === "待寄回" ? "wait" : r.status === "已拒绝" ? "bad" : "ok"}">${afterSaleLabel(r.status)}</span>
+              </div>
+              <div class="body">
+                <div class="thumb"></div>
+                <div class="info">
+                  <div class="title">${r.title}</div>
+                  <div class="meta-line">${r.buyer || ""}${r.id ? ` · ${r.id}` : ""}</div>
+                  <div class="meta-line">${r.reason}</div>
+                  <div class="meta-line" style="color:#888">${HP.refundStatusHint("m", r.status)}</div>
+                  ${r.returnExpressNo ? `<div class="meta-line">退货物流：${r.returnCompany || "快递"} ${r.returnExpressNo}</div>` : ""}
+                  <div class="price">¥${r.amount}</div>
+                </div>
+              </div>
+              ${r.status === "待处理" ? `
+                <div class="ft">
+                  <button class="btn danger sm" data-action="open-reject-refund" data-id="${r.id}">拒绝</button>
+                  <button class="btn solid sm" data-action="refund-approve-return" data-id="${r.id}">同意退货</button>
+                </div>` : ""}
+              ${r.status === "待寄回" ? `
+                <div class="ft"><span class="muted" style="font-size:12px">等待买家寄回商品</span></div>` : ""}
+              ${r.status === "待收货" ? `
+                <div class="ft">
+                  <button class="btn solid sm" data-action="refund-confirm-receive" data-id="${r.id}">确认收货并退款</button>
+                </div>` : ""}
+            </div>`).join("") : `<div class="empty">暂无售后单</div>`}
+        </div>`;
+    }
+
+    function renderOrders() {
+      const tab = state.orderTab === "退款" ? "售后" : (state.orderTab || "全部");
+      const isAfterSale = tab === "售后";
+      const list = isAfterSale ? [] : state.orders.filter((o) => tab === "全部" || o.status === tab);
+      return shell(`
+        <div class="seg">
+          ${["全部","待发货","待收货","已完成","售后"].map((t) =>
+            `<button class="${tab === t ? "on" : ""}" data-action="order-tab" data-tab="${t}">${t}</button>`).join("")}
+        </div>
+        ${isAfterSale ? renderAfterSaleList() : `
+        <div class="scroll with-tab">
+          ${list.length ? list.map((o) => {
+            const items = HP.normalizeOrderItems(o);
+            const refund = refundForOrder(o.id);
+            const refundSt = o.refundStatus || refund?.status;
+            const amount = HP.orderGoodsAmount(o);
+            return `
+            <div class="list-card">
+              <div class="hd">
+                <span class="muted">${o.id}</span>
+                <span class="tag ${orderStatusTagClass(o)}">${orderDisplayStatus(o)}</span>
+              </div>
+              <div data-action="open-order-detail" data-id="${o.id}" style="cursor:pointer">
+                ${items.map((it) => `
+                <div class="body" style="margin-bottom:8px">
+                  <div class="thumb ${it.pic || ""}"></div>
+                  <div class="info">
+                    <div class="title">${it.title}</div>
+                    <div class="meta-line">${it.sku || ""}${it.qty > 1 ? ` ×${it.qty}` : ""}</div>
+                    <div class="price" style="font-size:13px">¥${Number(it.price).toFixed(2)}</div>
+                  </div>
+                </div>`).join("")}
+                <div class="meta-line" style="margin:0 0 4px">${o.buyer}${o.paidAt ? ` · ${o.paidAt}` : ""} · 共${HP.orderItemCount(o)}件</div>
+                ${o.status === "退款" && refundSt ? `<div class="meta-line" style="color:#888">${HP.refundStatusHint("m", refundSt)}</div>` : ""}
+                <div class="price">¥${Number(amount).toFixed(2)}</div>
+              </div>
+              <div class="ft">
+                <button class="btn ghost sm" data-action="open-order-detail" data-id="${o.id}">详情</button>
+                ${o.status === "待发货"
+                  ? `<button class="btn solid sm" data-action="open-ship" data-id="${o.id}">发货</button>`
+                  : o.status === "退款"
+                    ? `<button class="btn outline sm" data-action="open-order-refund" data-id="${o.id}">去售后</button>`
+                    : o.express ? `<span class="muted">${o.express}</span>` : ""}
+              </div>
+            </div>`;
+          }).join("") : `<div class="empty">该状态下暂无订单</div>`}
+        </div>`}
+      `, { title: "订单", tab: true });
+    }
+
+    function renderOrderDetail() {
+      const o = state.orders.find((x) => String(x.id) === String(viewingOrderId)) || state.orders[0];
+      if (!o) {
+        screen = "orders";
+        return renderOrders();
+      }
+      const items = HP.normalizeOrderItems(o);
+      const amount = HP.orderGoodsAmount(o);
+      const refund = refundForOrder(o.id);
+      const refundSt = o.refundStatus || refund?.status;
+      return shell(`
+        <div class="scroll with-tab" style="padding-bottom:24px">
+          <div class="panel">
+            <div style="font-size:18px;font-weight:700;color:var(--brand)">${orderDisplayStatus(o)}</div>
+            <div class="muted" style="margin-top:6px">订单号 ${o.id}</div>
+            ${o.status === "退款" && refundSt ? `<div class="muted" style="margin-top:6px">${HP.refundStatusHint("m", refundSt)}</div>` : ""}
+          </div>
+          <div class="panel">
+            <div class="muted" style="margin-bottom:8px">买家</div>
+            <div style="font-size:14px;font-weight:650">${o.buyer || "-"}</div>
+            <div class="muted" style="margin-top:4px">下单 ${o.paidAt || "-"}</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">商品 · ${HP.orderItemCount(o)} 件</div>
+            ${items.map((it) => `
+              <div class="body" style="margin-bottom:12px">
+                <div class="thumb ${it.pic || ""}"></div>
+                <div class="info">
+                  <div class="title">${it.title}</div>
+                  <div class="meta-line">${it.sku || ""}</div>
+                  <div class="meta-line">¥${Number(it.price).toFixed(2)} × ${it.qty}</div>
+                </div>
+              </div>`).join("")}
+            <div style="text-align:right;font-size:14px;border-top:1px solid #f0f0f0;padding-top:10px">
+              实收 <span class="price">¥${Number(amount).toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="field" style="margin:0"><label>物流</label>
+              <div style="font-size:14px;margin-top:4px">${o.express || "暂无运单"}</div>
+            </div>
+            ${refund?.returnExpressNo ? `
+            <div class="field" style="margin:12px 0 0"><label>退货物流</label>
+              <div style="font-size:14px;margin-top:4px">${refund.returnCompany || "快递"} ${refund.returnExpressNo}</div>
+            </div>` : ""}
+          </div>
+          <div class="panel" style="display:flex;gap:8px;flex-wrap:wrap">
+            ${o.status === "待发货" ? `<button class="btn solid" style="flex:1" data-action="open-ship" data-id="${o.id}">发货</button>` : ""}
+            ${o.status === "退款" ? `<button class="btn outline" style="flex:1" data-action="open-order-refund" data-id="${o.id}">去售后</button>` : ""}
+            <button class="btn ghost" style="flex:1" data-nav="orders">返回列表</button>
+          </div>
+        </div>
+      `, { title: "订单详情", back: "orders", tab: true });
+    }
+
+    const SHOP_REVIEWS = [
+      { id: 1, product: "雾面陶瓷马克杯 350ml", user: "小***周", stars: 5, text: "釉面很细，和详情图一致。", time: "10-12", pics: ["mug", "mug"] },
+      { id: 2, product: "304 不锈钢细口手冲壶", user: "咖***迷", stars: 5, text: "出水很稳，手感沉但不累。", time: "10-20", pics: ["kettle"] },
+      { id: 3, product: "棉纸方格手帐本 A5", user: "阿***林", stars: 4, text: "纸张舒服，封面容易折角。", time: "10-08", pics: ["book"] },
+      { id: 4, product: "雪松香氛洗手皂", user: "陈***", stars: 5, text: "香味清爽，包装也完整。", time: "09-28", pics: ["soap", "soap"] },
+      { id: 5, product: "日式粗陶茶杯 150ml", user: "周***", stars: 5, text: "手作感强，喝茶很有仪式感。", time: "10-02" }
+    ];
+
+    function renderShop() {
+      const s = state.shop;
+      const c = counts();
+      const unread = notifUnreadM();
+      return shell(`
+        <div class="shop-head">
+          ${statusHtml()}
+          <div class="shop-user">
+            <div class="av">衡</div>
+            <div style="flex:1;min-width:0">
+              <div class="name">${s.name}</div>
+              <div class="sub">${s.category || "未分类"} · ${s.open ? "营业中" : "打烊"} · ${ACCOUNT.phone}</div>
+            </div>
+            <div class="msg-entry" data-nav="msgList" title="消息">
+              ${HP.bellEntryHtml(unread)}
+            </div>
+          </div>
+        </div>
+        <div class="scroll with-tab">
+          <div class="shop-body">
+            <div class="shop-panel">
+              <div class="phd">经营待办 <span data-nav="dash">工作台 ›</span></div>
+              <div class="shop-grid">
+                <div data-nav="orders" data-order-tab="待发货"><div class="ico">发</div>待发货${c.ship ? `<b class="gb">${c.ship}</b>` : ""}</div>
+                <div data-nav="orders" data-order-tab="售后"><div class="ico">售</div>售后${c.refund ? `<b class="gb">${c.refund}</b>` : ""}</div>
+                <div data-nav="goods"><div class="ico">品</div>商品${c.pendingGoods ? `<b class="gb">${c.pendingGoods}</b>` : ""}</div>
+                <div data-nav="wallet"><div class="ico">资</div>资金</div>
+              </div>
+            </div>
+            <div class="shop-panel">
+              <div class="phd">资产 <span data-nav="wallet">明细 ›</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding:2px 6px 6px">
+                <div>
+                  <div style="font-size:11px;color:var(--muted)">可提现余额</div>
+                  <div style="font-size:22px;font-weight:750;margin-top:2px">¥${Number(state.balance || 0).toFixed(2)}</div>
+                </div>
+                <button type="button" class="btn solid sm" data-nav="withdraw">去提现</button>
+              </div>
+            </div>
+            <div class="shop-menu">
+              <div class="shop-cell" data-nav="shopEdit">店铺资料 <span>名称 / 类目 / 公告 ›</span></div>
+              <div class="shop-cell" data-nav="shopReviews">店铺评价 <span>${SHOP_REVIEWS.length} 条 ›</span></div>
+              <div class="shop-cell" data-nav="withdrawAccounts">提现账户 <span>${authChannel === "mp" ? "仅微信 ›" : "微信/支付宝/银行卡 ›"}</span></div>
+              <div class="shop-cell" data-nav="msgList">消息通知 ${unread ? `<span style="color:var(--price)">${unread} 条未读 ›</span>` : "<span>›</span>"}</div>
+              <a class="shop-cell" href="./c-end-ui-preview.html" style="color:inherit;text-decoration:none">切换 C 端 <span>买家视角 ›</span></a>
+            </div>
+            <div class="muted" style="padding:0 4px;line-height:1.5">公告：${s.notice || "暂无公告"}</div>
+          </div>
+        </div>
+      `, { tab: true });
+    }
+
+    function renderShopEdit() {
+      const s = state.shop;
+      return shell(`
+        <div class="scroll with-tab" style="padding-bottom:24px">
+          <div class="panel">
+            <div class="field"><label>店铺名称</label><input id="shop-name" value="${s.name}" /></div>
+            <div class="field"><label>经营类目</label>
+              ${HP.hwSelectHtml("shop-cat", BUSINESS_CATEGORIES, s.category || BUSINESS_CATEGORIES[0])}
+            </div>
+            <div class="field"><label>店铺公告</label><textarea id="shop-notice" rows="3">${s.notice}</textarea></div>
+            <div class="field"><label>营业状态</label>
+              ${HP.hwSelectHtml("shop-open", [{ value: "1", label: "营业中" }, { value: "0", label: "打烊" }], s.open ? "1" : "0")}
+            </div>
+            <button class="btn solid block" data-action="save-shop">保存</button>
+          </div>
+        </div>
+      `, { title: "店铺资料", back: "shop", tab: true });
+    }
+
+    function renderShopReviews() {
+      return shell(`
+        <div class="scroll with-tab">
+          <div class="panel" style="margin-bottom:0">
+            <div style="font-size:13px;font-weight:650;margin-bottom:4px">买家评价</div>
+            <div class="muted">好评率 98% · 共 ${SHOP_REVIEWS.length} 条（演示）</div>
+          </div>
+          <div class="panel" style="margin-top:0;border-radius:0 0 12px 12px">
+            ${SHOP_REVIEWS.map((r) => `
+              <div class="shop-review">
+                <div class="who"><span>${r.user}</span><span class="stars">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</span></div>
+                <div class="prod">${r.product}</div>
+                <div class="txt">${r.text}</div>
+                ${r.pics?.length ? `<div class="pics">${r.pics.map((p) => `<div class="rp thumb ${p}"></div>`).join("")}</div>` : ""}
+                <div class="muted" style="margin-top:6px">${r.time}</div>
+              </div>`).join("")}
+          </div>
+        </div>
+      `, { title: "店铺评价", back: "shop", tab: true });
+    }
+
+    function renderWallet() {
+      const list = state.ledgers || [];
+      return shell(`
+        <div class="scroll">
+          <div class="wallet-head">
+            <div class="lab">可提现余额（元）</div>
+            <div class="num">${Number(state.balance || 0).toFixed(2)}</div>
+            <div class="acts">
+              <button type="button" style="background:#fff;color:var(--brand)" data-nav="withdraw">去提现</button>
+            </div>
+          </div>
+          <div style="padding:14px 12px 8px;font-size:13px;color:#888">资金明细</div>
+          ${list.length ? list.map((b) => `
+            <div class="ledger-item">
+              <div class="row">
+                <span>${b.title}</span>
+                <span class="${b.type === "plus" ? "amt-plus" : "amt-minus"}">${b.type === "plus" ? "+" : ""}${Number(b.amount).toFixed(2)}</span>
+              </div>
+              <div class="sub">${b.time}${b.tip ? " · " + b.tip : ""}</div>
+            </div>`).join("") : `<div class="empty">暂无流水</div>`}
+          <div class="panel" data-nav="withdrawAccounts" style="cursor:pointer">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:12px;color:var(--muted)">提现账户（${authChannel === "mp" ? "仅微信" : "微信 / 支付宝 / 银行卡"}）</div>
+                <div style="font-size:14px;font-weight:650;margin-top:4px">${withdrawAccountTitle(currentWithdrawAccount())}</div>
+              </div>
+              <span style="color:var(--brand);font-size:13px">管理 ›</span>
+            </div>
+          </div>
+          <div class="panel" style="font-size:12px;color:#888;line-height:1.55">
+            订单完成后入账可提现余额。支持提现到微信商家零钱、支付宝企业账户、对公银行卡。${HP.withdrawFeeText()}。
+          </div>
+        </div>
+      `, { title: "店铺资金", back: "dash" });
+    }
+
+    function renderWithdraw() {
+      const draft = Math.min(500, Number(state.balance) || 0) || 100;
+      const { fee, arrive } = HP.withdrawArrive(draft);
+      const acc = currentWithdrawAccount();
+      const icon = withdrawAccountIcon(acc);
+      return shell(`
+        <div class="scroll" style="padding-bottom:24px">
+          <div class="panel" data-action="open-withdraw-accounts" style="cursor:pointer">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div class="muted">到账账户</div>
+              <div style="font-size:12px;color:var(--brand)">更换 / 管理 ›</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:36px;height:36px;border-radius:8px;background:${icon.bg};color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700">${icon.t}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:650">${withdrawAccountTitle(acc)}</div>
+                <div class="muted">${withdrawAccountSub(acc)}</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="field"><label>提现金额（元）</label>
+              <input id="withdraw-amount" type="number" min="1" step="0.01" value="${draft.toFixed(2)}" /></div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px">
+              <span class="muted">可用余额</span>
+              <span>¥${Number(state.balance || 0).toFixed(2)} <a data-action="withdraw-all" style="color:var(--brand);cursor:pointer">全部</a></span>
+            </div>
+            ${HP.withdrawFeeBoxHtml(fee, arrive)}
+            <button class="btn solid block" style="margin-top:14px" data-action="confirm-withdraw">确认提现</button>
+          </div>
+          <div class="panel" style="font-size:12px;color:#888;line-height:1.55">
+            余额按提现金额全额扣减；手续费从该金额中扣除。单笔最低 ¥1，单笔上限 ¥50000。
+          </div>
+        </div>
+      `, { title: "余额提现", back: "wallet" });
+    }
+
+    function renderWithdrawAccounts() {
+      const allow = new Set(allowedWithdrawTypes());
+      const list = (state.withdrawAccounts || []).filter((a) => allow.has(normalizeWithdrawType(a.type)));
+      const locked = (state.withdrawAccounts || []).filter((a) => !allow.has(normalizeWithdrawType(a.type)));
+      const canAdd = authChannel !== "mp" || !list.some((a) => normalizeWithdrawType(a.type) === "wechat");
+      return shell(`
+        <div class="scroll">
+          <div class="panel" style="font-size:12px;color:#888;line-height:1.55">${withdrawChannelTip()}</div>
+          <div style="padding:0 12px 8px;font-size:13px;font-weight:650">${authChannel === "mp" ? "可用（微信）" : "可用账户"}</div>
+          ${list.length ? list.map((a) => {
+            const on = state.selectedWithdrawAccountId === a.id;
+            const icon = withdrawAccountIcon(a);
+            const tag = withdrawTypeLabel(a.type);
+            return `<div class="list-card" data-action="pick-withdraw-account" data-id="${a.id}" style="cursor:pointer">
+              <div class="hd">
+                <span style="display:flex;align-items:center;gap:8px">
+                  <span style="width:28px;height:28px;border-radius:8px;background:${icon.bg};color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700">${icon.t}</span>
+                  <span><span style="font-size:11px;padding:1px 6px;border-radius:4px;background:#eef6f2;color:var(--brand);margin-right:6px">${tag}</span>${a.def ? "【默认】" : ""}${withdrawAccountTitle(a)}${on ? " · 当前" : ""}</span>
+                </span>
+              </div>
+              <div class="meta-line" style="padding:0 0 8px">${withdrawAccountSub(a)}</div>
+              <div class="ft">
+                <button class="btn ghost sm" data-action="set-default-withdraw-account" data-id="${a.id}">${a.def ? "默认账户" : "设为默认"}</button>
+                <button class="btn outline sm" data-action="edit-withdraw-account" data-id="${a.id}">编辑</button>
+                ${authChannel === "mp" && normalizeWithdrawType(a.type) === "wechat" ? "" : `<button class="btn danger sm" data-action="del-withdraw-account" data-id="${a.id}">删除</button>`}
+              </div>
+            </div>`;
+          }).join("") : `<div class="empty">${authChannel === "mp" ? "请绑定微信商家零钱" : "暂无提现账户"}</div>`}
+          ${authChannel === "mp" && locked.length ? `
+            <div style="padding:12px 12px 8px;font-size:13px;font-weight:650;color:#888">App/H5 可用（本端不可选）</div>
+            ${locked.map((a) => {
+              const icon = withdrawAccountIcon(a);
+              return `<div class="list-card" style="opacity:.55">
+                <div class="hd"><span style="display:flex;align-items:center;gap:8px">
+                  <span style="width:28px;height:28px;border-radius:8px;background:${icon.bg};color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700">${icon.t}</span>
+                  <span>${withdrawAccountTitle(a)}</span>
+                </span></div>
+                <div class="meta-line" style="padding:0 0 8px">${withdrawAccountSub(a)} · 请使用 App/H5 提现</div>
+              </div>`;
+            }).join("")}
+          ` : ""}
+        </div>
+      `, {
+        title: "提现账户",
+        back: withdrawPickReturn || "wallet",
+        right: canAdd ? `<span data-action="edit-withdraw-account" data-id="">新增</span>` : ""
+      });
+    }
+
+    function renderWithdrawAccountEdit() {
+      const existing = (state.withdrawAccounts || []).find((x) => x.id === editingWithdrawAccountId);
+      if (!waEditDraft) {
+        waEditDraft = existing
+          ? { type: normalizeWithdrawType(existing.type), holder: existing.holder || "", bank: existing.bank || "", mask: existing.mask || "" }
+          : { type: authChannel === "mp" ? "wechat" : "bank", holder: "衡物（深圳）贸易有限公司", bank: authChannel === "mp" ? "" : "招商银行", mask: "" };
+      }
+      const d = waEditDraft;
+      const type = normalizeWithdrawType(d.type);
+      return shell(`
+        <div class="scroll">
+          <div class="panel">
+            <div class="field"><label>账户类型</label>${HP.withdrawTypePickHtml({ role: "merchant", current: type, allow: allowedWithdrawTypes(), lockedHint: "小程序仅此" })}</div>
+            <div class="field"><label>${type === "bank" ? "对公户名" : "账户名"}</label><input id="wa-holder" value="${d.holder || ""}" /></div>
+            ${type === "bank" ? `<div class="field"><label>开户银行</label><input id="wa-bank" value="${d.bank || ""}" placeholder="如：招商银行" /></div>` : `<input type="hidden" id="wa-bank" value="" />`}
+            <div class="field"><label>${type === "wechat" ? "账号备注（可留空）" : type === "alipay" ? "支付宝账号 / 掩码" : "卡号"}</label>
+              <input id="wa-mask" value="${d.mask || ""}" placeholder="${type === "wechat" ? "可选" : type === "alipay" ? "企业支付宝账号" : "对公银行卡号"}" /></div>
+            <button class="btn solid block" data-action="save-withdraw-account">保存</button>
+          </div>
+          <div class="panel" style="font-size:12px;color:#888;line-height:1.55">
+            ${type === "bank" ? "对公银行卡需与营业执照主体一致。" : type === "wechat" ? "微信商家零钱需完成微信商户实名。" : "支付宝企业账户需与入驻主体一致。"}
+          </div>
+        </div>
+      `, { title: editingWithdrawAccountId ? "编辑提现账户" : "新增提现账户", back: "withdrawAccounts" });
+    }
+
+    function render() {
+      syncRefundsFromC();
+      syncPreviewSwitchers();
+      syncAsideTabs();
+      const map = {
+        apply: renderApply,
+        pending: renderPending,
+        rejected: renderRejected,
+        dash: renderDash,
+        goods: renderGoods,
+        goodsEdit: renderGoodsEdit,
+        orders: renderOrders,
+        orderDetail: renderOrderDetail,
+        shop: renderShop,
+        shopEdit: renderShopEdit,
+        shopReviews: renderShopReviews,
+        wallet: renderWallet,
+        withdraw: renderWithdraw,
+        withdrawAccounts: renderWithdrawAccounts,
+        withdrawAccountEdit: renderWithdrawAccountEdit,
+        msgList: renderMsgList
+      };
+      const phone = document.getElementById("phone");
+      phone.innerHTML = (map[screen] || renderDash)();
+      HP.applyChannelChrome(phone, authChannel);
+    }
+
+    document.getElementById("tabs").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-screen]");
+      if (!btn) return;
+      goAside(btn.dataset.screen);
+    });
+
+    document.getElementById("phone").addEventListener("click", (e) => {
+      if (e.target.classList.contains("sheet-mask")) {
+        sheet = null; render(); return;
+      }
+
+      const nav = e.target.closest("[data-nav]");
+      if (nav) {
+        if (nav.dataset.nav === "goods") goodsEditDraft = null;
+        if (nav.dataset.nav === "refunds") {
+          state.orderTab = "售后";
+          screen = "orders";
+          render();
+          return;
+        }
+        if (nav.dataset.orderTab) state.orderTab = nav.dataset.orderTab;
+        screen = nav.dataset.nav;
+        render();
+        return;
+      }
+
+      const actionEl = e.target.closest("[data-action]");
+      if (!actionEl) return;
+      const action = actionEl.dataset.action;
+      const id = actionEl.dataset.id;
+
+      if (action === "toast") { toast(actionEl.dataset.msg || "示意"); return; }
+      if (action === "close-sheet") { sheet = null; render(); return; }
+      if (action === "read-all-notifs") {
+        HP.markAllNotifsRead("m", defaultNotifs);
+        toast("已全部标为已读");
+        render();
+        return;
+      }
+      if (action === "open-notif") {
+        const nid = actionEl.dataset.id;
+        HP.markNotifRead("m", defaultNotifs, nid);
+        const n = loadNotifsM().find((x) => String(x.id) === String(nid));
+        if (!n) { render(); return; }
+        if (n.go === "orders" || n.go === "refunds") {
+          if (n.tab === "售后" || n.go === "refunds") state.orderTab = "售后";
+          else if (n.tab) state.orderTab = n.tab;
+          screen = "orders";
+        } else if (n.go === "wallet" || n.go === "withdraw" || n.go === "goods") {
+          screen = n.go;
+        } else {
+          toast(n.body || n.title);
+        }
+        render();
+        return;
+      }
+
+      if (action === "toggle-agree-apply") {
+        agreeApply = !agreeApply;
+        render();
+        return;
+      }
+      if (action === "submit-apply") {
+        if (!agreeApply) { toast("请先阅读并同意入驻相关协议"); return; }
+        const name = document.getElementById("ap-name")?.value?.trim();
+        if (!name) { toast("请填写店铺名称"); return; }
+        const category = document.getElementById("ap-cat")?.value || BUSINESS_CATEGORIES[0];
+        state.apply = {
+          name,
+          category,
+          contact: document.getElementById("ap-contact")?.value?.trim() || ACCOUNT.name,
+          phone: document.getElementById("ap-phone")?.value?.trim() || ACCOUNT.phone,
+          rejectReason: ""
+        };
+        state.shop.name = name;
+        state.shop.category = state.apply.category;
+        state.settleStatus = "pending";
+        save();
+        screen = "pending";
+        toast("已提交，等待审核");
+        render();
+        return;
+      }
+      if (action === "approve") {
+        state.settleStatus = "approved";
+        save();
+        screen = "dash";
+        toast("入驻已通过");
+        render();
+        return;
+      }
+      if (action === "reject") {
+        state.settleStatus = "rejected";
+        state.apply.rejectReason = "营业执照不清晰，请重新上传后提交。";
+        save();
+        screen = "rejected";
+        render();
+        return;
+      }
+      if (action === "reapply") {
+        state.settleStatus = "none";
+        save();
+        screen = "apply";
+        render();
+        return;
+      }
+      if (action === "toggle-goods") {
+        const g = state.goods.find((x) => String(x.id) === String(id));
+        if (g) {
+          const st = goodsStatusOf(g);
+          if (st === "审核中") { toast("审核中请先通过或撤销"); return; }
+          if (st === "在售" || (st === "售罄" && normalizeShelf(g) === "on")) {
+            g.shelf = "off";
+            g.on = false;
+            toast("已下架");
+          } else {
+            g.shelf = "pending";
+            g.on = false;
+            toast("已提交审核");
+          }
+          save();
+          render();
+        }
+        return;
+      }
+      if (action === "goods-withdraw-audit") {
+        const g = state.goods.find((x) => String(x.id) === String(id));
+        if (g) {
+          g.shelf = "off";
+          g.on = false;
+          save();
+          toast("已撤销审核");
+          render();
+        }
+        return;
+      }
+      if (action === "edit-goods") {
+        state.editingGoodsId = id ? Number(id) : null;
+        goodsEditDraft = null;
+        screen = "goodsEdit";
+        render();
+        return;
+      }
+      if (action === "goods-tab") {
+        state.goodsTab = actionEl.dataset.tab || "全部";
+        render();
+        return;
+      }
+      if (action === "goods-status-tab") {
+        state.goodsStatusTab = actionEl.dataset.tab || "全部";
+        render();
+        return;
+      }
+      if (action === "add-goods-chip" || action === "remove-goods-chip" || action === "add-goods-param" || action === "remove-goods-param"
+        || action === "add-goods-spec" || action === "remove-goods-spec" || action === "add-goods-spec-value" || action === "remove-goods-spec-value") {
+        syncGoodsDraftFromForm();
+        const d = ensureGoodsDraft();
+        if (action === "add-goods-chip") {
+          const kind = actionEl.dataset.kind;
+          const input = document.getElementById(`chip-input-${kind}`);
+          const val = (input?.value || "").trim();
+          if (!val) { toast("请输入内容"); return; }
+          if (!Array.isArray(d[kind])) d[kind] = [];
+          if (d[kind].includes(val)) { toast("已存在"); return; }
+          d[kind].push(val);
+        } else if (action === "remove-goods-chip") {
+          const kind = actionEl.dataset.kind;
+          const idx = Number(actionEl.dataset.idx);
+          if (Array.isArray(d[kind])) d[kind].splice(idx, 1);
+        } else if (action === "add-goods-param") {
+          if (!Array.isArray(d.params)) d.params = [];
+          d.params.push({ k: "", v: "" });
+        } else if (action === "remove-goods-param") {
+          const idx = Number(actionEl.dataset.idx);
+          if (Array.isArray(d.params)) d.params.splice(idx, 1);
+        } else if (action === "add-goods-spec") {
+          if (!Array.isArray(d.specs)) d.specs = [];
+          d.specs.push({ name: "规格" + (d.specs.length + 1), values: ["默认"] });
+        } else if (action === "remove-goods-spec") {
+          const idx = Number(actionEl.dataset.idx);
+          if (Array.isArray(d.specs)) d.specs.splice(idx, 1);
+        } else if (action === "add-goods-spec-value") {
+          const idx = Number(actionEl.dataset.idx);
+          const input = document.getElementById(`spec-val-${idx}`);
+          const val = (input?.value || "").trim();
+          if (!val) { toast("请输入规格选项"); return; }
+          if (!d.specs[idx]) return;
+          if (!Array.isArray(d.specs[idx].values)) d.specs[idx].values = [];
+          if (d.specs[idx].values.includes(val)) { toast("已存在"); return; }
+          d.specs[idx].values.push(val);
+        } else if (action === "remove-goods-spec-value") {
+          const idx = Number(actionEl.dataset.idx);
+          const vidx = Number(actionEl.dataset.vidx);
+          if (d.specs[idx]?.values) d.specs[idx].values.splice(vidx, 1);
+        }
+        render();
+        return;
+      }
+      if (action === "save-goods") {
+        syncGoodsDraftFromForm();
+        const d = ensureGoodsDraft();
+        const title = (d.title || "").trim();
+        const cat = d.cat || "家居";
+        if (!title) { toast("请填写商品名称"); return; }
+        if (!PRODUCT_CATEGORIES.includes(cat)) { toast("请选择商品分类"); return; }
+        if (!(d.specs || []).length) { toast("请至少添加一个规格类型"); return; }
+        if ((d.specs || []).some((s) => !(s.values || []).length)) { toast("每个规格类型至少要有一个选项"); return; }
+        if ((d.specs || []).some((s) => !(s.name || "").trim())) { toast("请填写规格类型名称"); return; }
+        const row = normalizeGoods({
+          ...d,
+          title,
+          cat,
+          id: state.editingGoodsId || d.id || Date.now(),
+          sales: state.editingGoodsId
+            ? (state.goods.find((x) => x.id === state.editingGoodsId)?.sales || 0)
+            : 0
+        });
+        if (state.editingGoodsId) {
+          const g = state.goods.find((x) => x.id === state.editingGoodsId);
+          if (g) Object.assign(g, row, { id: state.editingGoodsId });
+        } else {
+          state.goods.unshift(row);
+        }
+        goodsEditDraft = null;
+        save();
+        screen = "goods";
+        toast("已保存");
+        render();
+        return;
+      }
+      if (action === "open-order-detail") {
+        viewingOrderId = id;
+        screen = "orderDetail";
+        render();
+        return;
+      }
+      if (action === "order-tab") {
+        state.orderTab = actionEl.dataset.tab === "退款" ? "售后" : actionEl.dataset.tab;
+        render();
+        return;
+      }
+      if (action === "open-ship") {
+        sheet = { type: "ship", orderId: id, company: EXPRESS_COMPANIES[0] };
+        render();
+        return;
+      }
+      if (action === "confirm-ship") {
+        const o = state.orders.find((x) => x.id === sheet?.orderId);
+        const no = document.getElementById("ship-no")?.value?.trim();
+        const co = document.getElementById("ship-co")?.value || EXPRESS_COMPANIES[0];
+        if (!no) { toast("请填写运单号"); return; }
+        if (o) { o.status = "待收货"; o.express = `${co} ${no}`; }
+        sheet = null;
+        save();
+        toast("已发货");
+        render();
+        return;
+      }
+      if (action === "open-legal") {
+        sheet = { type: "legal", doc: actionEl.dataset.doc || "settle" };
+        render();
+        return;
+      }
+      if (action === "open-reject-refund") {
+        sheet = { type: "reject-refund", refundId: id, reason: REFUND_REJECT_REASONS[0] };
+        render();
+        return;
+      }
+      if (action === "confirm-reject-refund") {
+        const r = state.refunds.find((x) => x.id === sheet?.refundId);
+        const reason = document.getElementById("reject-reason")?.value || REFUND_REJECT_REASONS[0];
+        if (r) {
+          r.status = "已拒绝";
+          r.rejectReason = reason;
+          applyOrderRefundStatus(r.orderId, "已拒绝");
+          syncRefundToC({
+            id: r.id, orderId: r.orderId, title: r.title, amount: r.amount,
+            status: "已拒绝", rejectReason: reason, reason: r.reason, buyer: r.buyer
+          });
+        }
+        sheet = null;
+        save();
+        toast("已拒绝退款");
+        render();
+        return;
+      }
+      if (action === "open-order-refund") {
+        state.orderTab = "售后";
+        screen = "orders";
+        render();
+        return;
+      }
+      if (action === "refund-approve-return") {
+        const r = state.refunds.find((x) => x.id === id);
+        if (r) {
+          r.status = "待寄回";
+          applyOrderRefundStatus(r.orderId, "待寄回");
+          syncRefundToC({
+            id: r.id, orderId: r.orderId, title: r.title, amount: r.amount,
+            status: "待寄回", reason: r.reason, buyer: r.buyer,
+            returnCompany: r.returnCompany || "", returnExpressNo: r.returnExpressNo || ""
+          });
+        }
+        save();
+        toast("已同意退货，等待买家寄回");
+        render();
+        return;
+      }
+      if (action === "refund-confirm-receive") {
+        const r = state.refunds.find((x) => x.id === id);
+        if (!r?.returnExpressNo) {
+          toast("尚未收到退货物流，无法退款");
+          return;
+        }
+        r.status = "已同意";
+        applyOrderRefundStatus(r.orderId, "已同意");
+        syncRefundToC({
+          id: r.id, orderId: r.orderId, title: r.title, amount: r.amount,
+          status: "已同意", reason: r.reason, buyer: r.buyer,
+          returnCompany: r.returnCompany || "", returnExpressNo: r.returnExpressNo || ""
+        });
+        save();
+        toast("已确认收货，退款已完成");
+        render();
+        return;
+      }
+      if (action === "save-shop") {
+        state.shop.name = document.getElementById("shop-name")?.value?.trim() || state.shop.name;
+        state.shop.notice = document.getElementById("shop-notice")?.value || "";
+        state.shop.category = document.getElementById("shop-cat")?.value || BUSINESS_CATEGORIES[0];
+        state.shop.open = document.getElementById("shop-open")?.value === "1";
+        save();
+        toast("店铺资料已保存");
+        screen = "shop";
+        render();
+        return;
+      }
+      if (action === "open-withdraw-accounts") {
+        withdrawPickReturn = "withdraw";
+        screen = "withdrawAccounts";
+        render();
+        return;
+      }
+      if (action === "pick-withdraw-account") {
+        state.selectedWithdrawAccountId = Number(id);
+        save();
+        toast("已选择提现账户");
+        screen = withdrawPickReturn || "wallet";
+        withdrawPickReturn = null;
+        render();
+        return;
+      }
+      if (action === "set-default-withdraw-account") {
+        e.stopPropagation();
+        (state.withdrawAccounts || []).forEach((a) => { a.def = a.id === Number(id); });
+        state.selectedWithdrawAccountId = Number(id);
+        save();
+        toast("已设默认提现账户");
+        render();
+        return;
+      }
+      if (action === "edit-withdraw-account") {
+        e.stopPropagation();
+        editingWithdrawAccountId = id ? Number(id) : null;
+        const existing = (state.withdrawAccounts || []).find((x) => x.id === editingWithdrawAccountId);
+        waEditDraft = existing
+          ? { type: normalizeWithdrawType(existing.type), holder: existing.holder || "", bank: existing.bank || "", mask: existing.mask || "" }
+          : { type: authChannel === "mp" ? "wechat" : "bank", holder: "衡物（深圳）贸易有限公司", bank: authChannel === "mp" ? "" : "招商银行", mask: "" };
+        screen = "withdrawAccountEdit";
+        render();
+        return;
+      }
+      if (action === "pick-wa-type") {
+        waEditDraft = HP.readWithdrawFormDraft(waEditDraft, { typeOverride: actionEl.dataset.type, allow: allowedWithdrawTypes() });
+        render();
+        return;
+      }
+      if (action === "del-withdraw-account") {
+        e.stopPropagation();
+        const list = state.withdrawAccounts || [];
+        const target = list.find((a) => a.id === Number(id));
+        if (authChannel === "mp" && target && normalizeWithdrawType(target.type) === "wechat") {
+          toast("小程序需保留微信提现账户");
+          return;
+        }
+        if (list.length <= 1) { toast("至少保留一个提现账户"); return; }
+        state.withdrawAccounts = list.filter((a) => a.id !== Number(id));
+        if (state.selectedWithdrawAccountId === Number(id)) {
+          const def = state.withdrawAccounts.find((a) => a.def) || state.withdrawAccounts[0];
+          state.selectedWithdrawAccountId = def?.id;
+          if (def) def.def = true;
+        }
+        save();
+        toast("已删除");
+        render();
+        return;
+      }
+      if (action === "save-withdraw-account") {
+        const draft = HP.readWithdrawFormDraft(waEditDraft, { allow: allowedWithdrawTypes() });
+        const type = draft.type;
+        const holder = (draft.holder || "").trim();
+        const bank = type === "bank" ? (draft.bank || "").trim() : "";
+        const mask = (draft.mask || "").trim();
+        if (!holder) { toast(type === "bank" ? "请填写对公户名" : "请填写账户名"); return; }
+        if (type === "bank" && !bank) { toast("请填写开户银行"); return; }
+        if (type === "bank" && !mask) { toast("请填写卡号"); return; }
+        if (type === "alipay" && !mask) { toast("请填写支付宝账号"); return; }
+        if (!state.withdrawAccounts) state.withdrawAccounts = [];
+        if (editingWithdrawAccountId) {
+          const a = state.withdrawAccounts.find((x) => x.id === editingWithdrawAccountId);
+          if (a) Object.assign(a, { type, bank, holder, mask });
+        } else {
+          const nid = Date.now();
+          const makeDef = state.withdrawAccounts.length === 0;
+          state.withdrawAccounts.push({ id: nid, type, bank, holder, mask, def: makeDef });
+          if (makeDef) state.selectedWithdrawAccountId = nid;
+        }
+        waEditDraft = null;
+        save();
+        toast("提现账户已保存");
+        screen = "withdrawAccounts";
+        render();
+        return;
+      }
+      if (action === "withdraw-all") {
+        const input = document.getElementById("withdraw-amount");
+        if (input) {
+          input.value = Number(state.balance || 0).toFixed(2);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        return;
+      }
+      if (action === "confirm-withdraw") {
+        const acc = currentWithdrawAccount();
+        if (!acc) {
+          toast("请先添加提现账户");
+          withdrawPickReturn = "withdraw";
+          screen = "withdrawAccounts";
+          render();
+          return;
+        }
+        if (!allowedWithdrawTypes().includes(normalizeWithdrawType(acc.type))) {
+          toast(authChannel === "mp" ? "小程序仅支持微信提现" : "不支持的提现方式");
+          return;
+        }
+        const amount = Number(document.getElementById("withdraw-amount")?.value || 0);
+        if (!(amount > 0)) { toast("请输入提现金额"); return; }
+        if (amount < 1) { toast("单笔最低提现 ¥1"); return; }
+        if (amount > Number(state.balance || 0)) { toast("余额不足"); return; }
+        if (amount > 50000) { toast("单笔不得超过 ¥50000"); return; }
+        const { fee, arrive } = HP.withdrawArrive(amount);
+        if (fee >= amount) { toast("提现金额过低，无法覆盖手续费"); return; }
+        state.balance = Math.round((Number(state.balance) - amount) * 100) / 100;
+        if (!Array.isArray(state.ledgers)) state.ledgers = [];
+        state.ledgers.unshift({
+          id: Date.now(),
+          title: withdrawLedgerTitle(acc),
+          time: new Date().toLocaleString(),
+          amount: -amount,
+          type: "minus",
+          tip: `到账 ¥${arrive.toFixed(2)}，手续费 ¥${fee.toFixed(2)}`
+        });
+        save();
+        toast(`已提交，预计到账 ¥${arrive.toFixed(2)}`);
+        screen = "wallet";
+        render();
+      }
+    });
+
+    document.getElementById("phone").addEventListener("input", (e) => {
+      if (e.target?.id !== "withdraw-amount") return;
+      const { fee, arrive } = HP.withdrawArrive(e.target.value);
+      const feeEl = document.getElementById("withdraw-fee");
+      const arrEl = document.getElementById("withdraw-arrive");
+      if (feeEl) feeEl.textContent = `¥${fee.toFixed(2)}`;
+      if (arrEl) arrEl.textContent = `¥${arrive.toFixed(2)}`;
+    });
+
+    if (new URLSearchParams(location.search).get("reset") === "1") {
+      localStorage.removeItem(STORE_KEY);
+      state = defaultState();
+      screen = "apply";
+    }
+    authChannel = HP.setPreviewChannel(authChannel);
+    HP.bindPreviewChannelSwitch((ch) => applyAuthChannel(ch));
+    HP.bindHwSelect(document.getElementById("phone"));
+    render();
+  </script>
+</body>
+</html>

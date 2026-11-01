@@ -1,0 +1,261 @@
+/* 自定义下拉（替代原生 select，展开列表也可主题化） */
+.hw-dd { position: relative; width: 100%; }
+.hw-dd-trigger {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 12px 12px 12px 14px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.35;
+  color: #1a1a1a;
+  background: #fafafa;
+  outline: none;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.hw-dd-trigger:hover { border-color: #d5d5d5; background: #f7f7f7; }
+.hw-dd.open .hw-dd-trigger,
+.hw-dd-trigger:focus {
+  border-color: var(--brand, #2f6f5e);
+  background: #fff;
+}
+.hw-dd-label {
+  flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hw-dd-chev {
+  flex-shrink: 0; width: 16px; height: 16px; color: #888;
+  transition: transform .15s ease;
+}
+.hw-dd.open .hw-dd-chev { transform: rotate(180deg); color: var(--brand, #2f6f5e); }
+.hw-dd-menu {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+  z-index: 40;
+  max-height: 220px; overflow: auto;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.12);
+  padding: 4px;
+  display: none;
+}
+.hw-dd.open .hw-dd-menu { display: block; }
+.hw-dd.drop-up .hw-dd-menu {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+.hw-dd-opt {
+  display: block; width: 100%;
+  border: 0; background: transparent;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit; font-size: 14px; line-height: 1.35;
+  color: #222; text-align: left; cursor: pointer;
+}
+.hw-dd-opt:hover { background: #f4f7f6; }
+.hw-dd-opt.on {
+  background: #eef6f2;
+  color: var(--brand, #2f6f5e);
+  font-weight: 650;
+}
+.hw-dd.is-compact .hw-dd-trigger {
+  font-size: 14px; padding: 10px 10px 10px 12px; border-radius: 8px;
+}
+.hw-dd.is-compact .hw-dd-opt { font-size: 13px; padding: 9px 10px; }
+.form-panel .hw-dd { margin-top: 6px; }
+
+/* 简易上传格 */
+.upload {
+  width: 88px; height: 88px; border: 1px dashed #ccc; border-radius: 10px;
+  display: grid; place-items: center; color: #aaa; font-size: 28px;
+  cursor: pointer; background: #fafafa; user-select: none;
+}
+.upload:hover { border-color: #bbb; color: #999; }
+
+/* C 端 / 商家端预览共用：账户类型点选 */
+.type-picks { display: flex; gap: 8px; flex-wrap: wrap; }
+.type-picks.stack { flex-direction: column; }
+.type-picks.stack .type-pick {
+  flex: none; width: 100%; min-width: 0; text-align: left; padding: 11px 12px;
+}
+.type-pick {
+  flex: 1; min-width: 88px; border: 1px solid #e5e5e5; background: #fff; color: #444;
+  border-radius: 10px; padding: 10px 8px; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+}
+.type-pick:disabled { cursor: default; opacity: 1; }
+.type-pick.on { border-color: var(--brand, #2f6f5e); background: #eef6f2; color: var(--brand, #2f6f5e); }
+.type-pick .sub { display: block; margin-top: 2px; font-size: 11px; font-weight: 500; opacity: .75; }
+
+/* 侧栏：屏列表快捷跳转 */
+.tabs { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+.tabs button {
+  border: 1px solid #ddd; background: #fff; border-radius: 999px;
+  padding: 5px 10px; font: inherit; font-size: 11px; cursor: pointer; color: inherit;
+}
+.tabs button.active { background: var(--brand, #2f6f5e); border-color: var(--brand, #2f6f5e); color: #fff; }
+
+/* 侧栏：角色 / 客户端切换 */
+.preview-switchers { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.switch-block .switch-lab {
+  font-size: 11px; font-weight: 650; color: #888; letter-spacing: .04em; margin-bottom: 6px;
+}
+.seg-switch {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; background: #f4f4f4;
+}
+.seg-switch > a,
+.seg-switch > button {
+  appearance: none; border: 0; margin: 0; background: transparent; color: #555;
+  font: inherit; font-size: 13px; font-weight: 650; padding: 9px 8px; text-align: center;
+  text-decoration: none; cursor: pointer; line-height: 1.2;
+}
+.seg-switch > a.on,
+.seg-switch > button.on {
+  background: var(--brand, #2f6f5e); color: #fff;
+}
+.seg-switch > a:not(.on):hover,
+.seg-switch > button:not(.on):hover { background: #ebebeb; }
+
+/* —— App vs 小程序机框差异 —— */
+.phone.channel-mp .notch {
+  width: 0; height: 0; opacity: 0; pointer-events: none;
+}
+.phone.channel-app .status-app {
+  padding: 14px 18px 0;
+}
+.phone.channel-mp .status-mp {
+  padding: 12px 110px 0 18px; /* 右侧留给胶囊 */
+  justify-content: flex-start;
+}
+.phone.channel-mp .status-mp .status-mp-pad { flex: 1; }
+
+/* 微信小程序右上角胶囊菜单（··· | 圆点） */
+.mp-capsule {
+  position: absolute;
+  top: 48px;
+  right: 8px;
+  z-index: 26;
+  width: 87px;
+  height: 32px;
+  border-radius: 16px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, .12);
+  background: rgba(255, 255, 255, .65);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+}
+.mp-capsule .mp-more {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  line-height: 1;
+  color: #161616;
+  transform: translateY(-1px);
+}
+.mp-capsule .mp-sep {
+  width: 1px;
+  height: 18px;
+  background: rgba(0, 0, 0, .18);
+  flex-shrink: 0;
+}
+.mp-capsule .mp-home {
+  flex: 1;
+  display: grid;
+  place-items: center;
+}
+.mp-capsule .mp-home i {
+  display: block;
+  width: 17px;
+  height: 17px;
+  border: 2px solid #161616;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* 深色顶栏上用浅色胶囊（:has 多选择器 = 任一匹配） */
+.phone.channel-mp:has(.home-head, .mine-head, .shop-banner, .dash-head, .balance-head) .mp-capsule,
+.mp-capsule.is-light {
+  border-color: rgba(255, 255, 255, .35);
+  background: rgba(0, 0, 0, .2);
+}
+.phone.channel-mp:has(.home-head, .mine-head, .shop-banner, .dash-head, .balance-head) .mp-capsule .mp-more,
+.mp-capsule.is-light .mp-more { color: #fff; }
+.phone.channel-mp:has(.home-head, .mine-head, .shop-banner, .dash-head, .balance-head) .mp-capsule .mp-sep,
+.mp-capsule.is-light .mp-sep { background: rgba(255, 255, 255, .35); }
+.phone.channel-mp:has(.home-head, .mine-head, .shop-banner, .dash-head, .balance-head) .mp-capsule .mp-home i,
+.mp-capsule.is-light .mp-home i { border-color: #fff; }
+
+/* 首页/工作台消息铃铛入口（两端统一） */
+.msg,
+.msg-entry {
+  position: relative; width: 34px; height: 34px; display: grid; place-items: center;
+  color: #fff; cursor: pointer; flex-shrink: 0;
+}
+.msg .mbadge,
+.msg-entry .mbadge {
+  position: absolute; top: 0; right: 0; min-width: 14px; height: 14px; padding: 0 3px;
+  background: var(--price, #e24b3b); color: #fff; border-radius: 8px;
+  font-size: 9px; line-height: 14px; text-align: center;
+}
+
+/* 小程序导航栏右侧给胶囊让位；App 保持原样 */
+.phone.channel-mp .shop-banner .shop-brand { padding-right: 96px; }
+.phone.channel-mp .home-head .search-row,
+.phone.channel-mp .mine-head .user,
+.phone.channel-mp .dash-shop { padding-right: 96px; }
+
+/* 消息中心铃铛入口 */
+.bell-ico {
+  display: grid; place-items: center; width: 28px; height: 28px; line-height: 0;
+}
+.bell-ico svg { display: block; }
+
+/* 导航栏：返回图标 + 标题贴左侧 */
+.subnav {
+  background: #fff; height: 44px; display: flex; align-items: center; gap: 4px;
+  border-bottom: 1px solid #f0f0f0; position: relative; flex-shrink: 0;
+  padding: 0 12px 0 2px; box-sizing: border-box;
+}
+.subnav-main {
+  display: flex; align-items: center; gap: 0; min-width: 0; flex: 1;
+}
+.subnav-title {
+  font-size: 16px; font-weight: 650; color: #1a1a1a;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.subnav-main:not(:has(.back-ico)) .subnav-title { padding-left: 10px; }
+.back-ico {
+  width: 40px; height: 44px; display: inline-grid; place-items: center;
+  color: #222; cursor: pointer; flex-shrink: 0; line-height: 0;
+  margin-right: -2px; padding: 0; border: 0; background: transparent;
+}
+.back-ico svg {
+  display: block; width: 20px; height: 20px;
+  /* 左箭头视觉重心偏左，略右移以在按钮内居中 */
+  transform: translateX(1px);
+}
+.subnav-right {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  font-size: 14px; font-weight: 500; color: var(--brand, #2f6f5e);
+  max-width: 42%;
+}
+.subnav-right .right,
+.subnav-right [data-action],
+.subnav-right [data-nav] { cursor: pointer; color: inherit; }
+.phone.channel-mp .subnav { padding-right: 100px; }
+.phone.channel-mp .subnav .right { right: auto; }
