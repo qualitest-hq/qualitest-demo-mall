@@ -35,7 +35,6 @@
       background: #fff; border: 1px solid #e5e5e5; border-radius: 999px; padding: 4px 10px; color: inherit; text-decoration: none;
     }
     .aside .meta a { color: var(--brand); }
-    .aside .note { margin-top: 14px; color: #888; font-size: 12px; line-height: 1.55; }
     .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; vertical-align: -1px; }
 
     /* .tabs 见 hengwu-preview-shared.css */
@@ -69,12 +68,12 @@
       gap: 2px; font-size: 10px; color: #888; position: relative; cursor: pointer;
     }
     .tabbar span.on { color: var(--brand); font-weight: 650; }
-    .tabbar .ico { width: 22px; height: 22px; border-radius: 7px; background: #ececec; }
+    .tabbar .ico { width: 22px; height: 22px; border-radius: 7px; background: #ececec; position: relative; }
     .tabbar span.on .ico { background: var(--brand); }
     .tabbar .badge {
-      position: absolute; top: 4px; right: 22px; min-width: 14px; height: 14px;
-      background: var(--price); color: #fff; border-radius: 8px; font-size: 9px;
-      line-height: 14px; text-align: center; padding: 0 3px;
+      position: absolute; top: -6px; left: calc(100% - 7px); min-width: 14px; height: 14px;
+      background: var(--price); color: #fff; border-radius: 8px; font-size: 9px; font-style: normal; font-weight: 650;
+      line-height: 14px; text-align: center; padding: 0 3px; box-sizing: border-box; border: 1px solid #fff;
     }
 
     .toast {
@@ -136,6 +135,7 @@
       content: ""; position: absolute; inset: 18% 22% 22% 22%;
       border-radius: 10px; background: rgba(255,255,255,.28);
     }
+    /* 实拍图 .has-img 见 hengwu-preview-shared.css */
 
     /* login */
     .login-wrap { flex: 1; display: flex; flex-direction: column; padding: 40px 24px 20px; background: #fff; overflow: auto; }
@@ -219,15 +219,7 @@
       width: 72px; height: 72px; border-radius: 8px; flex-shrink: 0; position: relative;
       background: #eee;
     }
-    .review-pics .rp .rm {
-      position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
-      background: rgba(0,0,0,.55); color: #fff; font-size: 12px; line-height: 18px; text-align: center;
-      border: 0; padding: 0; cursor: pointer;
-    }
-    .review-upload {
-      width: 72px; height: 72px; border: 1px dashed #ccc; border-radius: 8px;
-      display: grid; place-items: center; color: #aaa; font-size: 24px; cursor: pointer; background: #fafafa;
-    }
+    /* 可编辑评价图走统一上传格 .upload-slot */
     .star-pick { display: flex; gap: 8px; font-size: 22px; color: #ddd; cursor: pointer; }
     .star-pick i.on { color: #f0a35a; }
     .star-pick i { font-style: normal; }
@@ -325,7 +317,7 @@
     .goods .sold { font-size: 11px; color: var(--muted); }
 
     /* detail */
-    .gallery { height: 375px; position: relative; }
+    .gallery { height: 375px; position: relative; cursor: pointer; }
     .gallery .pic { height: 100%; }
     .gallery .back-ico, .gallery .share {
       position: absolute; top: 48px; width: 32px; height: 32px; border-radius: 50%;
@@ -384,6 +376,16 @@
     .cart-footer .sum .l2 { font-size: 10px; color: #aaa; }
     .cart-footer .go { border: 0; background: var(--brand); color: #fff; border-radius: 999px; padding: 10px 18px; font: inherit; font-size: 14px; font-weight: 650; }
     .store-card { margin: 10px 10px 0; background: #fff; border-radius: 10px; padding: 12px; }
+    .store-card.dead-box { background: #fafafa; }
+    .store-card .dead-hd {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #eee;
+      font-size: 13px; font-weight: 650; color: #666;
+    }
+    .store-card .dead-hd .clear {
+      border: 0; background: transparent; color: var(--brand); font: inherit;
+      font-size: 12px; font-weight: 650; padding: 0; cursor: pointer; white-space: nowrap;
+    }
     .store-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 14px; font-weight: 650; }
     .cart-line { display: grid; grid-template-columns: 18px 88px 1fr; gap: 10px; align-items: start; margin-bottom: 14px; }
     .cart-line:last-child { margin-bottom: 0; }
@@ -396,6 +398,31 @@
     .dead .thumb { filter: grayscale(.7); }
     .dead-tag { display: inline-block; background: #f0f0f0; color: #888; font-size: 10px; border-radius: 3px; padding: 1px 4px; margin-left: 4px; }
     .coupon-tip { margin: 10px; background: #fff7f0; border: 1px solid #f3d9c2; color: var(--coupon-ink); border-radius: 8px; padding: 8px 10px; font-size: 12px; cursor: pointer; }
+    .claim-tip {
+      display: flex; align-items: center; gap: 8px; margin: 10px 0 0;
+      background: #fff7f0; border: 1px solid #f3d9c2; color: var(--coupon-ink);
+      border-radius: 8px; padding: 8px 10px; font-size: 12px; cursor: pointer;
+    }
+    .claim-tip .labs { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; min-width: 0; }
+    .claim-tip .labs i {
+      font-style: normal; font-size: 11px; color: var(--coupon-ink);
+      background: #fff; border: 1px solid #f0d2ba; border-radius: 3px; padding: 1px 5px;
+    }
+    .claim-tip .more { color: #c48a5a; flex-shrink: 0; }
+    .claim-row {
+      display: grid; grid-template-columns: 72px 1fr auto; gap: 10px; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid #f3f3f3;
+    }
+    .claim-row:last-child { border-bottom: 0; }
+    .claim-row .amt { color: var(--price); font-size: 22px; font-weight: 750; line-height: 1; }
+    .claim-row .amt small { font-size: 12px; }
+    .claim-row .t { font-size: 13px; font-weight: 650; margin-bottom: 3px; }
+    .claim-row .s { font-size: 11px; color: var(--muted); line-height: 1.4; }
+    .claim-row .btn-claim {
+      border: 0; border-radius: 14px; padding: 6px 12px; font-size: 12px; font-weight: 650;
+      background: var(--brand); color: #fff; cursor: pointer; white-space: nowrap;
+    }
+    .claim-row .btn-claim.done { background: #eee; color: #999; cursor: default; }
 
     /* checkout / pay */
     .sticky-bar {
@@ -577,14 +604,14 @@
     <div class="layout">
       <aside class="aside">
         <h1>衡物 · C 端</h1>
-        <p class="brief">App/H5：密码、验证码、微信、QQ；提现支持微信/支付宝/银行卡。小程序登录仅微信提现。</p>
+        <p class="brief">App：密码、验证码、微信、QQ；提现支持微信/支付宝/银行卡。小程序登录仅微信提现。</p>
         <div id="preview-switchers"></div>
         <div class="meta">
           <span><i class="dot" style="background:#2f6f5e"></i>brand</span>
           <span><i class="dot" style="background:#e24b3b"></i>price</span>
         </div>
+        <div id="screen-note"></div>
         <div class="tabs" id="tabs"></div>
-        <p class="note">左侧可切换角色与客户端；点屏快捷跳转，手机内用底栏与返回。预填账号可直接登录。</p>
       </aside>
       <div class="stage" id="stage"></div>
     </div>
@@ -600,18 +627,118 @@
       "login", "loginMp", "home", "category", "search", "detail", "cart",
       "checkout", "pay", "payResult",
       "orders", "orderDetail", "logistics", "refundApply", "refundList",
-      "mine", "profile", "passwordChange", "address", "addressEdit", "coupon", "balance", "withdraw",
+      "mine", "profile", "passwordChange", "address", "addressEdit", "addressMap", "coupon", "balance", "withdraw",
       "withdrawAccounts", "withdrawAccountEdit",
       "msgList", "shop", "reviewList", "reviewEdit",
       ...LEGAL_SCREENS
     ];
+    /** 左侧「当前页面」说明 */
+    const SCREEN_NOTES = {
+      login: { desc: "App 登录页，顶部提示本项目仅用于演示。", points: [
+        "密码登录与短信验证码登录两种方式切换",
+        "支持微信、QQ 第三方授权登录",
+        "需勾选用户协议与隐私政策才能登录",
+        "已预填演示账号，可直接登录"
+      ] },
+      loginMp: { desc: "微信小程序登录页，顶部提示本项目仅用于演示。", points: [
+        "微信手机号一键登录，或短信验证码登录",
+        "小程序渠道提现只支持微信零钱"
+      ] },
+      home: { desc: "商城首页。", points: [
+        "顶部搜索与消息入口，分类图标可直达分类；「领券」进入我的优惠券",
+        "限时秒杀为固定展示位",
+        "「猜你喜欢」只展示商家已发布且有库存的商品"
+      ] },
+      category: { desc: "分类浏览。", points: [
+        "左侧切换分类，右侧为该分类商品",
+        "只展示在售且有库存的商品，售罄与下架不出现"
+      ] },
+      search: { desc: "商品搜索。", points: [
+        "按商品标题或分类关键词匹配",
+        "结果同样过滤售罄与下架商品"
+      ] },
+      detail: { desc: "商品详情。", points: [
+        "顶部轮播图，下方商品参数与详情图",
+        "选规格时切换规格封面、价格与库存，售罄规格不可选",
+        "领券：只列出本商品可用的券（商品券 / 品类券 / 店铺券），每张限领一次",
+        "加入购物车 / 立即购买前校验库存",
+        "「发货」行按商品运费方式展示：无运费 / 固定运费 / 运费模板（按默认收货省/市），模板不配送地区标红",
+        "下架商品只读展示，不能购买和领券"
+      ] },
+      cart: { desc: "购物车。", points: [
+        "按商家最新发布数据刷新价格与库存",
+        "有效商品在店铺框内；下架、规格失效、售罄归入下方「失效商品」框，可一键清空",
+        "管理模式可勾选批量删除",
+        "点结算时再次校验库存"
+      ] },
+      checkout: { desc: "确认订单。", points: [
+        "选择收货地址与优惠券，按券的适用商品范围和门槛判断是否可用",
+        "运费按商品运费方式计算：无运费、固定运费（元/件）、或运费模板（省/市匹配，可包邮）；多种方式分别计费后相加，可点开明细",
+        "收货省/市在商品的不配送地区时提示并拦截提交（演示地址含新疆、香港）",
+        "提交时按最新数据复核：下架、售罄、库存不足直接拦截",
+        "价格有变动会更新为新价格，需确认后再提交",
+        "提交即占用所选优惠券，生成待付款订单"
+      ] },
+      pay: { desc: "收银台（余额支付）。", points: [
+        "支付时扣减库存：整单库存都够才扣，不够则拦截支付",
+        "扣减同步到商家端的商品库存与实际销量",
+        "余额不足时提示充值",
+        "支付成功后订单同步到商家端「待发货」"
+      ] },
+      payResult: "支付结果页，可返回首页或查看订单。",
+      orders: { desc: "我的订单。", points: [
+        "按状态分栏查看",
+        "待付款可去支付或取消，取消后释放优惠券",
+        "待收货可查看物流、确认收货",
+        "可申请退款、填写退货物流、评价商品"
+      ] },
+      orderDetail: "订单详情：商品明细、金额构成（商品 / 运费 / 优惠，运费为下单时按运费模板算出的金额）、收货信息，可查看发货与退货物流。",
+      logistics: "物流轨迹，分发货物流与退货物流两种；发货运单号来自商家端发货操作。",
+      refundApply: "申请退款：选择退款原因并提交，商家端售后会同步收到。",
+      refundList: { desc: "我的退款。", points: [
+        "退款状态与商家端同步",
+        "商家同意退货后，在此填写退货物流",
+        "退款完成后金额退回余额"
+      ] },
+      mine: "个人中心：订单、优惠券、余额、地址、提现账户、退款、消息等入口，可退出登录。",
+      profile: "个人资料：修改头像与昵称。",
+      passwordChange: "修改密码：短信验证码校验，新密码至少 8 位且两次输入一致。",
+      address: "收货地址：新增、编辑、删除、设为默认；从确认订单进入时点选地址即返回。",
+      addressEdit: { desc: "编辑地址：填写收货人、手机号与所在位置。", points: [
+        "所在地区只能通过地图选点确定，不支持手填",
+        "选点后自动填入详细地址，可再补充楼栋 / 门牌号"
+      ] },
+      addressMap: { desc: "地图选点（示意图，正式版接天地图）。", points: [
+        "点击地图上的地点或下方列表选择，可搜索、定位",
+        "确认后回填编辑页的地区与详细地址"
+      ] },
+      coupon: { desc: "我的优惠券。", points: [
+        "分未使用 / 已使用 / 已过期",
+        "从确认订单进入时为选券模式，只能选本单可用的券",
+        "在商品详情领到的商品券也会出现在这里"
+      ] },
+      balance: "我的余额：当前余额与收支流水，可充值、提现。",
+      withdraw: "余额提现：选择到账账户，显示手续费与实际到账；可选账户类型随客户端（App / 小程序）变化。",
+      withdrawAccounts: "提现账户：管理微信、支付宝、银行卡账户，可设默认；从提现页进入时点选即返回。",
+      withdrawAccountEdit: "编辑提现账户：选择账户类型并填写户名、账号等信息。",
+      msgList: "消息通知：物流、订单、售后、优惠等站内通知，点击跳转到对应页面，可一键全部已读。",
+      shop: "店铺主页：展示商家已审核通过的店铺名称与营业状态，以及全部在售且有库存的商品。",
+      reviewList: { desc: "商品评价列表。", points: [
+        "文字评价与晒图，商家回复展示在评价下方",
+        "商家申请隐藏且平台同意的评价不展示；审核中照常展示"
+      ] },
+      reviewEdit: "发表评价：选择星级、填写内容并可晒图；提交后商家端「店铺评价」同步收到，可回复。",
+      legalUser: "用户协议正文，顶部为演示声明，末尾附演示说明条款。",
+      legalPrivacy: "隐私政策正文，顶部为演示声明。",
+      legalShare: "第三方信息共享清单，顶部为演示声明。"
+    };
     let tabRoot = "home";
     let stack = [];
     let loggedIn = false;
     /** 左侧屏列表预览中：未登录也可看页面，机内点击仍走登录拦截 */
     let guestPreview = false;
     let authChannel = HP.getPreviewChannel(); // app | mp — 未登录时展示哪套登录页
-    let loginTab = "password"; // password | sms（仅 App/H5）
+    let loginTab = "password"; // password | sms（仅 App）
     let mpLoginTab = "wxphone"; // wxphone | sms（仅小程序）
 
     function syncPreviewSwitchers() {
@@ -631,6 +758,22 @@
     let smsCooldown = 0;
     let pwdSmsCooldown = 0;
     let skuNext = "select";
+    /** 可领券池：详情页只展示对本商品可用的（商品专属 / 分类 / 全店） */
+    const CLAIM_POOL = [
+      { poolId: "mug-8", amount: 8, title: "马克杯专享减 ¥8", cond: "仅本商品可用 · 无门槛", minSpend: 0, productIds: [1] },
+      { poolId: "mug-12", amount: 12, title: "马克杯满 120 减 12", cond: "仅本商品 · 满 120 可用", minSpend: 120, productIds: [1] },
+      { poolId: "kettle-15", amount: 15, title: "手冲壶专享减 ¥15", cond: "仅本商品可用 · 无门槛", minSpend: 0, productIds: [2] },
+      { poolId: "book-6", amount: 6, title: "手帐本专享减 ¥6", cond: "仅本商品可用 · 无门槛", minSpend: 0, productIds: [3] },
+      { poolId: "bag-10", amount: 10, title: "托特包专享减 ¥10", cond: "仅本商品可用 · 无门槛", minSpend: 0, productIds: [4] },
+      { poolId: "lamp-20", amount: 20, title: "台灯专享满 180 减 20", cond: "仅本商品 · 满 180 可用", minSpend: 180, productIds: [5] },
+      { poolId: "soap-5", amount: 5, title: "香氛皂专享减 ¥5", cond: "仅本商品可用 · 无门槛", minSpend: 0, productIds: [6] },
+      { poolId: "tea-5", amount: 5, title: "茶杯专享减 ¥5", cond: "仅本商品可用 · 无门槛", minSpend: 0, productIds: [7] },
+      { poolId: "basket-8", amount: 8, title: "收纳篮专享减 ¥8", cond: "仅本商品可用 · 无门槛", minSpend: 0, productIds: [8] },
+      { poolId: "cat-coffee-10", amount: 10, title: "咖啡品类满 99 减 10", cond: "咖啡分类可用 · 满 99", minSpend: 99, cats: ["咖啡"] },
+      { poolId: "cat-home-20", amount: 20, title: "家居专场满 199 减 20", cond: "家居分类可用 · 满 199", minSpend: 199, cats: ["家居"] },
+      { poolId: "shop-5", amount: 5, title: "店铺无门槛券 ¥5", cond: "衡物官方旗舰店 · 全店可用", minSpend: 0 },
+      { poolId: "shop-99-10", amount: 10, title: "全场满 99 减 10", cond: "旗舰店通用 · 满 99 可用", minSpend: 99 }
+    ];
     let favOn = false;
     let pendingPay = null;
     let lastPay = null; // { amount, orderId }
@@ -638,6 +781,7 @@
     let editingWithdrawAccountId = null;
     let waEditDraft = null;
     let refundOrderId = null;
+    let refundProofPic = "";
     let viewingOrderId = null;
     let viewingProductId = 1;
     let reviewingOrderId = null;
@@ -647,57 +791,44 @@
     let cartManaging = false;
     let pickReturn = null; // 'checkout' | null，避免选地址/券时误退回
 
-    const skuState = { picks: { "颜色": "雾白", "尺码/容量": "350ml" }, qty: 1, price: 68, title: "雾面陶瓷马克杯", pic: "pic-mug" };
+    const skuState = { picks: { "颜色": "雾白", "尺码/容量": "350ml" }, qty: 1, price: 68, old: 88, stock: 200, skuId: "", title: "雾面陶瓷马克杯", pic: "pic-mug" };
+    let galleryIdx = 0;
 
-    const CATALOG = [
-      { id: 1, title: "雾面陶瓷马克杯 350ml 哑光釉", price: 68, old: 88, sold: "1.2万+", pic: "pic-mug", cat: "咖啡", tags: ["满99减10", "包邮"], colors: ["雾白", "墨灰"], sizes: ["350ml", "500ml"], sub: "哑光釉面 可微波 耐热易清洗",
-        params: [{ k: "材质", v: "陶瓷" }, { k: "工艺", v: "哑光釉" }, { k: "是否可微波", v: "是" }, { k: "产地", v: "广东深圳" }] },
-      { id: 2, title: "304 不锈钢细口手冲壶 600ml", price: 169, old: 199, sold: "4582", pic: "pic-kettle", cat: "咖啡", tags: ["包邮", "热销"], colors: ["原色", "磨砂黑"], sizes: ["600ml"], sub: "细嘴控流 食品级不锈钢",
-        params: [{ k: "材质", v: "304 不锈钢" }, { k: "容量", v: "600ml" }, { k: "适用", v: "手冲咖啡" }] },
-      { id: 3, title: "棉纸方格手帐本 A5 160页", price: 42, old: 52, sold: "3291", pic: "pic-book", cat: "文具", tags: ["新品"], specs: [{ name: "封面", values: ["米白", "浅灰"] }, { name: "尺寸", values: ["A5", "A6"] }], sub: "轻薄棉纸 方格内页",
-        params: [{ k: "纸张", v: "棉纸" }, { k: "页数", v: "160 页" }, { k: "尺寸", v: "A5" }] },
-      { id: 4, title: "水洗棉托特包 中号 可机洗", price: 128, old: 158, sold: "906", pic: "pic-bag", cat: "收纳", tags: ["满99减10"], colors: ["米色", "卡其"], sizes: ["中号"], sub: "水洗棉 可机洗 日常通勤",
-        params: [{ k: "面料", v: "水洗棉" }, { k: "洗涤", v: "可机洗" }, { k: "尺码", v: "中号" }] },
-      { id: 5, title: "胡桃木氛围台灯 三档调光", price: 199, old: 259, sold: "673", pic: "pic-lamp", cat: "灯光", tags: ["满199减20"], colors: ["原木色"], sizes: ["标准"], sub: "三档触控 暖光护眼",
-        params: [{ k: "灯体", v: "胡桃木" }, { k: "调光", v: "三档触控" }, { k: "光源", v: "暖光 LED" }] },
-      { id: 6, title: "雪松香氛洗手皂 3 块装", price: 39, old: 49, sold: "2.4万+", pic: "pic-soap", cat: "香氛", tags: ["买赠"], specs: [{ name: "香型", values: ["雪松", "白茶"] }, { name: "包装", values: ["单块", "3块装"] }], sub: "植物油脂 清爽不紧绷",
-        params: [{ k: "香型", v: "雪松" }, { k: "成分", v: "植物油脂" }, { k: "包装", v: "3 块装" }] },
-      { id: 7, title: "日式粗陶茶杯 150ml", price: 48, old: 58, sold: "1208", pic: "pic-mug", cat: "茶具", tags: ["包邮"], colors: ["原色", "釉青"], sizes: ["150ml"], sub: "手工粗陶 复古杯型",
-        params: [{ k: "材质", v: "粗陶" }, { k: "容量", v: "150ml" }, { k: "工艺", v: "手工" }] },
-      { id: 8, title: "亚麻收纳篮 大号 可折叠", price: 59, old: 79, sold: "884", pic: "pic-bag", cat: "家居", tags: ["满99减10"], colors: ["原麻", "浅咖"], sizes: ["大号"], sub: "可折叠 桌面收纳",
-        params: [{ k: "材质", v: "亚麻" }, { k: "规格", v: "大号" }, { k: "特性", v: "可折叠" }] }
-    ];
+    /* 在售目录来自商家端发布（HP.catalogForC）；价/库存/封面以 skus[] 为准 */
+    let CATALOG = HP.catalogForC();
 
-    const PRODUCT_REVIEWS = {
-      1: [
-        { user: "小***周", stars: 5, text: "釉面很细，350ml 刚好一杯美式，和详情图一致。", time: "10-12", pics: ["pic-mug", "pic-mug"] },
-        { user: "阿***林", stars: 5, text: "雾白不显指纹，快递包装有泡沫，没有磕碰。", time: "10-08", pics: ["pic-mug"] },
-        { user: "陈***", stars: 4, text: "同事问链接，又回购了一个墨灰。", time: "09-28" }
-      ],
-      2: [
-        { user: "咖***迷", stars: 5, text: "出水很稳，手感沉但不累，推荐。", time: "10-20", pics: ["pic-kettle", "pic-kettle"] },
-        { user: "周***", stars: 5, text: "嘴细好控，比之前那把强。", time: "10-02", pics: ["pic-kettle"] }
-      ]
-    };
+    function reviewItemHtml(r) {
+      return `
+        <div class="review-item">
+          <div class="who"><span>${r.user}</span><span class="stars">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</span></div>
+          <div class="txt">${r.text}</div>
+          ${reviewPicsHtml(r.pics)}
+          <div class="muted" style="margin-top:6px">${r.time}</div>
+          ${r.reply ? `<div class="review-reply"><b>商家回复：</b>${r.reply}</div>` : ""}
+        </div>`;
+    }
+
+    function reviewRate(list) {
+      return list.length ? Math.round(list.filter((r) => r.stars >= 4).length / list.length * 100) : 100;
+    }
 
     function reviewPicsHtml(pics, { editable = false } = {}) {
       const list = Array.isArray(pics) ? pics : [];
       if (!list.length && !editable) return "";
-      return `<div class="review-pics">
-        ${list.map((p, i) => `
-          <div class="rp ${p}">
-            ${editable ? `<button type="button" class="rm" data-action="remove-review-pic" data-idx="${i}" aria-label="删除">×</button>` : ""}
-          </div>`).join("")}
-        ${editable && list.length < 6 ? `<div class="review-upload" data-action="add-review-pic">+</div>` : ""}
+      return `<div class="review-pics upload-row">
+        ${list.map((p, i) => editable
+          ? HP.uploadSlotHtml(p, { action: "replace-review-pic", removeAction: "remove-review-pic", idx: i, removable: true, size: "sm", side: "c" })
+          : HP.productThumbHtml(p, "rp", "c")
+        ).join("")}
+        ${editable && list.length < HP.PRODUCT_PIC_MAX ? HP.uploadSlotHtml("", { action: "add-review-pic", size: "sm", side: "c" }) : ""}
       </div>`;
     }
     const CATEGORIES = ["全部", ...HP.PRODUCT_CATEGORIES];
 
     const state = {
-      profile: { nickname: "林晓薇", phone: "13800000001" },
+      profile: { nickname: "林晓薇", phone: "13800000001", avatar: "" },
       activeCategory: "全部",
       searchKeyword: "马克杯",
-      balance: 568.4,
       selectedWithdrawAccountId: 1,
       withdrawAccounts: [
         { id: 1, type: "wechat", title: "微信零钱", holder: "林晓薇", mask: "", bank: "", def: true },
@@ -706,21 +837,25 @@
       ],
       addresses: [
         { id: 1, name: "林晓薇", phone: "13800000001", region: "广东省 深圳市 南山区", detail: "粤海街道科技园南路 16 号深圳湾科技生态园 11 栋 A 座 1806", def: true },
-        { id: 2, name: "林晓薇", phone: "13800000001", region: "广东省 广州市 天河区", detail: "天河南街道体育西路 191 号中石化大厦 2208", def: false }
+        { id: 2, name: "林晓薇", phone: "13800000001", region: "广东省 广州市 天河区", detail: "天河南街道体育西路 191 号中石化大厦 2208", def: false },
+        { id: 3, name: "林晓薇", phone: "13800000001", region: "新疆维吾尔自治区 乌鲁木齐市 天山区", detail: "解放北路 108 号友好商厦 6 楼", def: false },
+        { id: 4, name: "林晓薇", phone: "13800000001", region: "香港特别行政区 九龙 油尖旺区", detail: "弥敦道 132 号美丽华大厦 12 楼", def: false }
       ],
       coupons: [
-        { id: 1, amount: 10, title: "全场满 99 减 10", cond: "旗舰店通用 · 有效期至 2026-12-31", status: "unused" },
-        { id: 2, amount: 5, title: "店铺无门槛券 ¥5", cond: "衡物官方旗舰店 · 至 2026-11-30", status: "unused" },
-        { id: 3, amount: 20, title: "家居专场满 199 减 20", cond: "已用于订单 HW260918203311", status: "used" },
-        { id: 4, amount: 15, title: "新人专享券 ¥15", cond: "已于 2026-09-15 过期", status: "expired" }
+        { id: 1, poolId: "shop-99-10", amount: 10, title: "全场满 99 减 10", cond: "旗舰店通用 · 有效期至 2026-12-31", minSpend: 99, status: "unused" },
+        { id: 2, poolId: "shop-5", amount: 5, title: "店铺无门槛券 ¥5", cond: "衡物官方旗舰店 · 至 2026-11-30", minSpend: 0, status: "unused" },
+        { id: 3, poolId: "cat-home-20", amount: 20, title: "家居专场满 199 减 20", cond: "已用于订单 HW261024091144", minSpend: 199, cats: ["家居"], status: "used" },
+        { id: 4, poolId: "new-15", amount: 15, title: "新人专享券 ¥15", cond: "已于 2026-09-15 过期", minSpend: 0, status: "expired" }
       ],
-      selectedCouponId: 1,
+      couponSeq: 10,
+      selectedCouponId: null,
       selectedAddressId: 1,
+      /* 流水合计 500-116-100-48+42 = 278；演示余额与之对齐 */
+      balance: 278,
       balances: [
         { id: 1, title: "微信充值", time: "2026-10-28 10:12", amount: 500, type: "plus" },
-        { id: 2, title: "支付订单 HW261028184732", time: "2026-10-28 18:47", amount: -68, type: "minus" },
+        { id: 2, title: "支付订单 HW261028184732", time: "2026-10-28 18:47", amount: -116, type: "minus" },
         { id: 3, title: "提现至微信零钱", time: "2026-10-15 16:20", amount: -100, type: "minus", tip: "到账 ¥99.00，手续费 ¥1.00" },
-        { id: 4, title: "退款入账 RF261006112208", time: "2026-10-06 15:40", amount: 59, type: "plus" },
         { id: 5, title: "支付订单 HW261008091255", time: "2026-10-08 09:12", amount: -48, type: "minus" },
         { id: 6, title: "订单取消退回", time: "2026-09-22 21:06", amount: 42, type: "plus" }
       ],
@@ -730,22 +865,29 @@
         { key: "bag-dead", productId: 4, title: "水洗棉托特包 中号", sku: "米色；已下架", price: 128, qty: 1, pic: "pic-bag", alive: false, checked: false }
       ],
       orders: [
-        { id: "HW261028184732", status: "待收货", price: 110, pic: "pic-mug", expressNo: "SF3128965741", company: "顺丰速运", logistics: "顺丰 SF3128965741 · 今日 11:26 派送中【深圳南山】",
+        { id: "HW261028184732", status: "待收货", price: 116, pic: "pic-mug", expressNo: "SF3128965741", company: "顺丰速运", logistics: "顺丰 SF3128965741 · 今日 11:26 派送中【深圳南山】",
+          buyer: "林晓薇 138****0001", paidAt: "10-28 18:47",
           items: [
             { productId: 1, title: "雾面陶瓷马克杯 350ml 哑光釉", sku: "雾白 / 350ml", price: 68, qty: 1, pic: "pic-mug" },
-            { productId: 7, title: "日式粗陶茶杯 150ml", sku: "原色 / 150ml", price: 42, qty: 1, pic: "pic-mug" }
+            { productId: 7, title: "日式粗陶茶杯 150ml", sku: "原色 / 150ml", price: 48, qty: 1, pic: "pic-mug" }
           ] },
-        { id: "HW261027152201", productId: 2, status: "待收货", title: "304 不锈钢细口手冲壶 600ml", sku: "原色 / 600ml ×1", price: 169, pic: "pic-kettle", expressNo: "786512349012", company: "中通快递", logistics: "中通 786512349012 · 昨日 21:08 到达【广州转运中心】" },
+        { id: "HW261027152201", productId: 2, status: "待收货", title: "304 不锈钢细口手冲壶 600ml", sku: "原色 / 600ml", price: 169, pic: "pic-kettle",
+          expressNo: "786512349012", company: "中通快递", logistics: "中通 786512349012 · 昨日 21:08 到达【广州转运中心】",
+          buyer: "林晓薇 138****0001", paidAt: "10-27 15:22" },
         { id: "HW261025203318", status: "待付款", price: 152, pic: "pic-book",
+          buyer: "林晓薇 138****0001",
           items: [
             { productId: 3, title: "棉纸方格手帐本 A5 160页", sku: "米白 / A5", price: 42, qty: 2, pic: "pic-book" },
-            { productId: 6, title: "雪松香氛洗手皂 3 块装", sku: "雪松 / 3块装", price: 39, qty: 1, pic: "pic-soap" },
             { productId: 1, title: "雾面陶瓷马克杯 350ml 哑光釉", sku: "墨灰 / 350ml", price: 68, qty: 1, pic: "pic-mug" }
           ] },
-        { id: "HW261024091144", productId: 5, status: "待发货", title: "胡桃木氛围台灯 三档调光", sku: "原木色 ×1", price: 199, pic: "pic-lamp" },
-        { id: "HW261008091255", productId: 7, status: "已完成", title: "日式粗陶茶杯 150ml", sku: "原色 ×1", price: 48, pic: "pic-mug", expressNo: "YT8844211563", company: "圆通速递", logistics: "圆通 YT8844211563 · 10-10 已签收", reviewed: false },
-        { id: "HW261012140902", productId: 6, status: "退款", title: "雪松香氛洗手皂 3 块装", sku: "套装 ×1", price: 39, pic: "pic-soap", refundStatus: "退货中",
-          returnCompany: "顺丰速运", returnExpressNo: "SF9988776655", returnLogistics: "退货已寄出，商家待收" }
+        { id: "HW261024091144", productId: 5, status: "待发货", title: "胡桃木氛围台灯 三档调光", sku: "原木色", price: 199, pic: "pic-lamp",
+          buyer: "林晓薇 138****0001", paidAt: "10-24 09:11" },
+        { id: "HW261008091255", productId: 7, status: "已完成", title: "日式粗陶茶杯 150ml", sku: "原色", price: 48, pic: "pic-mug",
+          expressNo: "YT8844211563", company: "圆通速递", logistics: "圆通 YT8844211563 · 10-10 已签收", reviewed: false,
+          buyer: "林晓薇 138****0001", paidAt: "10-08 09:12" },
+        { id: "HW261012140902", productId: 6, status: "退款", title: "雪松香氛洗手皂 3 块装", sku: "雪松 / 3块装", price: 39, pic: "pic-soap", refundStatus: "退货中",
+          returnCompany: "顺丰速运", returnExpressNo: "SF9988776655", returnLogistics: "退货已寄出，商家待收",
+          buyer: "林晓薇 138****0001", paidAt: "10-12 14:09" }
       ],
       refunds: [
         { id: "RF261012143301", orderId: "HW261012140902", title: "雪松香氛洗手皂 3 块装", amount: 39, status: "退货中", pic: "pic-soap",
@@ -825,7 +967,7 @@
         if (name === "withdrawAccountEdit" && editingWithdrawAccountId == null) {
           editingWithdrawAccountId = state.withdrawAccounts?.[0]?.id ?? null;
         }
-        if (name === "addressEdit" && editingAddressId == null) {
+        if (name === "addressEdit" && editingAddressId == null && !addrFormDraft) {
           editingAddressId = state.addresses?.[0]?.id ?? null;
         }
       }
@@ -852,7 +994,17 @@
     }
 
     function back() {
-      if (stack.length) { stack.pop(); render(); return; }
+      if (stack.length) {
+        const leaving = stack[stack.length - 1];
+        stack.pop();
+        // 从结算选地址/券返回且未点选时，清掉 pick 态，避免污染「我的优惠券」
+        if (leaving === "coupon" || leaving === "address" || leaving === "withdrawAccounts") {
+          pickReturn = null;
+        }
+        if (leaving === "addressEdit") addrFormDraft = null;
+        render();
+        return;
+      }
       if (!loggedIn && !guestPreview) { render(); return; }
       if (!loggedIn && guestPreview) {
         // 预览栈到底：停在当前 tab 根，不踢回登录
@@ -907,27 +1059,229 @@
     function selectedCoupon() {
       return state.coupons.find((c) => c.id === state.selectedCouponId && c.status === "unused") || null;
     }
-    function cartAlive() { return state.cart.filter((c) => c.alive); }
-    function cartChecked() { return state.cart.filter((c) => c.alive && c.checked); }
+    function couponClaimed(poolId) {
+      return state.coupons.some((c) => c.poolId === poolId);
+    }
+    /** 券是否对本商品可用（商品专属 / 分类 / 全店） */
+    function couponAppliesToProduct(coupon, product) {
+      if (!coupon || !product) return false;
+      const pids = coupon.productIds || [];
+      const cats = coupon.cats || [];
+      if (pids.length) return pids.map(String).includes(String(product.id));
+      if (cats.length) return cats.includes(product.cat);
+      return true;
+    }
+    function couponAppliesToItems(coupon, items) {
+      if (!coupon) return false;
+      const list = items || [];
+      if (!list.length) return false;
+      const pids = coupon.productIds || [];
+      const cats = coupon.cats || [];
+      if (pids.length) return list.some((it) => pids.map(String).includes(String(it.productId)));
+      if (cats.length) {
+        return list.some((it) => {
+          const g = productById(it.productId);
+          return g && cats.includes(g.cat);
+        });
+      }
+      return true;
+    }
+    function couponGoodsBase(coupon, items) {
+      const list = items || [];
+      const pids = coupon.productIds || [];
+      const cats = coupon.cats || [];
+      const matched = list.filter((it) => {
+        if (pids.length) return pids.map(String).includes(String(it.productId));
+        if (cats.length) {
+          const g = productById(it.productId);
+          return g && cats.includes(g.cat);
+        }
+        return true;
+      });
+      return matched.reduce((s, c) => s + Number(c.price) * Number(c.qty || 1), 0);
+    }
+    /** 可领且对本商品可用的券（含已领，用于展示状态） */
+    function claimPoolForProduct(product) {
+      return CLAIM_POOL.filter((c) => couponAppliesToProduct(c, product));
+    }
+    function claimableHints(product) {
+      return claimPoolForProduct(product).filter((c) => !couponClaimed(c.poolId)).slice(0, 3);
+    }
+    /** 单张券相对商品金额可减多少（0=不可用）；传 items 时按商品/分类范围校验 */
+    function couponDiscountOf(coupon, goods, items) {
+      if (!coupon || coupon.status !== "unused") return 0;
+      let base = Number(goods) || 0;
+      if (items && items.length) {
+        if (!couponAppliesToItems(coupon, items)) return 0;
+        base = couponGoodsBase(coupon, items);
+      } else if ((coupon.productIds || []).length || (coupon.cats || []).length) {
+        /* 无明细时无法判定专属/分类券，按不可用处理（结算选券会带 items） */
+        return 0;
+      }
+      const min = Number(coupon.minSpend);
+      const threshold = Number.isFinite(min) ? min : 0;
+      if (base < threshold) return 0;
+      return Math.min(Number(coupon.amount) || 0, base);
+    }
+    function cartSoldOut(c) { return c.alive && c.stock != null && Number(c.stock) <= 0; }
+    /** 失效：已下架 / 规格失效 / 售罄 */
+    function cartInvalid(c) { return !c.alive || cartSoldOut(c); }
+    function cartAlive() { return state.cart.filter((c) => !cartInvalid(c)); }
+    function cartChecked() { return state.cart.filter((c) => !cartInvalid(c) && c.checked); }
     function cartSum() { return cartChecked().reduce((s, c) => s + c.price * c.qty, 0); }
     function cartQty() { return cartChecked().reduce((s, c) => s + c.qty, 0); }
     function goodsSubtotal(items) { return items.reduce((s, c) => s + c.price * c.qty, 0); }
+    let freightDetailOpen = false;
+    /** 运费按商家运费模板 + 收货省/市计算；freightBlocked 为不配送商品标题 */
     function previewAmount(items) {
       const goods = goodsSubtotal(items);
-      const freight = goods >= 99 ? 0 : 8;
+      const fr = HP.calcFreight(items, defAddr()?.region, { catalog: CATALOG });
+      const freight = fr.total;
       const coupon = selectedCoupon();
-      let discount = 0;
-      if (coupon) {
-        if (coupon.id === 1 && goods >= 99) discount = 10;
-        else if (coupon.id === 2) discount = 5;
-        else if (coupon.amount && goods >= 99) discount = Math.min(coupon.amount, goods);
-      }
-      const pay = Math.max(0, goods + freight - discount);
-      return { goods, freight, discount, pay, coupon };
+      const discount = couponDiscountOf(coupon, goods, items);
+      const pay = Math.round(Math.max(0, goods + freight - discount) * 100) / 100;
+      const place = fr.city ? HP.regionShort(fr.city) : HP.provinceShort(fr.province);
+      return {
+        goods, freight, discount, pay, coupon,
+        freightGroups: fr.groups, freightBlocked: fr.blocked,
+        freightProvince: fr.province, freightCity: fr.city, freightPlace: place
+      };
     }
     function orderById(id) { return state.orders.find((o) => o.id === id); }
-    function productById(id) { return CATALOG.find((g) => String(g.id) === String(id)) || CATALOG[0]; }
+    /** 在售取发布目录；已下架 / 审核中的取种子做只读展示（offline） */
+    function productById(id) {
+      const live = CATALOG.find((g) => String(g.id) === String(id));
+      if (live) return live;
+      const seed = HP.seedGoods().find((g) => String(g.id) === String(id)) || (CATALOG.length ? null : HP.seedGoods()[0]);
+      if (seed) return { ...HP.goodsPublishSnapshot(seed), offline: true };
+      return CATALOG[0];
+    }
+
+    /** 商家发布变动后：刷新目录，购物车跟随最新价格与在售状态 */
+    function reloadCatalog() {
+      CATALOG = HP.catalogForC();
+      state.cart.forEach((row) => {
+        const g = CATALOG.find((x) => String(x.id) === String(row.productId));
+        if (!g) { row.alive = false; row.checked = false; return; }
+        const sku = HP.findSkuByLabel(g, row.sku);
+        if (!sku) { row.alive = false; row.checked = false; return; }
+        row.alive = true;
+        row.price = Number(sku.price) || row.price;
+        row.stock = Number(sku.stock) || 0;
+        row.pic = HP.skuCoverPic(g, sku);
+        row.skuId = sku.id;
+        if (row.stock <= 0) row.checked = false;
+        else if (row.qty > row.stock) row.qty = row.stock;
+      });
+    }
+
+    /** 列表只展示有货商品；售罄的仍可从订单 / 购物车进详情 */
+    function listCatalog() {
+      return CATALOG.filter((g) => HP.productStockTotal(g) > 0);
+    }
+
+    /** 商家已发布的店铺资料（审核通过后才更新） */
+    function liveShop() {
+      return HP.shopForC();
+    }
+    function shopName() {
+      return liveShop().name || "衡物官方旗舰店";
+    }
+
+    /** 下单前按最新发布数据校验（同规格多行合并）；价格变动回写并提示 */
+    function checkItemsBuyable(items) {
+      reloadCatalog();
+      const plan = HP.planStockDeduction(CATALOG, items);
+      if (!plan.ok) return plan;
+      let priceChanged = false;
+      for (const it of items) {
+        const g = CATALOG.find((x) => String(x.id) === String(it.productId));
+        const sku = HP.findSkuByLabel(g, it.sku);
+        if (Number(sku.price) !== Number(it.price)) { it.price = Number(sku.price); priceChanged = true; }
+        it.stock = Number(sku.stock) || 0;
+      }
+      return { ok: true, priceChanged };
+    }
     function genId(prefix) { return prefix + Date.now().toString().slice(-8); }
+
+    function buyerLabel() {
+      return `${state.profile.nickname} ${HP.maskPhone(state.profile.phone)}`;
+    }
+
+    function publishOrder(o, extras) {
+      if (!o?.id) return;
+      // 待付款仅 C 本地；支付后起同步给商家
+      if (o.status === "待付款") return;
+      HP.upsertOrderSync(HP.buildOrderSyncPayload({
+        ...o,
+        buyer: o.buyer || buyerLabel()
+      }, { src: "c", ...(extras || {}) }));
+    }
+
+    function applySyncedOrderRow(row) {
+      if (!row?.id) return;
+      const items = (row.items || []).map((it) => ({
+        ...it,
+        pic: HP.picForSide(it.pic, "c")
+      }));
+      let o = state.orders.find((x) => String(x.id) === String(row.id));
+      const patch = {
+        status: row.status || (o && o.status) || "待发货",
+        price: row.amount != null ? Number(row.amount) : (o && o.price),
+        title: row.title || (o && o.title),
+        pic: HP.picForSide(row.pic || items[0]?.pic, "c"),
+        buyer: row.buyer || (o && o.buyer) || buyerLabel(),
+        paidAt: row.paidAt || (o && o.paidAt) || "",
+        expressNo: row.expressNo || "",
+        company: row.company || "",
+        logistics: row.logistics || "",
+        refundStatus: row.refundStatus ? HP.mapRefundStatus("c", row.refundStatus) : (o && o.refundStatus),
+        returnCompany: row.returnCompany != null ? row.returnCompany : (o && o.returnCompany),
+        returnExpressNo: row.returnExpressNo != null ? row.returnExpressNo : (o && o.returnExpressNo),
+        returnLogistics: row.returnLogistics != null ? row.returnLogistics : (o && o.returnLogistics)
+      };
+      if (row.express && !patch.expressNo) {
+        const parts = String(row.express).trim().split(/\s+/);
+        if (parts.length >= 2) {
+          patch.company = parts[0];
+          patch.expressNo = parts.slice(1).join(" ");
+        } else {
+          patch.expressNo = row.express;
+        }
+      }
+      if (patch.expressNo && !patch.logistics) {
+        patch.logistics = `${patch.company || "快递"} ${patch.expressNo}`;
+      }
+      if (items.length) {
+        patch.items = items;
+        patch.sku = items.map((i) => `${i.sku} ×${i.qty}`).join("；");
+      }
+      if (o) {
+        Object.assign(o, patch);
+      } else if (row.status && row.status !== "待付款") {
+        // 商家侧他人订单不同步进「我的」；仅同步买家为自己的单
+        const mine = !row.buyer || row.buyer.includes("138****0001") || row.buyer.includes(state.profile.nickname);
+        if (!mine) return;
+        state.orders.unshift({
+          id: String(row.id),
+          ...patch,
+          items: items.length ? items : undefined
+        });
+      }
+    }
+
+    function syncOrdersFromMerchant() {
+      HP.loadOrderSync().forEach(applySyncedOrderRow);
+    }
+
+    function bootstrapOrderSync() {
+      state.orders.forEach((o) => {
+        if (o.status === "待付款") return;
+        const exists = HP.loadOrderSync().some((x) => String(x.id) === String(o.id));
+        if (!exists) publishOrder(o, { updatedAt: Date.now() - 7 * 86400000 });
+      });
+    }
+    bootstrapOrderSync();
 
     function syncRefundsFromMerchant() {
       HP.loadRefundSync().forEach((row) => {
@@ -945,7 +1299,7 @@
             title: row.title || "退款商品",
             amount: row.amount || 0,
             status: statusC,
-            pic: row.pic || "pic-soap",
+            pic: HP.picForSide(row.pic || "soap", "c"),
             reason: row.reason || "",
             rejectReason: row.rejectReason || "",
             returnCompany: row.returnCompany || "",
@@ -956,7 +1310,11 @@
         const o = state.orders.find((x) => x.id === row.orderId);
         if (o && row.status) {
           o.refundStatus = statusC;
-          if (statusC === "退款成功" || statusC === "退款中" || statusC === "待寄回" || statusC === "退货中") o.status = "退款";
+          if (statusC === "已拒绝") {
+            o.status = "已完成";
+          } else if (statusC === "退款成功" || statusC === "退款中" || statusC === "待寄回" || statusC === "退货中") {
+            o.status = "退款";
+          }
           if (row.returnCompany != null) o.returnCompany = row.returnCompany;
           if (row.returnExpressNo != null) {
             o.returnExpressNo = row.returnExpressNo;
@@ -964,6 +1322,15 @@
               ? `${row.returnCompany || "快递"} ${row.returnExpressNo}`
               : (o.returnLogistics || "");
           }
+          if (statusC === "退款成功" && r && !r.credited) {
+            const amt = Number(r.amount) || HP.orderPayAmount(o);
+            state.balance = Math.round((state.balance + amt) * 100) / 100;
+            state.balances.unshift({
+              id: Date.now(), title: `退款入账 ${r.id}`, time: new Date().toLocaleString(), amount: amt, type: "plus"
+            });
+            r.credited = true;
+          }
+          publishOrder(o);
         }
       });
     }
@@ -971,6 +1338,7 @@
     function openProduct(id) {
       const g = productById(id);
       viewingProductId = g.id;
+      galleryIdx = 0;
       skuState.qty = 1;
       skuState.picks = HP.defaultSkuPicks(HP.normalizeProductSpecs(g));
       applySkuFromProduct(g);
@@ -1020,15 +1388,25 @@
 
     function applySkuFromProduct(g) {
       skuState.title = g.title;
-      skuState.pic = g.pic;
-      skuState.price = g.price;
       const specs = HP.normalizeProductSpecs(g);
       skuState.picks = HP.syncSkuPicks(skuState.picks, specs);
+      const sku = HP.findSkuByPicks(g, skuState.picks);
+      skuState.price = sku ? sku.price : HP.productListPrice(g);
+      skuState.old = sku ? sku.old : (g.old || skuState.price + 20);
+      skuState.stock = sku ? Number(sku.stock) || 0 : HP.productStockTotal(g);
+      skuState.skuId = sku?.id || "";
+      skuState.pic = HP.picForSide(HP.skuCoverPic(g, sku || skuState.picks), "c");
+      if (skuState.stock > 0) skuState.qty = Math.min(Math.max(1, skuState.qty), skuState.stock);
+      else skuState.qty = 1;
     }
 
     function currentSkuText(sep = "，") {
       const g = productById(viewingProductId);
       return HP.skuPicksText(skuState.picks, HP.normalizeProductSpecs(g), sep);
+    }
+
+    function currentSku() {
+      return HP.findSkuByPicks(productById(viewingProductId), skuState.picks);
     }
 
     function defaultNotifs() {
@@ -1043,55 +1421,135 @@
     const notifUnreadC = () => HP.notifUnread(loadNotifsC());
 
     function updateSkuTexts(root) {
+      if (!root) return;
+      const g = productById(viewingProductId);
+      applySkuFromProduct(g);
       const text = currentSkuText();
+      const stock = skuState.stock;
       root.querySelectorAll("[data-sheet-sku]").forEach((n) => { n.textContent = text; });
-      root.querySelectorAll("[data-sku-text]").forEach((n) => { n.textContent = `${text}，数量×${skuState.qty}`; });
+      root.querySelectorAll("[data-sku-text]").forEach((n) => {
+        n.textContent = stock > 0 ? `${text}，数量×${skuState.qty}` : `${text}（缺货）`;
+      });
       root.querySelectorAll("[data-sheet-qty]").forEach((n) => { n.textContent = String(skuState.qty); });
+      root.querySelectorAll("[data-sheet-price]").forEach((n) => { n.innerHTML = `<small>¥</small>${skuState.price}`; });
+      root.querySelectorAll("[data-sheet-stock]").forEach((n) => {
+        n.textContent = stock > 0 ? `库存 ${stock}` : "该规格暂时无货";
+        n.style.color = stock > 0 ? "#888" : "var(--price)";
+      });
+      root.querySelectorAll("[data-detail-price]").forEach((n) => { n.innerHTML = `<small>¥</small>${skuState.price}`; });
+      root.querySelectorAll("[data-detail-old]").forEach((n) => { n.textContent = `¥${skuState.old}`; });
+      root.querySelectorAll("[data-sku-cover-slot]").forEach((slot) => {
+        slot.innerHTML = HP.productThumbHtml(skuState.pic, "sthumb", "c");
+      });
+      const btn = root.querySelector("[data-action='confirm-sku']");
+      if (btn) {
+        if (stock <= 0) {
+          btn.textContent = "暂时无货";
+          btn.disabled = true;
+          btn.style.opacity = ".5";
+        } else {
+          btn.disabled = false;
+          btn.style.opacity = "";
+          btn.textContent = skuNext === "buy" ? "立即购买" : skuNext === "add" ? "加入购物车" : "确定";
+        }
+      }
     }
 
     function addToCartFromSku() {
       const g = productById(viewingProductId);
+      applySkuFromProduct(g);
+      if (skuState.stock <= 0) { toast("该规格暂时无货"); return false; }
+      if (skuState.qty > skuState.stock) { toast(`库存仅剩 ${skuState.stock} 件`); return false; }
       const specs = HP.normalizeProductSpecs(g);
       const key = HP.skuPicksKey(viewingProductId, skuState.picks, specs);
       const exist = state.cart.find((c) => c.key === key && c.alive);
       if (exist) {
-        exist.qty += skuState.qty;
+        const nextQty = exist.qty + skuState.qty;
+        if (nextQty > skuState.stock) { toast(`库存仅剩 ${skuState.stock} 件`); return false; }
+        exist.qty = nextQty;
+        exist.price = skuState.price;
         exist.checked = true;
       } else {
         const deadIdx = state.cart.findIndex((c) => !c.alive);
         const row = {
           key, productId: viewingProductId, title: g.title,
-          sku: currentSkuText("；"),
-          price: skuState.price, qty: skuState.qty, pic: skuState.pic, alive: true, checked: true
+          sku: currentSkuText("；"), skuId: skuState.skuId,
+          price: skuState.price, qty: skuState.qty, pic: skuState.pic, alive: true, checked: true,
+          stock: skuState.stock
         };
         if (deadIdx >= 0) state.cart.splice(deadIdx, 0, row);
         else state.cart.push(row);
       }
+      return true;
     }
 
     function openSheet(next) {
+      closeSheet();
       skuNext = next || "select";
-      const mask = document.querySelector(".phone.active [data-sheet]");
-      const btn = document.querySelector(".phone.active [data-action='confirm-sku']");
-      if (btn) btn.textContent = skuNext === "buy" ? "立即购买" : skuNext === "add" ? "加入购物车" : "确定";
+      applySkuFromProduct(productById(viewingProductId));
+      const mask = document.querySelector('.phone.active [data-sheet="sku"]')
+        || document.querySelector(".phone.active [data-sheet]");
       mask?.classList.add("show");
       updateSkuTexts(document.querySelector(".phone.active"));
     }
 
+    function openClaimSheet() {
+      closeSheet();
+      document.querySelector('.phone.active [data-sheet="claim"]')?.classList.add("show");
+    }
+
     function closeSheet() {
-      document.querySelector(".phone.active [data-sheet]")?.classList.remove("show");
+      document.querySelectorAll(".phone.active [data-sheet]").forEach((m) => m.classList.remove("show"));
+    }
+
+    function claimCouponByPoolId(poolId) {
+      const pool = CLAIM_POOL.find((c) => c.poolId === poolId);
+      if (!pool) { toast("优惠券不存在"); return false; }
+      const g = productById(viewingProductId);
+      if (!couponAppliesToProduct(pool, g)) { toast("该券不可用于本商品"); return false; }
+      if (couponClaimed(poolId)) { toast("已领取过该券"); return false; }
+      state.couponSeq = (state.couponSeq || 10) + 1;
+      state.coupons.unshift({
+        id: state.couponSeq,
+        poolId: pool.poolId,
+        amount: pool.amount,
+        title: pool.title,
+        cond: pool.cond + " · 有效期至 2026-12-31",
+        minSpend: pool.minSpend,
+        productIds: pool.productIds ? [...pool.productIds] : undefined,
+        cats: pool.cats ? [...pool.cats] : undefined,
+        status: "unused"
+      });
+      return true;
+    }
+
+    function unusedCoupons() {
+      return state.coupons.filter((c) => c.status === "unused");
+    }
+    function usableCouponsFor(goods, items) {
+      return unusedCoupons().filter((c) => couponDiscountOf(c, goods, items) > 0);
     }
 
     function startCheckout(items, from) {
       if (!items.length) { toast("请先选择商品"); return; }
-      state.checkoutItems = items.map((c) => ({ ...c }));
+      const list = items.map((c) => ({ ...c }));
+      const chk = checkItemsBuyable(list);
+      if (!chk.ok) { render(); toast(chk.msg); return; }
+      state.checkoutItems = list;
+      state.checkoutRemark = "";
+      // 进入结算默认不用券；在确认订单页点「优惠券」行选择
+      state.selectedCouponId = null;
       pendingPay = null;
       push("checkout", { state: { checkoutFrom: from } });
     }
 
     function submitCheckout() {
       const items = state.checkoutItems;
-      const { pay } = previewAmount(items);
+      const chk = checkItemsBuyable(items);
+      if (!chk.ok) { toast(chk.msg); return; }
+      if (chk.priceChanged) { render(); toast("商品价格有变动，请确认后再提交"); return; }
+      const { pay, goods, freight, discount, coupon, freightBlocked } = previewAmount(items);
+      if (freightBlocked.length) { toast("部分商品不支持配送至当前地址"); return; }
       const id = genId("HW");
       const lines = items.map((i) => ({
         productId: i.productId,
@@ -1102,15 +1560,27 @@
         pic: i.pic
       }));
       const first = lines[0];
-      state.orders.unshift({
+      const order = {
         id,
         status: "待付款",
         items: lines,
         title: HP.orderTitleSummary({ items: lines }),
         sku: lines.map((i) => `${i.sku} ×${i.qty}`).join("；"),
         price: pay,
-        pic: first.pic
-      });
+        goodsAmount: goods,
+        freightAmount: freight,
+        discountAmount: discount,
+        couponId: discount > 0 && coupon ? coupon.id : null,
+        couponTitle: discount > 0 && coupon ? coupon.title : "",
+        pic: first.pic,
+        buyer: buyerLabel(),
+        address: (() => { const a = defAddr(); return a ? { name: a.name, phone: a.phone, region: a.region, detail: a.detail } : null; })(),
+        remark: (document.getElementById("checkout-remark")?.value || state.checkoutRemark || "").trim()
+      };
+      state.checkoutRemark = "";
+      state.orders.unshift(order);
+      // 提交即占券，防止未支付前重复用同一张
+      consumeOrderCoupon(order);
       // remove checked alive items if from cart
       if (state.checkoutFrom === "cart") {
         state.cart = state.cart.filter((c) => !(c.alive && c.checked));
@@ -1119,24 +1589,55 @@
       push("pay");
     }
 
+    function releaseOrderCoupon(order) {
+      if (!order?.couponId) return;
+      const c = state.coupons.find((x) => String(x.id) === String(order.couponId));
+      if (c && c.status === "used") {
+        c.status = "unused";
+        c.cond = c.id === 1
+          ? "旗舰店通用 · 有效期至 2026-12-31"
+          : c.id === 2
+            ? "衡物官方旗舰店 · 至 2026-11-30"
+            : "已退回，可再次使用";
+      }
+      order.couponId = null;
+      order.couponTitle = "";
+      order.discountAmount = 0;
+    }
+
+    function consumeOrderCoupon(order) {
+      if (!order?.couponId || !(Number(order.discountAmount) > 0)) return;
+      const c = state.coupons.find((x) => String(x.id) === String(order.couponId));
+      if (c && c.status === "unused") {
+        c.status = "used";
+        c.cond = `已用于订单 ${order.id}`;
+      }
+      state.selectedCouponId = null;
+    }
+
     function paySuccess() {
       const amount = pendingPay?.amount || 0;
       if (state.balance < amount) {
         toast("余额不足，请先充值");
         return;
       }
-      state.balance -= amount;
+      const payOrder = orderById(pendingPay?.orderId);
+      const ded = HP.deductStockForOrder(pendingPay?.orderId, payOrder ? HP.normalizeOrderItems(payOrder) : []);
+      if (!ded.ok) { toast(`${ded.msg}，暂无法支付`); return; }
+      reloadCatalog();
+      state.balance = Math.round((state.balance - amount) * 100) / 100;
       state.balances.unshift({
-        id: Date.now(), title: "订单支付", time: new Date().toLocaleString(), amount: -amount, type: "minus"
+        id: Date.now(), title: `支付订单 ${pendingPay.orderId}`, time: new Date().toLocaleString(), amount: -amount, type: "minus"
       });
       const order = orderById(pendingPay.orderId);
-      if (order) order.status = "待发货";
-      // consume coupon if used
-      const c = selectedCoupon();
-      if (c && previewAmount(state.checkoutItems).discount > 0) {
-        c.status = "used";
-        c.cond = "已使用";
-        state.selectedCouponId = state.coupons.find((x) => x.status === "unused")?.id || null;
+      if (order) {
+        order.status = "待发货";
+        order.price = amount;
+        order.paidAt = new Date().toLocaleString();
+        order.buyer = buyerLabel();
+        // 券已在提交订单时占用；此处仅保证状态为已使用
+        consumeOrderCoupon(order);
+        publishOrder(order);
       }
       lastPay = { amount, orderId: pendingPay.orderId };
       pendingPay = null;
@@ -1145,36 +1646,40 @@
     }
 
     function goodsCard(g) {
+      const priceTxt = HP.productPriceLabel(g, { withSymbol: false });
+      const soldOut = HP.productStockTotal(g) <= 0;
       return `<article class="goods" data-action="open-product" data-id="${g.id}">
-        <div class="pic ${g.pic}"></div>
+        ${HP.productThumbHtml(HP.productCoverPic(g), "pic", "c")}
         <div class="body">
           <div class="title">${g.title}</div>
-          <div class="tags">${(g.tags || []).map((t) => `<i>${t}</i>`).join("")}</div>
-          <div class="row"><div class="price"><small>¥</small>${g.price}</div><div class="sold">已售 ${g.sold}</div></div>
+          <div class="tags">${(g.tags || []).map((t) => `<i>${t}</i>`).join("")}${soldOut ? "<i>售罄</i>" : ""}</div>
+          <div class="row"><div class="price"><small>¥</small>${priceTxt}</div><div class="sold">已售 ${HP.productSoldLabel(g)}</div></div>
         </div>
       </article>`;
     }
 
     function goodsListRow(g) {
+      const priceTxt = HP.productPriceLabel(g, { withSymbol: false });
+      const soldOut = HP.productStockTotal(g) <= 0;
       return `<div class="row-item" data-action="open-product" data-id="${g.id}">
-        <div class="thumb ${g.pic}"></div>
+        ${HP.productThumbHtml(HP.productCoverPic(g), "thumb", "c")}
         <div>
           <div class="title">${g.title}</div>
-          <div class="tags">${(g.tags || []).map((t) => `<i>${t}</i>`).join("")}</div>
-          <div><span class="price">¥${g.price}</span><span class="sold">已售 ${g.sold}</span></div>
+          <div class="tags">${(g.tags || []).map((t) => `<i>${t}</i>`).join("")}${soldOut ? "<i>售罄</i>" : ""}</div>
+          <div><span class="price">¥${priceTxt}</span><span class="sold">${soldOut ? "暂无库存" : `已售 ${HP.productSoldLabel(g)}`}</span></div>
         </div>
       </div>`;
     }
 
     function filteredCatalog() {
       const cat = state.activeCategory;
-      return CATALOG.filter((g) => cat === "全部" || g.cat === cat);
+      return listCatalog().filter((g) => cat === "全部" || g.cat === cat);
     }
 
     function searchCatalog() {
       const kw = (state.searchKeyword || "").trim();
-      if (!kw) return CATALOG;
-      return CATALOG.filter((g) => g.title.includes(kw) || g.cat.includes(kw));
+      if (!kw) return listCatalog();
+      return listCatalog().filter((g) => g.title.includes(kw) || g.cat.includes(kw));
     }
 
     /* ========== render pieces ========== */
@@ -1183,7 +1688,7 @@
       return `<div class="tabbar" data-tabbar>
         <span class="${active === "home" ? "on" : ""}" data-go="home" data-tab="1"><div class="ico"></div>首页</span>
         <span class="${active === "category" ? "on" : ""}" data-go="category" data-tab="1"><div class="ico"></div>分类</span>
-        <span class="${active === "cart" ? "on" : ""}" data-go="cart" data-tab="1"><div class="ico"></div><i class="badge">${n}</i>购物车</span>
+        <span class="${active === "cart" ? "on" : ""}" data-go="cart" data-tab="1"><div class="ico">${n ? `<i class="badge">${n > 99 ? "99+" : n}</i>` : ""}</div>购物车</span>
         <span class="${active === "mine" ? "on" : ""}" data-go="mine" data-tab="1"><div class="ico"></div>我的</span>
       </div>`;
     }
@@ -1205,7 +1710,8 @@
         ${statusHtml(true)}
         <div class="login-wrap">
           <div class="login-brand">衡物</div>
-          <div class="login-sub">App / H5 · 登录后同步购物车与订单</div>
+          <div class="login-sub">App · 登录后同步购物车与订单</div>
+          ${HP.demoNoticeHtml({ compact: true })}
           <div class="login-tabs">
             <span class="${!sms ? "on" : ""}" data-action="login-tab" data-tab="password">密码登录</span>
             <span class="${sms ? "on" : ""}" data-action="login-tab" data-tab="sms">验证码登录</span>
@@ -1243,11 +1749,12 @@
         ${HP.subnavHtml({ title: "微信小程序 · 衡物", back: false })}
         <div class="login-wrap" style="padding-top:28px">
           <div class="login-brand">衡物</div>
-          <div class="login-sub">小程序内登录，使用微信生态能力</div>
+          <div class="login-sub">微信小程序登录</div>
+          ${HP.demoNoticeHtml({ compact: true })}
           ${!sms ? `
             <div style="margin-top:8px">${agreeRowHtml()}</div>
             <button class="btn solid block" style="background:#07c160;margin-top:8px" data-action="login-mp-phone">手机号快捷登录</button>
-            <div class="login-hint">调用微信绑定手机号授权；未注册将自动开户。小程序内不提供 QQ / 微信 App 登录。</div>
+            <div class="login-hint">使用微信授权的手机号一键登录，未注册将自动开户</div>
             <div class="login-hint" style="margin-top:20px"><a data-action="mp-login-tab" data-tab="sms" style="color:var(--brand);cursor:pointer">改用短信验证码登录</a></div>
           ` : `
             <div class="field"><label>手机号</label><input id="auth-phone" value="13800000001" maxlength="11" /></div>
@@ -1272,9 +1779,10 @@
         legalUser: {
           title: "用户协议",
           html: `<h3>一、服务说明</h3><p>衡物向您提供商品浏览、下单支付、物流查询、售后与客户服务等功能。使用本服务即表示您同意本协议。</p>
-            <h3>二、账号规范</h3><p>您应妥善保管账号与验证码。App/H5 支持手机号、微信、QQ 登录；微信小程序支持手机号快捷登录与短信登录。未注册将自动创建账号。</p>
+            <h3>二、账号规范</h3><p>您应妥善保管账号与验证码。App 支持手机号、微信、QQ 登录；微信小程序支持手机号快捷登录与短信登录。未注册将自动创建账号。</p>
             <h3>三、交易与售后</h3><p>下单即构成购买意向；支付成功后按店铺发货时效履约。退换货适用国家七天无理由及店铺规则。</p>
-            <h3>四、违约与终止</h3><p>存在欺诈、恶意刷单等行为的，平台有权限制功能或终止服务。</p>`
+            <h3>四、违约与终止</h3><p>存在欺诈、恶意刷单等行为的，平台有权限制功能或终止服务。</p>
+            <h3>五、演示说明</h3><p>本项目仅用于演示，不提供真实的商品销售、支付结算与物流服务，页面数据仅保存在当前浏览器本地，清除浏览器数据即恢复初始状态。</p>`
         },
         legalPrivacy: {
           title: "隐私政策",
@@ -1287,7 +1795,7 @@
           title: "第三方信息共享清单",
           html: `<h3>一、支付与清结算</h3><p>向支付渠道提供订单金额、商户号等，用于完成支付。</p>
             <h3>二、物流配送</h3><p>向承运商提供收件人姓名、电话、地址与包裹信息，用于配送。</p>
-            <h3>三、登录授权</h3><p>App/H5 使用微信或 QQ 登录时，获取授权的头像、昵称与 OpenID；小程序使用微信手机号能力时，获取您授权的手机号用于创建或绑定账号。</p>
+            <h3>三、登录授权</h3><p>App 使用微信或 QQ 登录时，获取授权的头像、昵称与 OpenID；小程序使用微信手机号能力时，获取您授权的手机号用于创建或绑定账号。</p>
             <h3>四、短信服务</h3><p>向短信服务商提供手机号与模板参数，用于发送验证码与物流通知。</p>`
         }
       };
@@ -1296,7 +1804,7 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav(d.title)}
-        <div class="scroll legal-body">${d.html}</div>
+        <div class="scroll legal-body">${HP.demoNoticeHtml()}${d.html}</div>
         <div class="toast" data-toast></div>
       </div>`;
     }
@@ -1330,20 +1838,20 @@
           <div class="seckill">
             <div class="hd"><strong>限时秒杀</strong><div class="timer">距结束 <b>01</b>:<b>28</b>:<b>46</b></div></div>
             <div class="seckill-row">
-              <div class="sk" data-action="open-product" data-id="1"><div class="pic pic-mug"></div><div class="n">雾面马克杯</div><div class="p">¥59.9 <s>¥68</s></div></div>
-              <div class="sk" data-action="open-product" data-id="3"><div class="pic pic-book"></div><div class="n">棉纸手帐本</div><div class="p">¥35.9 <s>¥42</s></div></div>
-              <div class="sk" data-action="open-product" data-id="6"><div class="pic pic-soap"></div><div class="n">雪松洗手皂</div><div class="p">¥29.9 <s>¥39</s></div></div>
+              <div class="sk" data-action="open-product" data-id="1">${HP.productThumbHtml("mug", "pic", "c")}<div class="n">雾面马克杯</div><div class="p">¥59.9 <s>¥68</s></div></div>
+              <div class="sk" data-action="open-product" data-id="3">${HP.productThumbHtml("book", "pic", "c")}<div class="n">棉纸手帐本</div><div class="p">¥35.9 <s>¥42</s></div></div>
+              <div class="sk" data-action="open-product" data-id="6">${HP.productThumbHtml("soap", "pic", "c")}<div class="n">雪松洗手皂</div><div class="p">¥29.9 <s>¥39</s></div></div>
             </div>
           </div>
           <div class="feed-hd">猜你喜欢 <span>综合推荐</span></div>
           <div class="feed">
-            ${CATALOG.slice(0, 6).map((g, i) => `
+            ${listCatalog().slice(0, 6).map((g, i) => `
               <article class="goods" data-action="open-product" data-id="${g.id}">
-                <div class="pic ${g.pic}">${i % 2 === 0 ? `<span class="tag">券后价</span>` : ""}</div>
+                ${HP.productThumbHtml(HP.productCoverPic(g), "pic", "c", { inner: i % 2 === 0 ? `<span class="tag">券后价</span>` : "" })}
                 <div class="body">
                   <div class="title">${g.title}</div>
                   <div class="tags">${(g.tags || []).slice(0, 2).map((t) => `<i>${t}</i>`).join("")}</div>
-                  <div class="row"><div class="price"><small>¥</small>${g.price}</div><div class="sold">已售 ${g.sold}</div></div>
+                  <div class="row"><div class="price"><small>¥</small>${HP.productPriceLabel(g, { withSymbol: false })}</div><div class="sold">已售 ${HP.productSoldLabel(g)}</div></div>
                 </div>
               </article>`).join("")}
           </div>
@@ -1356,35 +1864,52 @@
     function renderDetail() {
       const g = productById(viewingProductId);
       applySkuFromProduct(g);
-      const reviews = PRODUCT_REVIEWS[g.id] || PRODUCT_REVIEWS[1];
+      const reviews = HP.reviewsForC(g.id);
       const specs = HP.normalizeProductSpecs(g);
       const skuText = currentSkuText();
+      const banners = HP.productBanners(g);
+      const detailPics = HP.productDetailPics(g);
+      const bi = ((galleryIdx % banners.length) + banners.length) % banners.length;
+      const bannerPic = banners[bi];
+      const skuPic = HP.picKeyRaw(skuState.pic);
       return `<div class="phone active" id="screen-detail">
         <div class="notch"></div>
-        <div class="scroll" style="padding-bottom:70px">
-          <div class="gallery">
-            <div class="pic ${g.pic}" style="height:100%"></div>
+        <div class="scroll" style="padding-bottom:16px">
+          <div class="gallery" data-action="gallery-next">
+            ${HP.productThumbHtml(bannerPic, "pic", "c", { style: "height:100%" })}
             ${HP.backIconHtml('data-action="back"')}
             <div class="share" data-action="toast" data-msg="分享成功">⋯</div>
-            <div class="pager">1/4</div>
+            <div class="pager">${bi + 1}/${banners.length}</div>
           </div>
           <div class="panel" style="margin:0 0 8px;border-radius:0">
             <div class="price-block">
-              <div class="now"><small>¥</small>${g.price}</div><div class="old">¥${g.old || g.price + 20}</div>
-              <div class="sold">已售 ${g.sold}</div>
+              <div class="now" data-detail-price><small>¥</small>${skuState.price}</div><div class="old" data-detail-old>¥${skuState.old}</div>
+              <div class="sold">已售 ${HP.productSoldLabel(g)}${HP.productMaxPrice(g) !== HP.productListPrice(g) ? " · 规格价不同" : ""}</div>
             </div>
             <div class="d-title">${g.title}${g.sub ? " " + g.sub : ""}</div>
-            <div class="d-tags">${(g.tags || []).map((t) => `<i>${t}</i>`).join("")}<i>店铺券 ¥5</i></div>
+            <div class="d-tags">${(g.tags || []).map((t) => `<i>${t}</i>`).join("")}${g.offline ? "" : (claimableHints(g).slice(0, 1).map((c) => `<i>券 ¥${c.amount}</i>`).join("") || (claimPoolForProduct(g).length ? `<i>券</i>` : ""))}</div>
+            ${(() => {
+              const pool = claimPoolForProduct(g);
+              if (g.offline || !pool.length) return "";
+              const open = claimableHints(g);
+              const labs = (open.length ? open : pool.slice(0, 3)).map((c) => `<i>¥${c.amount}</i>`).join("");
+              const tip = open.length ? `${open.length} 张可领` : "已领完 · 查看";
+              return `<div class="claim-tip" data-action="open-claim-coupon"><span class="labs">${labs}</span><span>${tip}</span><span class="more">领券 ›</span></div>`;
+            })()}
           </div>
+          ${g.offline ? `<div class="panel" style="margin:0 0 8px;border-radius:0;padding:10px 12px;color:#999;font-size:13px">该商品已下架，暂不可购买</div>` : ""}
           <div class="panel" style="margin:0 0 8px;border-radius:0;padding:0 12px" data-action="sku" data-next="select">
-            <div class="cell-row"><div class="lab">选择</div><div class="val" data-sku-text>${skuText}，数量×${skuState.qty}</div><div class="more">›</div></div>
+            <div class="cell-row"><div class="lab">选择</div><div class="val" data-sku-text>${skuState.stock > 0 ? `${skuText}，数量×${skuState.qty}` : `${skuText}（缺货）`}</div><div class="more">›</div></div>
           </div>
           <div class="panel" style="margin:0 0 8px;border-radius:0;padding:0 12px" data-action="open-category" data-cat="${g.cat || "全部"}">
             <div class="cell-row"><div class="lab">分类</div><div class="val">${g.cat || "未分类"}</div><div class="more">›</div></div>
           </div>
-          <div class="panel" style="margin:0 0 8px;border-radius:0;padding:0 12px" data-action="toast" data-msg="满 99 包邮，新疆西藏加收运费">
-            <div class="cell-row"><div class="lab">发货</div><div class="val">广东深圳 · 现货 · 48 小时内发货</div><div class="more">›</div></div>
-          </div>
+          ${(() => {
+            const hint = HP.freightShipHint(g, defAddr()?.region);
+            return `<div class="panel" style="margin:0 0 8px;border-radius:0;padding:0 12px" data-action="toast" data-msg="${hint.msg}">
+              <div class="cell-row"><div class="lab">发货</div><div class="val"${hint.blocked ? ` style="color:var(--price)"` : ""}>广东深圳发货 · ${hint.brief}</div><div class="more">›</div></div>
+            </div>`;
+          })()}
           ${(g.params || []).length ? `
           <div class="panel" style="margin:0 0 8px;border-radius:0;padding:10px 12px">
             <div style="font-weight:650;margin-bottom:8px;font-size:14px">商品参数</div>
@@ -1392,86 +1917,152 @@
               <div class="cell-row"><div class="lab">${p.k}</div><div class="val">${p.v}</div></div>
             `).join("")}
           </div>` : ""}
+          ${detailPics.length ? `
+          <div class="panel" style="margin:0 0 8px;border-radius:0;padding:10px 12px 12px">
+            <div style="font-weight:650;margin-bottom:8px;font-size:14px">商品详情</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              ${detailPics.map((p) => HP.productThumbHtml(p, "pic", "c", { style: "width:100%;height:200px;border-radius:8px" })).join("")}
+            </div>
+          </div>` : ""}
           <div class="shop">
             <div class="logo">衡</div>
-            <div><div style="font-weight:650">衡物官方旗舰店</div><div style="font-size:11px;color:#888;margin-top:2px">回头客 4.2万 · 物流评分 4.9</div></div>
+            <div><div style="font-weight:650">${shopName()}</div><div style="font-size:11px;color:#888;margin-top:2px">回头客 4.2万 · 物流评分 4.9</div></div>
             <div class="enter" data-go="shop">进店</div>
           </div>
           <div class="panel" style="margin:0 0 8px;border-radius:0">
-            <div style="display:flex;justify-content:space-between;font-weight:650;margin-bottom:8px">评价 (${reviews.length * 800 + 81}) <span style="font-weight:400;color:#888;font-size:12px" data-go="reviewList">好评 98% ›</span></div>
-            ${reviews.slice(0, 2).map((r) => `
-              <div style="margin-bottom:12px">
-                <div style="font-size:13px;color:#444;line-height:1.55">${r.user}：${r.text}</div>
-                ${reviewPicsHtml(r.pics)}
-              </div>`).join("")}
+            <div style="display:flex;justify-content:space-between;font-weight:650;margin-bottom:8px">评价 (${reviews.length}) ${reviews.length ? `<span style="font-weight:400;color:#888;font-size:12px" data-go="reviewList">好评 ${reviewRate(reviews)}% ›</span>` : ""}</div>
+            ${reviews.length ? reviews.slice(0, 2).map(reviewItemHtml).join("") : `<div class="muted">暂无评价</div>`}
           </div>
         </div>
         <div class="buybar">
           <div class="act" data-go="shop"><div class="ico"></div>店铺</div>
           <div class="act" data-go="msgList"><div class="ico"></div>消息</div>
           <div class="act" data-action="fav"><div class="ico"></div>收藏</div>
-          <button class="cart-btn" data-action="sku" data-next="add">加入购物车</button>
-          <button class="buy-btn" data-action="sku" data-next="buy">立即购买</button>
+          ${g.offline
+            ? `<button class="buy-btn" disabled style="grid-column:span 2;margin-left:0;border-radius:999px;background:#bbb;cursor:default">商品已下架</button>`
+            : `<button class="cart-btn" data-action="sku" data-next="add">加入购物车</button>
+          <button class="buy-btn" data-action="sku" data-next="buy">立即购买</button>`}
         </div>
-        <div class="sheet-mask" data-sheet>
+        <div class="sheet-mask" data-sheet="sku">
           <div class="sheet" data-stop>
             <div class="shd">
-              <div class="sthumb ${g.pic}"></div>
-              <div><div class="sprice">¥${g.price}</div><div class="ssku">已选：<span data-sheet-sku>${skuText}</span></div></div>
+              <div data-sku-cover-slot>${HP.productThumbHtml(skuPic, "sthumb", "c")}</div>
+              <div>
+                <div class="sprice" data-sheet-price><small>¥</small>${skuState.price}</div>
+                <div class="ssku">已选：<span data-sheet-sku>${skuText}</span></div>
+                <div class="ssku" data-sheet-stock style="margin-top:2px">${skuState.stock > 0 ? `库存 ${skuState.stock}` : "该规格暂时无货"}</div>
+              </div>
               <div class="close" data-action="close-sheet">×</div>
             </div>
             ${specs.map((s) => `
               <div class="lab">${s.name}</div>
               <div class="opts" data-opt-group="${s.name}">
-                ${(s.values || []).map((v) => `<div class="opt ${skuState.picks?.[s.name] === v ? "on" : ""}" data-val="${v}">${v}</div>`).join("")}
+                ${(s.values || []).map((v) => {
+                  const trial = { ...skuState.picks, [s.name]: v };
+                  const sk = HP.findSkuByPicks(g, trial);
+                  const dead = sk && Number(sk.stock) <= 0;
+                  return `<div class="opt ${skuState.picks?.[s.name] === v ? "on" : ""}${dead ? " used" : ""}" data-val="${v}">${v}${dead ? " 缺" : ""}</div>`;
+                }).join("")}
               </div>
             `).join("")}
             <div class="qty-row"><span>数量</span>
               <div class="stepper" data-sheet-stepper><i data-step="-1">−</i><b data-sheet-qty>${skuState.qty}</b><i data-step="1">+</i></div>
             </div>
-            <button class="btn solid confirm" data-action="confirm-sku">确定</button>
+            <button class="btn solid confirm" data-action="confirm-sku" ${skuState.stock <= 0 ? "disabled style=\"opacity:.5\"" : ""}>${skuState.stock <= 0 ? "暂时无货" : "确定"}</button>
+          </div>
+        </div>
+        <div class="sheet-mask" data-sheet="claim">
+          <div class="sheet" data-stop>
+            <div class="shd" style="align-items:center;margin-bottom:6px">
+              <div style="flex:1">
+                <div style="font-size:16px;font-weight:700">领取优惠券</div>
+                <div style="font-size:12px;color:#888;margin-top:4px">仅展示本商品可用券</div>
+              </div>
+              <div class="close" data-action="close-sheet">×</div>
+            </div>
+            ${(() => {
+              const pool = claimPoolForProduct(g);
+              if (!pool.length) return `<div class="empty" style="padding:24px 0">暂无可领优惠券</div>`;
+              return pool.map((c) => {
+                const got = couponClaimed(c.poolId);
+                const scope = (c.productIds || []).length ? "商品券" : (c.cats || []).length ? "品类券" : "店铺券";
+                return `
+                <div class="claim-row">
+                  <div class="amt"><small>¥</small>${c.amount}</div>
+                  <div>
+                    <div class="t">${c.title}</div>
+                    <div class="s">${scope} · ${c.cond}</div>
+                  </div>
+                  ${got
+                    ? `<button type="button" class="btn-claim done" disabled>已领取</button>`
+                    : `<button type="button" class="btn-claim" data-action="claim-coupon" data-pool="${c.poolId}">领取</button>`}
+                </div>`;
+              }).join("");
+            })()}
           </div>
         </div>
         <div class="toast" data-toast></div>
       </div>`;
     }
 
+    function cartLineHtml(c, idx, { invalid = false } = {}) {
+      const soldOut = cartSoldOut(c);
+      const pickable = !cartInvalid(c);
+      const tag = !c.alive ? "已失效" : (soldOut ? "已售罄" : "");
+      const tip = !c.alive ? "商品已下架或规格失效" : (soldOut ? "暂无库存" : "");
+      return `
+        <div class="cart-line ${pickable ? "" : "dead"}" data-cart-idx="${idx}">
+          ${invalid && !cartManaging
+            ? `<div class="chk" style="visibility:hidden"></div>`
+            : `<div class="chk ${c.checked ? "on" : ""}" data-action="${cartManaging ? "toggle-check-manage" : (pickable ? "toggle-check" : "toast")}" data-msg="${soldOut ? "该规格已售罄" : "失效商品不可勾选"}" data-idx="${idx}"></div>`}
+          ${HP.productThumbHtml(c.pic, "thumb", "c", { attrs: `data-action="open-product" data-id="${c.productId || 1}"` })}
+          <div>
+            <div class="title" data-action="open-product" data-id="${c.productId || 1}">${c.title}${tag ? ` <span class="dead-tag">${tag}</span>` : ""}</div>
+            <div class="sku">${c.sku}</div>
+            <div class="bottom">
+              <div class="price">¥${c.price}</div>
+              ${cartManaging
+                ? ""
+                : (pickable
+                  ? `<div class="stepper"><i data-step="-1" data-idx="${idx}">−</i><b>${c.qty}</b><i data-step="1" data-idx="${idx}">+</i></div>`
+                  : `<span style="font-size:11px;color:#aaa">${tip}</span>`)}
+            </div>
+          </div>
+        </div>`;
+    }
+
     function renderCart() {
       const sum = cartSum();
       const qty = cartQty();
+      const aliveIdx = state.cart.map((c, i) => [c, i]).filter(([c]) => !cartInvalid(c));
+      const deadIdx = state.cart.map((c, i) => [c, i]).filter(([c]) => cartInvalid(c));
+      const deadN = deadIdx.length;
       const allOn = cartManaging
         ? state.cart.length > 0 && state.cart.every((c) => c.checked)
-        : cartAlive().length > 0 && cartAlive().every((c) => c.checked);
-      const deadN = state.cart.filter((c) => !c.alive).length;
+        : aliveIdx.length > 0 && aliveIdx.every(([c]) => c.checked);
       return `<div class="phone active" id="screen-cart">
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnavNoBack(`购物车(${state.cart.length})`, `<span data-action="toggle-cart-manage">${cartManaging ? "完成" : "管理"}</span>`)}
-        <div class="scroll" style="padding-bottom:130px">
-          ${cartManaging ? "" : `<div class="coupon-tip" data-go="coupon">有可用优惠券，去看看 ›</div>`}
+        <div class="scroll" style="padding-bottom:16px">
+          ${cartManaging ? "" : `<div class="coupon-tip" data-action="cart-use-coupon">有可用优惠券，确认订单时在「优惠」中选择 ›</div>`}
+          ${aliveIdx.length ? `
           <div class="store-card">
-            <div class="store-hd"><div class="chk ${allOn ? "on" : ""}" data-action="${cartManaging ? "toggle-all-manage" : "toggle-all"}"></div>衡物官方旗舰店</div>
-            ${state.cart.map((c, idx) => `
-              <div class="cart-line ${c.alive ? "" : "dead"}" data-cart-idx="${idx}">
-                <div class="chk ${c.checked ? "on" : ""}" data-action="${cartManaging ? "toggle-check-manage" : (c.alive ? "toggle-check" : "toast")}" data-msg="失效商品不可勾选" data-idx="${idx}"></div>
-                <div class="thumb ${c.pic}" data-action="open-product" data-id="${c.productId || 1}"></div>
-                <div>
-                  <div class="title" data-action="open-product" data-id="${c.productId || 1}">${c.title}${c.alive ? "" : ` <span class="dead-tag">已失效</span>`}</div>
-                  <div class="sku">${c.sku}</div>
-                  <div class="bottom">
-                    <div class="price">¥${c.price}</div>
-                    ${cartManaging || !c.alive
-                      ? (c.alive ? "" : `<span style="font-size:11px;color:#aaa">失效</span>`)
-                      : `<div class="stepper"><i data-step="-1" data-idx="${idx}">−</i><b>${c.qty}</b><i data-step="1" data-idx="${idx}">+</i></div>`}
-                  </div>
-                </div>
-              </div>`).join("") || `<div class="empty">购物车是空的</div>`}
-          </div>
+            <div class="store-hd"><div class="chk ${allOn ? "on" : ""}" data-action="${cartManaging ? "toggle-all-manage" : "toggle-all"}"></div>${shopName()}</div>
+            ${aliveIdx.map(([c, idx]) => cartLineHtml(c, idx)).join("")}
+          </div>` : (deadN ? "" : `<div class="empty">购物车是空的</div>`)}
+          ${deadN ? `
+          <div class="store-card dead-box">
+            <div class="dead-hd">
+              <span>失效商品（${deadN}）</span>
+              <button type="button" class="clear" data-action="clear-dead">一键清空</button>
+            </div>
+            ${deadIdx.map(([c, idx]) => cartLineHtml(c, idx, { invalid: true })).join("")}
+          </div>` : ""}
         </div>
         <div class="cart-footer">
           <div class="all" data-action="${cartManaging ? "toggle-all-manage" : "toggle-all"}"><div class="chk ${allOn ? "on" : ""}"></div>全选</div>
           ${cartManaging ? `
-            <button class="btn ghost sm" style="padding:8px 12px" data-action="clear-dead" ${deadN ? "" : "disabled"}>清理失效(${deadN})</button>
             <button class="go" style="background:var(--price)" data-action="delete-checked">删除</button>
           ` : `
             <div class="sum"><div class="l1">合计 <strong>¥${sum}</strong></div><div class="l2">优惠另计 · 去结算查看</div></div>
@@ -1486,13 +2077,13 @@
     function renderCheckout() {
       const items = state.checkoutItems || [];
       const addr = defAddr();
-      const { goods, freight, discount, pay, coupon } = previewAmount(items);
+      const { goods, freight, discount, pay, coupon, freightGroups, freightBlocked, freightPlace } = previewAmount(items);
       const empty = !items.length;
       return `<div class="phone active" id="screen-checkout">
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav("确认订单")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           ${empty ? `<div class="empty">暂无待结算商品<br><span style="color:var(--brand);cursor:pointer" data-go="cart" data-tab="1">去购物车</span></div>` : `
           <div class="panel addr-card" data-action="goto-pick" data-target="address">
             <div style="flex:1">
@@ -1504,10 +2095,14 @@
             </div>
             <div class="more">›</div>
           </div>
+          ${freightBlocked.length ? `
+          <div class="panel" style="padding:10px 12px;font-size:12px;line-height:1.6;color:var(--price);background:#fff5f4">
+            以下商品不支持配送至${freightPlace}：${freightBlocked.join("、")}。请更换收货地址或返回调整商品。
+          </div>` : ""}
           <div class="panel">
             ${items.map((c) => `
               <div style="display:grid;grid-template-columns:64px 1fr;gap:10px;margin-bottom:10px">
-                <div class="thumb ${c.pic}" style="width:64px;height:64px;border-radius:8px"></div>
+                ${HP.productThumbHtml(c.pic, "thumb", "c", { style: "width:64px;height:64px;border-radius:8px" })}
                 <div>
                   <div style="font-size:13px">${c.title}</div>
                   <div style="font-size:12px;color:#888;margin:4px 0">${c.sku} ×${c.qty}</div>
@@ -1516,15 +2111,40 @@
               </div>`).join("")}
           </div>
           <div class="panel" style="padding:0 12px">
-            <div class="cell-row" data-action="goto-pick" data-target="coupon">
-              <div class="lab">优惠券</div>
-              <div class="val">${coupon ? `${coupon.title} -¥${discount || coupon.amount}` : "暂无可用"}</div>
+            <div class="cell-row"><div class="lab">商品金额</div><div class="val" style="text-align:right">¥${goods}</div></div>
+            ${(() => {
+              const multi = freightGroups.length > 1;
+              const allBlocked = freightGroups.length > 0 && freightGroups.every((gp) => gp.blocked);
+              const text = allBlocked ? "不配送" : freight ? `¥${freight}` : "免运费";
+              const groupFee = (gp) => (gp.blocked ? "不配送" : gp.free ? "包邮" : `¥${gp.fee}`);
+              return `
+                <div class="cell-row"${multi ? ` data-action="toggle-freight-detail" style="cursor:pointer"` : ""}>
+                  <div class="lab">运费</div>
+                  <div class="val" style="text-align:right">${text}${multi ? ` <span style="color:#888;font-size:12px">${freightDetailOpen ? "收起" : "明细"}</span>` : ""}</div>
+                </div>
+                ${multi && freightDetailOpen ? `
+                <div style="padding:0 0 10px;font-size:12px;color:#888;line-height:1.7">
+                  ${freightGroups.map((gp) => `
+                    <div style="display:flex;justify-content:space-between;gap:10px">
+                      <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${gp.tplName} · ${gp.items.map((it) => it.title).join("、")}</span>
+                      <span style="flex-shrink:0">${groupFee(gp)}</span>
+                    </div>`).join("")}
+                  <div>不同运费方式的商品分别计费后相加</div>
+                </div>` : ""}`;
+            })()}
+            <div class="cell-row" data-action="goto-pick" data-target="coupon" style="cursor:pointer">
+              <div class="lab">优惠</div>
+              <div class="val" style="${discount > 0 ? "color:var(--price)" : "color:#888"}">${(() => {
+                const usable = usableCouponsFor(goods, items);
+                if (coupon && discount > 0) return `${coupon.title} -¥${discount}`;
+                if (coupon) return `${coupon.title}（未满门槛）`;
+                if (usable.length) return `${usable.length} 张可用 ›`;
+                if (unusedCoupons().length) return "无可用券 ›";
+                return "暂无优惠券";
+              })()}</div>
               <div class="more">›</div>
             </div>
-            <div class="cell-row"><div class="lab">商品金额</div><div class="val" style="text-align:right">¥${goods}</div></div>
-            <div class="cell-row"><div class="lab">运费</div><div class="val" style="text-align:right">${freight ? `¥${freight}` : "免运费"}</div></div>
-            <div class="cell-row"><div class="lab">优惠</div><div class="val" style="text-align:right;color:var(--price)">-¥${discount}</div></div>
-            <div class="cell-row"><div class="lab">留言</div><div class="val"><input placeholder="选填，给商家留言" style="border:0;width:100%;font:inherit;outline:0" /></div></div>
+            <div class="cell-row"><div class="lab">留言</div><div class="val"><input id="checkout-remark" maxlength="60" value="${(state.checkoutRemark || "").replace(/"/g, "&quot;")}" placeholder="选填，给商家留言" style="border:0;width:100%;font:inherit;outline:0" /></div></div>
           </div>`}
         </div>
         ${empty ? "" : `
@@ -1533,7 +2153,7 @@
           </div>
           <div class="sticky-bar">
           <div class="sum">合计 <strong>¥${pay}</strong></div>
-          <button class="btn solid" style="padding:10px 22px" data-action="submit-order">提交订单</button>
+          <button class="btn solid" style="padding:10px 22px${freightBlocked.length ? ";opacity:.45" : ""}" data-action="submit-order">提交订单</button>
         </div>`}
         <div class="toast" data-toast></div>
       </div>`;
@@ -1545,7 +2165,7 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav("收银台")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="pay-amount">
             <div class="lab">需支付</div>
             <div class="num"><small>¥</small>${amount}</div>
@@ -1585,21 +2205,21 @@
         ${statusHtml(true)}
         ${subnav("我的订单")}
         <div class="order-tabs" data-order-tabs>
-          ${["全部","待付款","待发货","待收货","已完成","退款"].map((t) =>
+          ${["全部","待付款","待发货","待收货","已完成","退款","已取消"].map((t) =>
             `<span class="${tab === t ? "on" : ""}" data-tab="${t}">${t}</span>`).join("")}
         </div>
         <div class="scroll">
           ${list.length ? list.map((o) => {
             const items = HP.normalizeOrderItems(o);
-            const amount = HP.orderGoodsAmount(o);
+            const amount = HP.orderPayAmount(o);
             return `
             <div class="order" data-order-id="${o.id}">
-              <div class="hd"><span class="shopname">衡物官方旗舰店</span>
+              <div class="hd"><span class="shopname">${shopName()}</span>
                 <span class="st" style="${o.status === "待付款" || o.status === "退款" ? "color:var(--price)" : ""}">${o.refundStatus || o.status}</span>
               </div>
               ${items.map((it) => `
               <div class="line" data-action="open-order" data-id="${o.id}">
-                <div class="thumb ${it.pic || o.pic}"></div>
+                ${HP.productThumbHtml(it.pic || o.pic, "thumb", "c")}
                 <div>
                   <div class="ot">${it.title}</div>
                   <div class="os">${it.sku}${it.qty > 1 ? ` ×${it.qty}` : ""}</div>
@@ -1651,7 +2271,7 @@
       const o = orderById(viewingOrderId) || state.orders[0];
       if (!o) return renderOrders();
       const items = HP.normalizeOrderItems(o);
-      const amount = HP.orderGoodsAmount(o);
+      const amount = HP.orderPayAmount(o);
       return `<div class="phone active" id="screen-orderDetail">
         <div class="notch"></div>
         ${statusHtml(true)}
@@ -1664,7 +2284,7 @@
           <div class="panel">
             ${items.map((it) => `
               <div style="display:grid;grid-template-columns:72px 1fr auto;gap:10px;margin-bottom:12px">
-                <div class="thumb ${it.pic || o.pic}" style="width:72px;height:72px;border-radius:8px"></div>
+                ${HP.productThumbHtml(it.pic || o.pic, "thumb", "c", { style: "width:72px;height:72px;border-radius:8px" })}
                 <div>
                   <div style="font-size:14px">${it.title}</div>
                   <div style="font-size:12px;color:#888;margin:6px 0">${it.sku}</div>
@@ -1677,6 +2297,9 @@
             </div>
           </div>
           <div class="panel" style="padding:0 12px">
+            ${o.goodsAmount != null ? `<div class="cell-row"><div class="lab">商品</div><div class="val" style="text-align:right">¥${Number(o.goodsAmount).toFixed(2)}</div></div>` : ""}
+            ${o.freightAmount != null ? `<div class="cell-row"><div class="lab">运费</div><div class="val" style="text-align:right">${Number(o.freightAmount) ? `¥${Number(o.freightAmount).toFixed(2)}` : "免运费"}</div></div>` : ""}
+            ${o.couponTitle || Number(o.discountAmount) > 0 ? `<div class="cell-row"><div class="lab">优惠券</div><div class="val" style="text-align:right;color:var(--price)">${o.couponTitle || "优惠"} -¥${Number(o.discountAmount || 0).toFixed(2)}</div></div>` : ""}
             <div class="cell-row" ${o.expressNo ? `data-action="open-logistics" data-id="${o.id}" style="cursor:pointer"` : ""}>
               <div class="lab">物流</div><div class="val">${o.logistics || "暂无物流轨迹"}</div>${o.expressNo ? `<div class="more">›</div>` : ""}
             </div>
@@ -1705,18 +2328,18 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav("申请退款")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="panel">
             ${(HP.normalizeOrderItems(o || {})).map((it) => `
               <div style="display:grid;grid-template-columns:64px 1fr;gap:10px;margin-bottom:10px">
-                <div class="thumb ${it.pic || o?.pic || "pic-mug"}" style="width:64px;height:64px;border-radius:8px"></div>
+                ${HP.productThumbHtml(it.pic || o?.pic || "mug", "thumb", "c", { style: "width:64px;height:64px;border-radius:8px" })}
                 <div>
                   <div style="font-size:13px">${it.title}</div>
                   <div style="font-size:12px;color:#888;margin-top:4px">${it.sku}${it.qty > 1 ? ` ×${it.qty}` : ""}</div>
                   <div style="margin-top:6px;font-weight:700">¥${Number(it.price).toFixed(2)}</div>
                 </div>
               </div>`).join("")}
-            <div style="font-size:13px;font-weight:700">可退合计 ¥${Number(HP.orderGoodsAmount(o || {})).toFixed(2)}</div>
+            <div style="font-size:13px;font-weight:700">可退合计 ¥${Number(HP.orderPayAmount(o || {})).toFixed(2)}</div>
           </div>
           <div class="panel form-panel">
             <div class="field"><label style="font-size:12px;color:#888">退款原因</label>
@@ -1726,7 +2349,9 @@
               <textarea id="refund-desc" rows="3" placeholder="选填"></textarea>
             </div>
             <div class="field"><label style="font-size:12px;color:#888">凭证图</label>
-              <div style="margin-top:8px;width:72px;height:72px;border:1px dashed #ccc;border-radius:8px;display:grid;place-items:center;color:#aaa;font-size:24px" data-action="toast" data-msg="请上传凭证图片">+</div>
+              <div class="upload-row" style="margin-top:8px">
+                ${HP.uploadSlotHtml(refundProofPic, { action: "upload-refund-proof", removeAction: "remove-refund-proof", removable: !!refundProofPic, size: "sm", side: "c" })}
+              </div>
             </div>
           </div>
         </div>
@@ -1765,7 +2390,7 @@
                 <span style="color:var(--price);font-size:13px">${r.status}</span>
               </div>
               <div style="display:grid;grid-template-columns:64px 1fr;gap:10px">
-                <div class="thumb ${r.pic}" style="width:64px;height:64px;border-radius:8px"></div>
+                ${HP.productThumbHtml(r.pic, "thumb", "c", { style: "width:64px;height:64px;border-radius:8px" })}
                 <div>
                   <div style="font-size:13px">${r.title}</div>
                   <div style="margin-top:4px;font-size:12px;color:#888">${r.reason || "订单 " + r.orderId}</div>
@@ -1852,18 +2477,46 @@
       </div>`;
     }
 
+    /** 编辑地址表单草稿（进地图选点前暂存，避免 render 丢失） */
+    let addrFormDraft = null;
+    /** 地图页当前选中的示意地点 id */
+    let mapPickId = null;
+    let mapSearchQ = "";
+
+    function seedAddrFormDraft() {
+      const a = state.addresses.find((x) => x.id === editingAddressId);
+      addrFormDraft = a
+        ? { name: a.name || "", phone: a.phone || "", region: a.region || "", detail: a.detail || "" }
+        : { name: "", phone: "13800000001", region: "", detail: "" };
+    }
+
+    function readAddrFormFromDom() {
+      return {
+        name: document.getElementById("addr-name")?.value?.trim() || "",
+        phone: document.getElementById("addr-phone")?.value?.trim() || "",
+        region: document.getElementById("addr-region")?.value?.trim() || "",
+        detail: document.getElementById("addr-detail")?.value?.trim() || ""
+      };
+    }
+
     function renderAddressEdit() {
-      const a = state.addresses.find((x) => x.id === editingAddressId) || { name: "", phone: "13800000001", region: "广东省 深圳市 南山区", detail: "", def: false };
+      if (!addrFormDraft) seedAddrFormDraft();
+      const a = addrFormDraft;
       return `<div class="phone active" id="screen-addressEdit">
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav(editingAddressId ? "编辑地址" : "新增地址")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="panel form-panel">
-            <div class="field"><label style="font-size:12px;color:#888">收货人</label><input id="addr-name" value="${a.name}" /></div>
-            <div class="field"><label style="font-size:12px;color:#888">手机号</label><input id="addr-phone" value="${a.phone}" /></div>
-            <div class="field"><label style="font-size:12px;color:#888">地区</label><input id="addr-region" value="${a.region}" /></div>
-            <div class="field"><label style="font-size:12px;color:#888">详细地址</label><textarea id="addr-detail" rows="2">${a.detail}</textarea></div>
+            <div class="field"><label style="font-size:12px;color:#888">收货人</label><input id="addr-name" value="${a.name || ""}" /></div>
+            <div class="field"><label style="font-size:12px;color:#888">手机号</label><input id="addr-phone" value="${a.phone || ""}" /></div>
+            <div class="field"><label style="font-size:12px;color:#888">所在地区</label>
+              <div class="addr-region-pick${a.region ? "" : " empty"}" data-action="open-address-map">
+                <span>${a.region || "请在地图上选点"}</span><i>地图选点 ›</i>
+              </div>
+              <input type="hidden" id="addr-region" value="${a.region || ""}" />
+            </div>
+            <div class="field"><label style="font-size:12px;color:#888">详细地址</label><textarea id="addr-detail" rows="2" placeholder="选点后自动填入，可补充楼栋 / 门牌号">${a.detail || ""}</textarea></div>
           </div>
         </div>
         <div class="sticky-bar">
@@ -1873,27 +2526,86 @@
       </div>`;
     }
 
+    function renderAddressMap() {
+      const cur = HP.mapMockPoiById(mapPickId);
+      const q = mapSearchQ.trim();
+      const pois = q ? HP.MAP_MOCK_POIS.filter((p) => p.name.includes(q) || p.detail.includes(q)) : HP.MAP_MOCK_POIS;
+      return `<div class="phone active" id="screen-addressMap">
+        <div class="notch"></div>
+        ${statusHtml(true)}
+        ${subnav("选择位置")}
+        <div class="addr-map-page">
+          <div class="addr-map-search">
+            <input id="addr-map-q" type="search" placeholder="搜索小区 / 写字楼 / 街道" value="${q}" />
+            <button type="button" class="btn ghost sm" data-action="addr-map-search">搜索</button>
+            <button type="button" class="btn ghost sm" data-action="addr-map-locate">定位</button>
+          </div>
+          <div class="addr-map-canvas">${HP.mapMockHtml(mapPickId)}</div>
+          <div class="addr-map-footer">
+            <div class="addr-map-poi-list">
+              ${pois.length ? pois.map((p) => `
+                <div class="row${p.id === mapPickId ? " on" : ""}" data-action="pick-map-poi" data-id="${p.id}">
+                  <div class="n">${p.name}</div>
+                  <div class="d">${p.region} ${p.detail}</div>
+                </div>`).join("") : `<div class="empty" style="padding:16px 0">没有找到相关地点</div>`}
+            </div>
+            <div class="pick-title">当前位置</div>
+            <div class="pick-addr${cur ? "" : " empty"}">${cur ? `${cur.region} ${cur.detail}` : "请点击地图或列表选择地点"}</div>
+            <button type="button" class="btn solid block" data-action="confirm-address-map" style="margin-top:10px">确认选点</button>
+          </div>
+        </div>
+        <div class="toast" data-toast></div>
+      </div>`;
+    }
+
     function renderCoupon() {
+      const picking = pickReturn === "checkout";
+      const items = picking ? (state.checkoutItems || []) : [];
+      const goods = picking ? goodsSubtotal(items) : 0;
+      if (picking) state.couponTab = "unused";
       const tab = state.couponTab;
       const list = state.coupons.filter((c) => c.status === tab);
       const labels = { unused: "未使用", used: "已使用", expired: "已过期" };
       return `<div class="phone active" id="screen-coupon">
         <div class="notch"></div>
         ${statusHtml(true)}
-        ${subnav("优惠券")}
-        <div class="seg" data-coupon-tabs>
+        ${subnav(picking ? "选择优惠券" : "优惠券")}
+        ${picking ? "" : `<div class="seg" data-coupon-tabs>
           ${["unused","used","expired"].map((t) =>
             `<span class="${tab === t ? "on" : ""}" data-ctab="${t}">${labels[t]}</span>`).join("")}
-        </div>
+        </div>`}
         <div class="scroll">
-          ${list.length ? list.map((c) => `
-            <div class="coupon-item ${c.status}" data-action="${c.status === "unused" ? "pick-coupon" : "toast"}" data-id="${c.id}" data-msg="不可用">
+          ${picking ? `
+            <div class="panel" style="margin:10px 12px;padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px"
+              data-action="pick-coupon" data-id="">
+              <div class="chk ${state.selectedCouponId == null ? "on" : ""}"></div>
+              <div style="flex:1;font-size:14px;font-weight:650">不使用优惠券</div>
+            </div>
+            <div style="margin:0 14px 8px;font-size:12px;color:#888">本单商品 ¥${goods.toFixed(2)} · 点选后返回确认订单</div>
+          ` : (tab === "unused" ? `<div style="margin:10px 14px 0;font-size:12px;color:#888">结算下单时再选择使用；此处仅查看</div>` : "")}
+          ${list.length ? list.map((c) => {
+            const off = picking ? couponDiscountOf(c, goods, items) : 0;
+            const usable = !picking || off > 0;
+            const selected = picking && state.selectedCouponId === c.id && c.status === "unused";
+            let action = `data-action="toast" data-msg="不可用"`;
+            if (picking) {
+              action = c.status !== "unused"
+                ? `data-action="toast" data-msg="不可用"`
+                : (!usable
+                  ? `data-action="toast" data-msg="未满足使用门槛"`
+                  : `data-action="pick-coupon" data-id="${c.id}"`);
+            } else if (c.status === "unused") {
+              action = `data-action="coupon-go-checkout"`;
+            }
+            return `
+            <div class="coupon-item ${c.status}${picking && !usable ? " used" : ""}" ${action} style="cursor:pointer">
               <div class="left"><div class="n"><small>¥</small>${c.amount}</div></div>
               <div class="right">
-                <div class="t">${c.title}${state.selectedCouponId === c.id && c.status === "unused" ? " · 已选" : ""}</div>
-                <div class="s">${c.cond}</div>
+                <div class="t">${c.title}${selected ? " · 已选" : ""}${picking && usable ? ` · 可减 ¥${off}` : ""}${!picking && c.status === "unused" ? " · 去结算" : ""}</div>
+                <div class="s">${picking && !usable ? "未满门槛，本单不可用" : c.cond}</div>
               </div>
-            </div>`).join("") : `<div class="empty">暂无优惠券</div>`}
+            </div>`;
+          }).join("") : `<div class="empty">暂无优惠券</div>`}
         </div>
         <div class="toast" data-toast></div>
       </div>`;
@@ -1962,7 +2674,7 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav("余额提现")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="panel" data-action="open-withdraw-accounts" style="cursor:pointer">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
               <div class="muted">到账账户</div>
@@ -2008,7 +2720,7 @@
               <span style="display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;background:#f0f4f2;color:var(--brand);margin-right:6px">${typeTag}</span>
               ${a.def && !locked ? "【默认】" : ""}${withdrawAccountTitle(a)}${on ? " · 当前" : ""}
             </div>
-            <div class="detail">${locked ? "微信小程序不可用，请使用 App/H5 提现" : withdrawAccountSub(a)}</div>
+            <div class="detail">${locked ? "微信小程序不可用，请使用 App 提现" : withdrawAccountSub(a)}</div>
             ${locked ? "" : `<div class="ops">
               <span data-action="set-default-withdraw-account" data-id="${a.id}">${a.def ? "默认账户" : "设为默认"}</span>
               <span data-action="edit-withdraw-account" data-id="${a.id}">编辑</span>
@@ -2036,10 +2748,10 @@
           <div style="padding:0 12px 8px;font-size:13px;font-weight:650">${authChannel === "mp" ? "可用（微信）" : "可用账户（微信 / 支付宝 / 银行卡）"}</div>
           ${list.length ? list.map((a) => renderWithdrawAccountRow(a)).join("") : `<div class="empty">${authChannel === "mp" ? "请绑定微信零钱账户" : "暂无提现账户，请先新增"}</div>`}
           ${lockedExtras.length ? `
-            <div style="padding:12px 12px 8px;font-size:13px;font-weight:650;color:#888">App/H5 可用（本端不可选）</div>
+            <div style="padding:12px 12px 8px;font-size:13px;font-weight:650;color:#888">App 可用（本端不可选）</div>
             ${lockedExtras.map((a) => renderWithdrawAccountRow(a, { locked: true })).join("")}
           ` : (authChannel === "mp" ? `
-            <div style="padding:12px 12px 8px;font-size:13px;font-weight:650;color:#888">App/H5 可用（本端不可选）</div>
+            <div style="padding:12px 12px 8px;font-size:13px;font-weight:650;color:#888">App 可用（本端不可选）</div>
             ${renderWithdrawAccountRow({ type: "alipay", title: "支付宝", holder: "—", mask: "未在此端绑定", def: false }, { locked: true })}
             ${renderWithdrawAccountRow({ type: "bank", title: "银行卡", holder: "—", mask: "----", bank: "银行卡", def: false }, { locked: true })}
           ` : "")}
@@ -2063,7 +2775,7 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav(editingWithdrawAccountId ? "编辑提现账户" : "新增提现账户")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="panel form-panel">
             <div class="field"><label style="font-size:12px;color:#888">账户类型</label>${HP.withdrawTypePickHtml({ role: "c", current: type, allow, lockedHint: "小程序仅此" })}</div>
             <div class="field"><label style="font-size:12px;color:#888">户名</label><input id="wa-holder" value="${d.holder || ""}" /></div>
@@ -2165,12 +2877,14 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav("个人资料")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="panel" style="display:flex;align-items:center;gap:12px">
-            <div class="av" style="width:56px;height:56px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700">林</div>
+            ${state.profile.avatar
+              ? `<div style="width:56px;height:56px;border-radius:50%;overflow:hidden;flex-shrink:0">${HP.productThumbHtml(state.profile.avatar, "thumb", "c", { style: "width:56px;height:56px;border-radius:50%" })}</div>`
+              : `<div class="av" style="width:56px;height:56px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700">林</div>`}
             <div>
               <div style="font-weight:650">头像</div>
-              <div style="font-size:12px;color:#888;margin-top:4px" data-action="toast" data-msg="头像上传">点击更换头像</div>
+              <div style="font-size:12px;color:#888;margin-top:4px" data-action="upload-avatar">点击上传 / 更换头像</div>
             </div>
           </div>
           <div class="panel form-panel">
@@ -2196,7 +2910,7 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav("修改密码")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="panel" style="font-size:13px;color:#666;line-height:1.55">
             为保障账号安全，修改密码需验证绑定手机 <b style="color:var(--ink)">${phoneMask}</b>。
           </div>
@@ -2257,6 +2971,7 @@
     }
 
     function renderShop() {
+      const s = liveShop();
       return `<div class="phone active" id="screen-shop">
         <div class="notch"></div>
         <div class="shop-banner">
@@ -2265,15 +2980,16 @@
             ${HP.backIconHtml('data-action="back"')}
             <div class="logo">衡</div>
             <div>
-              <div class="name">衡物官方旗舰店</div>
-              <div class="sub">精选日用 · 回头客 4.2万 · 物流 4.9 · 服务 4.9</div>
+              <div class="name">${s.name}</div>
+              <div class="sub">${s.category || "精选日用"} · ${s.open ? "营业中" : "打烊中"} · 回头客 4.2万 · 物流 4.9</div>
             </div>
           </div>
         </div>
         <div class="scroll">
-          <div class="feed-hd" style="margin-top:12px">全部商品 <span>${CATALOG.length} 件</span></div>
+          ${s.notice ? `<div class="muted" style="padding:10px 14px 0;line-height:1.5">公告：${s.notice}</div>` : ""}
+          <div class="feed-hd" style="margin-top:12px">全部商品 <span>${listCatalog().length} 件</span></div>
           <div class="feed shop-feed">
-            ${CATALOG.map((g) => goodsCard(g)).join("")}
+            ${listCatalog().map((g) => goodsCard(g)).join("")}
           </div>
         </div>
         <div class="toast" data-toast></div>
@@ -2282,7 +2998,7 @@
 
     function renderReviewList() {
       const g = productById(viewingProductId);
-      const list = PRODUCT_REVIEWS[g.id] || PRODUCT_REVIEWS[1] || [];
+      const list = HP.reviewsForC(g.id);
       return `<div class="phone active" id="screen-reviewList">
         <div class="notch"></div>
         ${statusHtml(true)}
@@ -2290,16 +3006,10 @@
         <div class="scroll">
           <div class="panel" style="margin-bottom:0;border-radius:0">
             <div style="font-weight:650;margin-bottom:4px">${g.title}</div>
-            <div class="muted">好评率 98% · 共 ${list.length * 800 + 81} 条</div>
+            <div class="muted">好评率 ${reviewRate(list)}% · 共 ${list.length} 条</div>
           </div>
           <div class="panel" style="border-radius:0">
-            ${list.map((r) => `
-              <div class="review-item">
-                <div class="who"><span>${r.user}</span><span class="stars">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</span></div>
-                <div class="txt">${r.text}</div>
-                ${reviewPicsHtml(r.pics)}
-                <div class="muted" style="margin-top:6px">${r.time}</div>
-              </div>`).join("")}
+            ${list.map(reviewItemHtml).join("") || `<div class="empty">暂无评价</div>`}
           </div>
         </div>
         <div class="toast" data-toast></div>
@@ -2312,7 +3022,7 @@
         <div class="notch"></div>
         ${statusHtml(true)}
         ${subnav("发表评价")}
-        <div class="scroll" style="padding-bottom:80px">
+        <div class="scroll" style="padding-bottom:16px">
           <div class="panel">
             <div style="font-size:13px;margin-bottom:12px">${o?.title || ""}</div>
             <div class="muted" style="margin-bottom:8px">评分</div>
@@ -2367,7 +3077,7 @@
       orders: renderOrders, orderDetail: renderOrderDetail, logistics: renderLogistics,
       refundApply: renderRefundApply, refundList: renderRefundList,
       mine: renderMine, profile: renderProfile, passwordChange: renderPasswordChange,
-      address: renderAddress, addressEdit: renderAddressEdit,
+      address: renderAddress, addressEdit: renderAddressEdit, addressMap: renderAddressMap,
       coupon: renderCoupon, balance: renderBalance, withdraw: renderWithdraw,
       withdrawAccounts: renderWithdrawAccounts, withdrawAccountEdit: renderWithdrawAccountEdit,
       msgList: renderMsgList,
@@ -2378,12 +3088,16 @@
     };
 
     function render() {
+      syncOrdersFromMerchant();
       syncRefundsFromMerchant();
       syncPreviewSwitchers();
       const name = currentScreen();
       const html = (renderers[name] || renderHome)();
+      HP.capturePhoneScroll(document.querySelector("#stage .phone"), name);
       document.getElementById("stage").innerHTML = html;
-      HP.applyChannelChrome(document.querySelector("#stage .phone"), authChannel);
+      const phone = document.querySelector("#stage .phone");
+      HP.applyChannelChrome(phone, authChannel);
+      HP.restorePhoneScroll(phone);
       syncTopTabs(name);
       const tabs = document.getElementById("tabs");
       const labels = {
@@ -2393,7 +3107,7 @@
         orders: "订单", orderDetail: "订单详情", logistics: "物流",
         refundApply: "申请退款", refundList: "我的退款",
         mine: "我的", profile: "资料", passwordChange: "改密",
-        address: "地址", addressEdit: "编辑地址",
+        address: "地址", addressEdit: "编辑地址", addressMap: "地图选点",
         coupon: "优惠券", balance: "余额", withdraw: "提现",
         withdrawAccounts: "提现账户", withdrawAccountEdit: "编辑提现账户",
         msgList: "消息通知",
@@ -2403,6 +3117,7 @@
       const ordered = {};
       SCREENS.filter((s) => labels[s]).forEach((s) => { ordered[s] = labels[s]; });
       tabs.innerHTML = HP.asideTabsHtml(ordered, name);
+      document.getElementById("screen-note").innerHTML = HP.screenNoteHtml(labels[name], SCREEN_NOTES[name]);
     }
 
     /* ========== events ========== */
@@ -2440,14 +3155,23 @@
       const step = e.target.closest(".stepper i[data-step]");
       if (step) {
         if (step.closest("[data-sheet-stepper]")) {
-          skuState.qty = Math.max(1, skuState.qty + Number(step.dataset.step));
+          const delta = Number(step.dataset.step);
+          const max = Math.max(1, skuState.stock || 1);
+          const next = skuState.qty + delta;
+          if (delta > 0 && skuState.stock <= 0) { toast("该规格暂时无货"); return; }
+          if (delta > 0 && next > skuState.stock) { toast(`库存仅剩 ${skuState.stock} 件`); return; }
+          skuState.qty = Math.min(max, Math.max(1, next));
           updateSkuTexts(document.querySelector(".phone.active"));
           return;
         }
         const idx = Number(step.dataset.idx);
         const item = state.cart[idx];
         if (item?.alive) {
-          item.qty = Math.max(1, item.qty + Number(step.dataset.step));
+          const delta = Number(step.dataset.step);
+          const maxStock = item.stock != null ? Number(item.stock) : 99;
+          const next = item.qty + delta;
+          if (delta > 0 && maxStock > 0 && next > maxStock) { toast(`库存仅剩 ${maxStock} 件`); return; }
+          item.qty = Math.max(1, next);
           render();
         }
         return;
@@ -2460,6 +3184,13 @@
         if (action === "toast") { toast(actionEl.dataset.msg || "示意"); return; }
         if (action === "open-product") {
           openProduct(actionEl.dataset.id || 1);
+          return;
+        }
+        if (action === "gallery-next") {
+          const g = productById(viewingProductId);
+          const n = HP.productBanners(g).length || 1;
+          galleryIdx = (galleryIdx + 1) % n;
+          render();
           return;
         }
         if (action === "open-logistics") {
@@ -2504,10 +3235,12 @@
           }
           HP.upsertRefundSync({
             id: r.id, orderId: r.orderId, title: r.title, amount: r.amount,
-            status: "待收货", reason: r.reason, pic: r.pic,
+            status: "待收货", reason: r.reason, pic: HP.picKeyRaw(r.pic),
             returnCompany: company, returnExpressNo: expressNo,
-            buyer: `${state.profile.nickname} ${HP.maskPhone(state.profile.phone)}`
+            buyer: buyerLabel()
           });
+          const ord = orderById(r.orderId);
+          if (ord) publishOrder(ord);
           fillingReturnRefundId = null;
           toast("退货物流已提交");
           render();
@@ -2531,15 +3264,21 @@
           return;
         }
         if (action === "add-review-pic") {
-          if (reviewPics.length >= 6) { toast("最多上传 6 张"); return; }
+          if (reviewPics.length >= HP.PRODUCT_PIC_MAX) { toast(`最多上传 ${HP.PRODUCT_PIC_MAX} 张`); return; }
           reviewTextDraft = document.getElementById("review-text")?.value ?? reviewTextDraft;
-          const o = orderById(reviewingOrderId);
-          const items = HP.normalizeOrderItems(o || {});
-          const fallback = items[0]?.pic || o?.pic || "pic-mug";
-          const pool = ["pic-mug", "pic-kettle", "pic-book", "pic-bag", "pic-lamp", "pic-soap"];
-          reviewPics.push(pool.includes(fallback) ? fallback : "pic-mug");
-          toast("已添加图片");
+          reviewPics.push(HP.demoNextPicKey(reviewPics[reviewPics.length - 1], reviewPics));
+          toast("已上传图片");
           render();
+          return;
+        }
+        if (action === "replace-review-pic") {
+          const idx = Number(actionEl.dataset.idx);
+          reviewTextDraft = document.getElementById("review-text")?.value ?? reviewTextDraft;
+          if (idx >= 0 && idx < reviewPics.length) {
+            reviewPics[idx] = HP.demoNextPicKey(reviewPics[idx], reviewPics);
+            toast("已更换图片");
+            render();
+          }
           return;
         }
         if (action === "remove-review-pic") {
@@ -2556,9 +3295,10 @@
             o.reviewed = true;
             const items = HP.normalizeOrderItems(o);
             const pid = o.productId || items[0]?.productId || 1;
-            if (!PRODUCT_REVIEWS[pid]) PRODUCT_REVIEWS[pid] = [];
             const nick = state.profile.nickname || "用";
-            PRODUCT_REVIEWS[pid].unshift({
+            HP.addReview({
+              productId: pid,
+              orderId: o.id,
               user: nick[0] + "***" + (nick.length > 1 ? nick[nick.length - 1] : ""),
               stars: reviewStars,
               text,
@@ -2575,7 +3315,7 @@
         if (action === "toggle-cart-manage") {
           cartManaging = !cartManaging;
           if (cartManaging) state.cart.forEach((c) => { c.checked = false; });
-          else state.cart.forEach((c) => { if (c.alive) c.checked = true; });
+          else state.cart.forEach((c) => { c.checked = !cartInvalid(c); });
           render();
           return;
         }
@@ -2599,9 +3339,10 @@
           return;
         }
         if (action === "clear-dead") {
-          const n = state.cart.filter((c) => !c.alive).length;
-          state.cart = state.cart.filter((c) => c.alive);
-          toast(n ? `已清理 ${n} 件失效商品` : "没有失效商品");
+          const n = state.cart.filter(cartInvalid).length;
+          if (!n) { toast("没有失效商品"); return; }
+          state.cart = state.cart.filter((c) => !cartInvalid(c));
+          toast(`已清空 ${n} 件失效商品`);
           render();
           return;
         }
@@ -2678,13 +3419,36 @@
           return;
         }
         if (action === "logout") { loggedIn = false; guestPreview = false; stack = []; agreeLogin = false; render(); toast("已退出"); return; }
-        if (action === "sku") { openSheet(actionEl.dataset.next || "select"); return; }
+        if (action === "sku") {
+          if (productById(viewingProductId).offline) { toast("商品已下架"); return; }
+          openSheet(actionEl.dataset.next || "select");
+          return;
+        }
+        if (action === "open-claim-coupon") {
+          if (productById(viewingProductId).offline) { toast("商品已下架"); return; }
+          openClaimSheet();
+          return;
+        }
+        if (action === "claim-coupon") {
+          if (claimCouponByPoolId(actionEl.dataset.pool)) {
+            render();
+            openClaimSheet();
+            toast("领取成功");
+          }
+          return;
+        }
         if (action === "close-sheet") { closeSheet(); return; }
         if (action === "fav") { favOn = !favOn; toast(favOn ? "已收藏" : "已取消收藏"); return; }
         if (action === "confirm-sku") {
+          applySkuFromProduct(productById(viewingProductId));
+          if (skuState.stock <= 0) { toast("该规格暂时无货"); return; }
           closeSheet();
           if (skuNext === "select") { toast("已选择规格"); render(); return; }
-          if (skuNext === "add") { addToCartFromSku(); toast("已加入购物车"); render(); return; }
+          if (skuNext === "add") {
+            if (addToCartFromSku()) toast("已加入购物车");
+            render();
+            return;
+          }
           if (skuNext === "buy") {
             const gBuy = productById(viewingProductId);
             const specsBuy = HP.normalizeProductSpecs(gBuy);
@@ -2692,7 +3456,8 @@
               key: HP.skuPicksKey(viewingProductId, skuState.picks, specsBuy),
               productId: viewingProductId,
               title: gBuy.title,
-              sku: currentSkuText("；"), price: skuState.price, qty: skuState.qty,
+              sku: currentSkuText("；"), skuId: skuState.skuId,
+              price: skuState.price, qty: skuState.qty, stock: skuState.stock,
               pic: skuState.pic, alive: true, checked: true
             }], "buy");
             return;
@@ -2701,6 +3466,7 @@
         if (action === "toggle-check") {
           const idx = Number(actionEl.dataset.idx);
           const item = state.cart[idx];
+          if (item && cartSoldOut(item)) { toast("该规格已售罄"); return; }
           if (item?.alive) { item.checked = !item.checked; render(); }
           return;
         }
@@ -2714,14 +3480,48 @@
           startCheckout(cartChecked().map((c) => ({ ...c })), "cart");
           return;
         }
+        if (action === "cart-use-coupon") {
+          const checked = cartChecked();
+          if (checked.length) startCheckout(checked.map((c) => ({ ...c })), "cart");
+          else {
+            toast("请先勾选商品再结算用券");
+            push("coupon");
+          }
+          return;
+        }
+        if (action === "coupon-go-checkout") {
+          const checked = cartChecked();
+          if (checked.length) {
+            startCheckout(checked.map((c) => ({ ...c })), "cart");
+          } else {
+            toast("请先在购物车勾选商品");
+            goTab("cart");
+          }
+          return;
+        }
         if (action === "goto-pick") {
+          const remarkEl = document.getElementById("checkout-remark");
+          if (remarkEl) state.checkoutRemark = remarkEl.value;
           pickReturn = "checkout";
+          if (actionEl.dataset.target === "coupon") state.couponTab = "unused";
           push(actionEl.dataset.target || "address");
+          return;
+        }
+        if (action === "toggle-freight-detail") {
+          const remark = document.getElementById("checkout-remark");
+          if (remark) state.checkoutRemark = remark.value;
+          freightDetailOpen = !freightDetailOpen;
+          render();
           return;
         }
         if (action === "submit-order") {
           if (!(state.checkoutItems || []).length) { toast("暂无待结算商品"); return; }
           if (!defAddr()) { toast("请选择地址"); return; }
+          const { freightBlocked, freightPlace } = previewAmount(state.checkoutItems);
+          if (freightBlocked.length) {
+            toast(`${freightBlocked.length} 件商品不支持配送至${freightPlace}，请更换地址`);
+            return;
+          }
           submitCheckout();
           return;
         }
@@ -2774,21 +3574,30 @@
         if (action === "pay-order") {
           const o = orderById(id);
           if (!o) return;
-          const amount = HP.orderGoodsAmount(o);
+          const amount = HP.orderPayAmount(o);
           pendingPay = { amount, orderId: o.id, from: "orders" };
           state.checkoutItems = HP.normalizeOrderItems(o).map((it) => ({ ...it }));
           push("pay");
           return;
         }
         if (action === "cancel-order") {
-          state.orders = state.orders.filter((o) => o.id !== id);
+          const o = orderById(id);
+          if (o) {
+            releaseOrderCoupon(o);
+            o.status = "已取消";
+            publishOrder(o);
+          }
           toast("订单已取消");
           render();
           return;
         }
         if (action === "confirm-receive") {
           const o = orderById(id);
-          if (o) { o.status = "已完成"; o.logistics = "已签收"; }
+          if (o) {
+            o.status = "已完成";
+            o.logistics = (o.logistics ? o.logistics + " · " : "") + "已签收";
+            publishOrder(o);
+          }
           toast("确认收货成功");
           render();
           return;
@@ -2798,7 +3607,26 @@
           return;
         }
         if (action === "apply-refund") {
+          refundProofPic = "";
           push("refundApply", { refundOrderId: id });
+          return;
+        }
+        if (action === "upload-refund-proof") {
+          refundProofPic = HP.demoNextPicKey(refundProofPic || "cover");
+          toast("已上传凭证");
+          render();
+          return;
+        }
+        if (action === "remove-refund-proof") {
+          refundProofPic = "";
+          toast("已移除凭证");
+          render();
+          return;
+        }
+        if (action === "upload-avatar") {
+          state.profile.avatar = HP.demoNextPicKey(state.profile.avatar || "detail");
+          toast("头像已更新");
+          render();
           return;
         }
         if (action === "submit-refund") {
@@ -2810,8 +3638,10 @@
             const items = HP.normalizeOrderItems(o);
             const refund = {
               id: genId("RF"), orderId: o.id, title: HP.orderTitleSummary(o),
-              amount: HP.orderGoodsAmount(o), status: "退款中", pic: items[0]?.pic || o.pic, reason
+              amount: HP.orderPayAmount(o), status: "退款中",
+              pic: refundProofPic || items[0]?.pic || o.pic, reason
             };
+            refundProofPic = "";
             state.refunds.unshift(refund);
             HP.upsertRefundSync({
               id: refund.id,
@@ -2820,9 +3650,10 @@
               amount: refund.amount,
               status: "待处理",
               reason: refund.reason,
-              pic: refund.pic,
-              buyer: `${state.profile.nickname} ${HP.maskPhone(state.profile.phone)}`
+              pic: HP.picKeyRaw(refund.pic),
+              buyer: buyerLabel()
             });
+            publishOrder(o);
           }
           toast("退款已提交");
           stack = stack.filter((s) => s !== "refundApply");
@@ -2851,7 +3682,9 @@
         }
         if (action === "edit-address") {
           e.stopPropagation();
-          push("addressEdit", { editingAddressId: id ? Number(id) : null });
+          editingAddressId = id ? Number(id) : null;
+          seedAddrFormDraft();
+          push("addressEdit", { editingAddressId });
           return;
         }
         if (action === "del-address") {
@@ -2861,32 +3694,84 @@
           render();
           return;
         }
+        if (action === "open-address-map") {
+          addrFormDraft = readAddrFormFromDom();
+          mapPickId = HP.mapMockPoiByAddr(addrFormDraft.region, addrFormDraft.detail)?.id || null;
+          mapSearchQ = "";
+          push("addressMap");
+          return;
+        }
+        if (action === "pick-map-poi") {
+          mapPickId = id;
+          render();
+          return;
+        }
+        if (action === "addr-map-search") {
+          mapSearchQ = document.getElementById("addr-map-q")?.value?.trim() || "";
+          render();
+          return;
+        }
+        if (action === "addr-map-locate") {
+          mapPickId = HP.MAP_MOCK_POIS[0].id;
+          mapSearchQ = "";
+          toast("已定位到当前位置");
+          render();
+          return;
+        }
+        if (action === "confirm-address-map") {
+          const poi = HP.mapMockPoiById(mapPickId);
+          if (!poi) { toast("请先选择地点"); return; }
+          if (!addrFormDraft) seedAddrFormDraft();
+          addrFormDraft.region = poi.region;
+          addrFormDraft.detail = poi.detail;
+          toast("已选择位置");
+          back();
+          return;
+        }
         if (action === "save-address") {
-          const name = document.getElementById("addr-name")?.value?.trim() || "收货人";
-          const phone = document.getElementById("addr-phone")?.value?.trim() || "";
-          const region = document.getElementById("addr-region")?.value?.trim() || "";
-          const detail = document.getElementById("addr-detail")?.value?.trim() || "";
+          const form = readAddrFormFromDom();
+          if (!form.region) { toast("请在地图上选择所在地区"); return; }
+          const patch = {
+            name: form.name || "收货人",
+            phone: form.phone || "",
+            region: form.region || "",
+            detail: form.detail || ""
+          };
           if (editingAddressId) {
             const a = state.addresses.find((x) => x.id === editingAddressId);
-            if (a) Object.assign(a, { name, phone, region, detail });
+            if (a) Object.assign(a, patch);
           } else {
             const nid = Date.now();
-            state.addresses.push({ id: nid, name, phone, region, detail, def: state.addresses.length === 0 });
+            state.addresses.push({ id: nid, ...patch, def: state.addresses.length === 0 });
             state.selectedAddressId = nid;
           }
+          addrFormDraft = null;
           toast("已保存");
           back();
           return;
         }
         if (action === "pick-coupon") {
-          state.selectedCouponId = Number(id);
-          toast("已选择优惠券");
-          if (pickReturn === "checkout") {
-            pickReturn = null;
-            if (stack[stack.length - 1] === "coupon") stack.pop();
-            if (!stack.includes("checkout")) stack.push("checkout");
-            render();
-          } else render();
+          if (pickReturn !== "checkout") {
+            toast("请在确认订单页「优惠」中选择");
+            return;
+          }
+          if (id === "" || id == null) {
+            state.selectedCouponId = null;
+            toast("本单不使用优惠券");
+          } else {
+            const goods = goodsSubtotal(state.checkoutItems || []);
+            const c = state.coupons.find((x) => String(x.id) === String(id));
+            if (c && couponDiscountOf(c, goods, state.checkoutItems || []) <= 0) {
+              toast("未满足使用门槛");
+              return;
+            }
+            state.selectedCouponId = Number(id);
+            toast("已选择优惠券");
+          }
+          pickReturn = null;
+          if (stack[stack.length - 1] === "coupon") stack.pop();
+          if (!stack.includes("checkout")) stack.push("checkout");
+          render();
           return;
         }
         if (action === "recharge") {
@@ -3054,6 +3939,16 @@
       applyAuthChannel(ch);
     });
     HP.bindHwSelect(document.getElementById("stage"));
+
+    window.addEventListener("storage", (e) => {
+      if (e.key === HP.GOODS_SYNC_KEY) {
+        reloadCatalog();
+        render();
+        return;
+      }
+      if (e.key === HP.ORDER_SYNC_KEY || e.key === HP.REFUND_SYNC_KEY || e.key === HP.REVIEW_SYNC_KEY || e.key === HP.FREIGHT_SYNC_KEY || e.key === HP.SHOP_SYNC_KEY) render();
+    });
+    reloadCatalog();
 
     // boot: 按当前客户端展示对应登录页
     loggedIn = false;

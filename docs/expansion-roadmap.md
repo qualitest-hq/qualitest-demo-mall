@@ -165,7 +165,8 @@ flowchart LR
 
 ## 4. 新域补齐（按需）
 
-建议 B1–B5 告一段落后再开；急需支付幂等场景时可提前开 B6。仍走 §2 检查单。
+建议 B1–B5 告一段落后再开；急需支付幂等场景时可提前开 B6。仍走 §2 检查单。  
+B6 先用 HMAC 简单签名即可（质衡现有脚本已支持）；要仿真实渠道（RSA2、微信 v3 加密 resource、XML 回调）需等质衡 ROADMAP 7.1 / 7.2，回调后异步改状态的轮询断言依赖 7.3。
 
 ### 4.1 模拟支付 / 履约 / 评价
 
@@ -206,7 +207,8 @@ flowchart LR
 
 > 可选、附属。有需要时再开独立目录；**不**阻塞 §3 / §4，也**不**要求贡献者实现。
 
-**页面优先**：以 [c-end-ui-preview.html](./c-end-ui-preview.html) 定稿交互与信息架构；现有 `/api` 对不上时，**改接口适配页面**（面试向真实商城），而不是把 UI 砍瘦。`demo-mall-uni/` 仍后置，预览定稿后再开。
+**页面优先**：以 [c-end-ui-preview.html](./c-end-ui-preview.html) 定稿交互与信息架构；现有 `/api` 对不上时，**改接口适配页面**（面试向真实商城），而不是把 UI 砍瘦。`demo-mall-uni/` 仍后置，预览定稿后再开。  
+预览屏增强（收藏 / 秒杀闭环、搜索排序等）分批清单见 [c-end-preview-roadmap.md](./c-end-preview-roadmap.md)，与本文 §3/§4 后端批次独立推进。
 
 | 项 | 建议 |
 |---|---|
@@ -303,5 +305,6 @@ flowchart LR
 - 快速启动与认证：[../README.md](../README.md)
 - Compose 部署：[deploy.md](./deploy.md)
 - AI 测试流提示：[ai-test-flow-prompts.md](./ai-test-flow-prompts.md)
+- C 端预览分批扩充：[c-end-preview-roadmap.md](./c-end-preview-roadmap.md)
 - 场景元数据：`../sql/seed/scenarios/manifest.json`
 - 后端双契约分层：仓库 Cursor 规则 `qualitest-demo-mall-backend`

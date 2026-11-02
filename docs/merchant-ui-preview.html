@@ -35,8 +35,6 @@
       background: #fff; border: 1px solid #e5e5e5; border-radius: 999px; padding: 4px 10px; color: inherit; text-decoration: none;
     }
     .aside .meta a { color: var(--brand); }
-    .aside .note { margin-top: 14px; color: #888; font-size: 12px; line-height: 1.55; }
-
     /* .tabs 见 hengwu-preview-shared.css */
     .stage { flex-shrink: 0; }
     .phone {
@@ -53,7 +51,7 @@
       font-size: 12px; font-weight: 600; flex-shrink: 0; position: relative; z-index: 2;
     }
     .scroll { flex: 1; overflow: auto; padding-bottom: 8px; }
-    .scroll.with-tab { padding-bottom: 72px; }
+    /* 底栏留白由 HP.fitScrollToBottomBars 按实际底栏高度补齐 */
     .scroll::-webkit-scrollbar { width: 0; }
 
     /* .subnav 样式见 hengwu-preview-shared.css */
@@ -68,12 +66,12 @@
       gap: 2px; font-size: 10px; color: #888; position: relative; cursor: pointer;
     }
     .tabbar span.on { color: var(--brand); font-weight: 650; }
-    .tabbar .ico { width: 22px; height: 22px; border-radius: 7px; background: #ececec; }
+    .tabbar .ico { width: 22px; height: 22px; border-radius: 7px; background: #ececec; position: relative; }
     .tabbar span.on .ico { background: var(--brand); }
     .tabbar .badge {
-      position: absolute; top: 4px; right: 10px; min-width: 14px; height: 14px;
-      background: var(--price); color: #fff; border-radius: 8px; font-size: 9px;
-      line-height: 14px; text-align: center; padding: 0 3px;
+      position: absolute; top: -6px; left: calc(100% - 7px); min-width: 14px; height: 14px;
+      background: var(--price); color: #fff; border-radius: 8px; font-size: 9px; font-style: normal; font-weight: 650;
+      line-height: 14px; text-align: center; padding: 0 3px; box-sizing: border-box; border: 1px solid #fff;
     }
 
     .toast {
@@ -119,7 +117,6 @@
     .field input:focus, .field textarea:focus { border-color: var(--brand); background: #fff; }
     /* 下拉 / 上传见 hengwu-preview-shared.css */
 
-    .muted { color: var(--muted); font-size: 12px; }
     .tag {
       display: inline-block; font-size: 11px; border-radius: 4px; padding: 2px 6px; background: #f0f0f0; color: #666;
     }
@@ -128,6 +125,47 @@
     .tag.wait { background: #fff7f0; color: var(--warn); }
     .tag.ok { background: #eaf4f0; color: var(--brand); }
     .tag.bad { background: #fdeceb; color: var(--price); }
+
+    /* 订单详情 */
+    .od-hero { margin: 10px; border-radius: 12px; padding: 16px 14px; color: #fff; background: linear-gradient(135deg, var(--brand), #3f8a76); }
+    .od-hero.warn { background: linear-gradient(135deg, #d96b2b, #e89a5a); }
+    .od-hero.off { background: #9a9a9a; }
+    .od-hero .st { font-size: 18px; font-weight: 700; }
+    .od-hero .hint { font-size: 12px; margin-top: 6px; opacity: .92; line-height: 1.5; }
+    .od-steps { display: flex; justify-content: space-between; padding: 12px 18px; }
+    .od-steps .step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; color: #bbb; position: relative; }
+    .od-steps .step i { width: 10px; height: 10px; border-radius: 50%; background: #ddd; position: relative; z-index: 1; }
+    .od-steps .step:not(:first-child)::before {
+      content: ""; position: absolute; top: 4px; right: 50%; width: 100%; height: 2px; background: #eee;
+    }
+    .od-steps .step.done, .od-steps .step.now { color: var(--brand); }
+    .od-steps .step.done i { background: var(--brand); }
+    .od-steps .step.now i { background: #fff; border: 2px solid var(--brand); width: 12px; height: 12px; margin-top: -1px; }
+    .od-steps .step.done::before, .od-steps .step.now::before { background: var(--brand); }
+    .od-steps .step.now span { font-weight: 650; }
+    .od-sec { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 650; margin-bottom: 10px; }
+    .od-link { border: 0; background: transparent; color: var(--brand); font: inherit; font-size: 12px; font-weight: 500; padding: 0; cursor: pointer; }
+    .od-addr-name { font-size: 15px; font-weight: 650; }
+    .od-addr-name span { font-weight: 500; color: #555; margin-left: 6px; font-size: 13px; }
+    .od-addr { font-size: 13px; color: #444; line-height: 1.55; margin-top: 4px; }
+    .od-remark { margin-top: 10px; padding: 8px 10px; background: #fff7f0; border-radius: 6px; font-size: 12px; color: #8a5a2a; line-height: 1.5; }
+    .od-remark b { margin-right: 6px; color: var(--warn); }
+    .od-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+    .od-item .info { flex: 1; min-width: 0; }
+    .od-item .title { font-size: 13px; line-height: 1.4; }
+    .od-item .meta-line { margin-top: 4px; font-size: 12px; color: var(--muted); }
+    .od-item-amt { text-align: right; font-size: 13px; }
+    .od-amts { border-top: 1px solid #f0f0f0; padding-top: 10px; font-size: 13px; color: #555; }
+    .od-amts > div { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .od-amts .minus { color: var(--price); }
+    .od-amts .total { margin: 8px 0 0; font-weight: 650; color: #1a1a1a; }
+    .od-amts .price { color: var(--price); font-size: 16px; font-weight: 750; }
+    .od-line { font-size: 14px; }
+    .od-info > div:not(.od-sec) { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; margin-bottom: 8px; }
+    .od-info > div:not(.od-sec) span:first-child { color: var(--muted); flex-shrink: 0; }
+    .od-info > div:not(.od-sec) span:last-child { text-align: right; word-break: break-all; }
+    .od-acts { display: flex; gap: 8px; }
+    .od-acts .btn { flex: 1; }
 
     .dash-head {
       background: linear-gradient(180deg, var(--brand) 0%, #3a8572 62%, var(--bg) 100%);
@@ -151,7 +189,7 @@
     }
     .shop-user .name { font-size: 17px; font-weight: 750; line-height: 1.25; }
     .shop-user .sub { font-size: 11px; opacity: .88; margin-top: 3px; }
-    .shop-body { padding: 10px 10px 72px; display: flex; flex-direction: column; gap: 10px; }
+    .shop-body { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
     .shop-panel { background: #fff; border-radius: 10px; padding: 10px 8px 8px; }
     .shop-panel .phd {
       display: flex; justify-content: space-between; align-items: center;
@@ -190,6 +228,13 @@
     .shop-review .txt { font-size: 13px; color: #333; line-height: 1.45; }
     .shop-review .pics { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
     .shop-review .pics .rp.thumb { width: 56px; height: 56px; border-radius: 6px; flex-shrink: 0; }
+    .shop-review.hidden .txt, .shop-review.hidden .pics { opacity: .5; }
+    .shop-review .who .tag { margin-left: 6px; }
+    .shop-review .hide-info {
+      margin-top: 8px; padding: 8px 10px; background: #fff8f0; border-radius: 6px;
+      font-size: 12px; color: #8a6a4a; line-height: 1.55;
+    }
+    .shop-review .acts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 10px; }
     .stats {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 12px 0;
     }
@@ -255,18 +300,46 @@
     }
     .chip-add input:focus { border-color: var(--brand); background: #fff; }
     .param-row {
-      display: grid; grid-template-columns: 88px 1fr 28px; gap: 6px; margin-bottom: 8px; align-items: center;
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) 32px;
+      gap: 8px; margin-bottom: 8px; align-items: center;
     }
+    .param-row:last-child { margin-bottom: 0; }
     .param-row input {
-      width: 100%; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 10px;
+      width: 100%; border: 1px solid #e5e5e5; border-radius: 8px; padding: 9px 10px;
       font: inherit; font-size: 13px; background: #fafafa; outline: none;
+      box-sizing: border-box; min-width: 0;
     }
     .param-row input:focus { border-color: var(--brand); background: #fff; }
-    .edit-sec-title {
-      font-size: 13px; font-weight: 650; margin: 4px 0 10px; color: #333;
-      display: flex; justify-content: space-between; align-items: center;
+    .param-row .param-del {
+      width: 32px; height: 32px; padding: 0; border-radius: 8px;
+      display: grid; place-items: center; font-size: 16px; line-height: 1;
+      color: #888; border: 1px solid #e5e5e5; background: #fff;
     }
+    .param-row .param-del:hover { color: var(--price); border-color: #f0b4ae; }
+    .sku-head, .sku-row {
+      display: grid;
+      grid-template-columns: minmax(72px, 1.2fr) repeat(3, minmax(52px, .7fr));
+      gap: 6px; align-items: center; margin-bottom: 8px;
+    }
+    .sku-head { font-size: 11px; color: #888; padding: 0 2px; margin-bottom: 6px; }
+    .sku-row .sku-lab {
+      font-size: 12px; font-weight: 650; min-width: 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .sku-row input {
+      width: 100%; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 6px;
+      font: inherit; font-size: 13px; background: #fafafa; outline: none;
+      box-sizing: border-box; min-width: 0;
+    }
+    .sku-row input:focus { border-color: var(--brand); background: #fff; }
+    .sku-row.kv { grid-template-columns: minmax(72px, 1.2fr) minmax(0, 2.1fr); }
+    .edit-sec-title {
+      font-size: 13px; font-weight: 650; margin: 0 0 12px; color: #333;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .edit-sec-title > span:first-child { display: inline-flex; align-items: baseline; gap: 6px; min-width: 0; }
     .edit-sec-title .hint { font-size: 11px; font-weight: 500; color: var(--muted); }
+    .edit-sec-title .btn { flex-shrink: 0; }
     .spec-block {
       border: 1px solid #eee; border-radius: 10px; padding: 10px; margin-bottom: 10px; background: #fafafa;
     }
@@ -299,8 +372,47 @@
     .list-card .meta-line { margin-top: 4px; font-size: 12px; color: var(--muted); }
     .list-card .price { margin-top: 6px; color: var(--price); font-weight: 750; font-size: 15px; }
     .list-card .ft {
-      display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f5f5f5;
+      display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f5f5f5;
     }
+
+    .fr-rule { border: 1px solid #eee; border-radius: 10px; padding: 10px; margin-bottom: 10px; background: #fafafa; }
+    .fr-rule .rhd { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .fr-pick {
+      flex: 1; min-width: 0; width: 100%; border: 1px dashed #cfd9d2; border-radius: 8px; padding: 8px 10px;
+      background: #fff; font: inherit; font-size: 12px; color: #333; text-align: left; cursor: pointer; line-height: 1.5;
+    }
+    .fr-pick.empty { color: #aaa; }
+    .fr-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+    .fr-grid label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; white-space: nowrap; }
+    .fr-grid input {
+      width: 100%; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 6px;
+      font: inherit; font-size: 13px; background: #fafafa; outline: none; box-sizing: border-box; min-width: 0;
+    }
+    .fr-grid input:focus { border-color: var(--brand); background: #fff; }
+    .fr-calc { background: #f7faf8; border-radius: 10px; padding: 10px 12px; font-size: 12px; line-height: 1.75; color: #555; }
+    .fr-calc .fee { font-size: 13px; color: #222; font-weight: 650; }
+    .fr-calc .fee b { color: var(--price); font-size: 18px; }
+    .fr-calc .bad { color: var(--price); font-weight: 650; }
+    .region-pick { display: grid; grid-template-columns: 108px 1fr; gap: 0; margin: 0 -14px; max-height: 380px; }
+    .region-prov {
+      overflow: auto; background: #f7f7f7; border-right: 1px solid #eee;
+    }
+    .region-prov button {
+      display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 4px;
+      border: 0; background: transparent; padding: 12px 10px; font: inherit; font-size: 12px;
+      color: #555; text-align: left; cursor: pointer; border-left: 3px solid transparent;
+    }
+    .region-prov button.on { background: #fff; color: var(--brand); font-weight: 650; border-left-color: var(--brand); }
+    .region-prov button .mark { font-size: 10px; color: var(--brand); flex-shrink: 0; }
+    .region-city { overflow: auto; padding: 10px 12px 4px; }
+    .region-city .chd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; color: #666; font-weight: 650; }
+    .prov-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .prov-chip {
+      border: 1px solid #e5e5e5; background: #fff; border-radius: 999px; padding: 5px 11px;
+      font: inherit; font-size: 12px; color: #444; cursor: pointer;
+    }
+    .prov-chip.on { border-color: var(--brand); background: #eef6f2; color: var(--brand); font-weight: 650; }
+    .prov-chip:disabled { opacity: .4; cursor: not-allowed; text-decoration: line-through; }
 
     .status-block { text-align: center; padding: 40px 20px 24px; }
     .status-block .ico {
@@ -368,14 +480,14 @@
     <div class="layout">
       <aside class="aside">
         <h1>衡物 · 商家端</h1>
-        <p class="brief">移动经营后台：入驻 → 工作台 / 商品 / 订单 / 店铺；售后在订单内处理。消息为经营通知。与 C 端同一账号，无单独登录。</p>
+        <p class="brief">移动经营后台：入驻 → 工作台 / 商品 / 订单 / 店铺；售后在订单内处理。同一账号，无单独登录。</p>
         <div id="preview-switchers"></div>
         <div class="meta">
           <span>单账号双端</span>
           <a href="?reset=1" id="reset-settle">重置入驻</a>
         </div>
+        <div id="screen-note"></div>
         <div class="tabs" id="tabs"></div>
-        <p class="note">左侧可切换角色与客户端，点屏快捷跳转；右侧机框可一眼看全。审核页可用「通过 / 驳回」推进演示。</p>
       </aside>
       <div class="stage">
         <div class="phone" id="phone"></div>
@@ -392,8 +504,7 @@
     const BUSINESS_CATEGORIES = HP.BUSINESS_CATEGORIES;
     const EXPRESS_COMPANIES = HP.EXPRESS_COMPANIES;
     const REFUND_REJECT_REASONS = HP.REFUND_REJECT_REASONS;
-    const GOODS_SHELF_OPTIONS = HP.GOODS_SHELF_OPTIONS;
-    const SEED_VER = 13;
+    const SEED_VER = 24;
     let authChannel = HP.getPreviewChannel();
 
     function syncPreviewSwitchers() {
@@ -415,6 +526,10 @@
         notice: "工作日 16:00 前付款当日发货，顺丰/中通；破损包赔，支持 7 天无理由（定制款除外）。",
         open: true
       },
+      /** 已对用户端生效的店铺资料；改资料审核期间用户端仍看此版本 */
+      shopLive: null,
+      /** null | { status: 'pending'|'rejected', rejectReason? } */
+      shopAudit: null,
       /** 店铺可提现余额（订单结算入账） */
       balance: 2864.5,
       selectedWithdrawAccountId: 1,
@@ -432,54 +547,47 @@
       apply: { name: "", category: "家居日用", contact: ACCOUNT.name, phone: ACCOUNT.phone, rejectReason: "" },
       goodsTab: "全部",
       goodsStatusTab: "全部",
-      /** 与 C 端 CATALOG 对齐：价格/分类/卖点/标签/自定义规格/参数 */
-      goods: [
-        { id: 1, title: "雾面陶瓷马克杯 350ml 哑光釉", cat: "咖啡", price: 68, old: 88, stock: 326, on: true, pic: "mug", sales: 1283,
-          sub: "哑光釉面 可微波 耐热易清洗", tags: ["满99减10", "包邮"], colors: ["雾白", "墨灰"], sizes: ["350ml", "500ml"],
-          params: [{ k: "材质", v: "陶瓷" }, { k: "工艺", v: "哑光釉" }, { k: "是否可微波", v: "是" }, { k: "产地", v: "广东深圳" }] },
-        { id: 2, title: "304 不锈钢细口手冲壶 600ml", cat: "咖啡", price: 169, old: 199, stock: 0, on: false, pic: "kettle", sales: 452,
-          sub: "细嘴控流 食品级不锈钢", tags: ["包邮", "热销"], colors: ["原色", "磨砂黑"], sizes: ["600ml"],
-          params: [{ k: "材质", v: "304 不锈钢" }, { k: "容量", v: "600ml" }, { k: "适用", v: "手冲咖啡" }] },
-        { id: 3, title: "棉纸方格手帐本 A5 160页", cat: "文具", price: 42, old: 52, stock: 518, on: true, pic: "book", sales: 906,
-          sub: "轻薄棉纸 方格内页", tags: ["新品"],
-          specs: [{ name: "封面", values: ["米白", "浅灰"] }, { name: "尺寸", values: ["A5", "A6"] }],
-          params: [{ k: "纸张", v: "棉纸" }, { k: "页数", v: "160 页" }, { k: "尺寸", v: "A5" }] },
-        { id: 4, title: "水洗棉托特包 中号 可机洗", cat: "收纳", price: 128, old: 158, stock: 0, on: false, pic: "bag", sales: 906,
-          sub: "水洗棉 可机洗 日常通勤", tags: ["满99减10"], colors: ["米色", "卡其"], sizes: ["中号"],
-          params: [{ k: "面料", v: "水洗棉" }, { k: "洗涤", v: "可机洗" }, { k: "尺码", v: "中号" }] },
-        { id: 5, title: "胡桃木氛围台灯 三档调光", cat: "灯光", price: 199, old: 259, stock: 86, on: true, pic: "lamp", sales: 211,
-          sub: "三档触控 暖光护眼", tags: ["满199减20"], colors: ["原木色"], sizes: ["标准"],
-          params: [{ k: "灯体", v: "胡桃木" }, { k: "调光", v: "三档触控" }, { k: "光源", v: "暖光 LED" }] },
-        { id: 6, title: "雪松香氛洗手皂 3 块装", cat: "香氛", price: 39, old: 49, stock: 1204, on: true, pic: "soap", sales: 3402,
-          sub: "植物油脂 清爽不紧绷", tags: ["买赠"],
-          specs: [{ name: "香型", values: ["雪松", "白茶"] }, { name: "包装", values: ["单块", "3块装"] }],
-          params: [{ k: "香型", v: "雪松" }, { k: "成分", v: "植物油脂" }, { k: "包装", v: "3 块装" }] },
-        { id: 7, title: "日式粗陶茶杯 150ml", cat: "茶具", price: 48, old: 58, stock: 260, on: true, pic: "mug", sales: 1208,
-          sub: "手工粗陶 复古杯型", tags: ["包邮"], colors: ["原色", "釉青"], sizes: ["150ml"],
-          params: [{ k: "材质", v: "粗陶" }, { k: "容量", v: "150ml" }, { k: "工艺", v: "手工" }] },
-        { id: 8, title: "亚麻收纳篮 大号 可折叠", cat: "家居", price: 59, old: 79, stock: 140, on: false, shelf: "pending", pic: "bag", sales: 884,
-          sub: "可折叠 桌面收纳", tags: ["满99减10"], colors: ["原麻", "浅咖"], sizes: ["大号"],
-          params: [{ k: "材质", v: "亚麻" }, { k: "规格", v: "大号" }, { k: "特性", v: "可折叠" }] }
-      ],
+      /** 商品种子与 C 端共用（HP.seedGoods）；在售版本经 HP.publishGoodsSync 推给 C 端 */
+      goods: HP.seedGoods(),
+      /** 已回写到本端商品的 C 端支付扣减（订单号） */
+      appliedDeducts: [],
       orders: [
         { id: "HW261031162233", buyer: "周敏 138****6621", status: "待发货", paidAt: "今天 16:22", amount: 116,
+          remark: "两个杯子请分开包装，谢谢",
           items: [
             { title: "雾面陶瓷马克杯 350ml", sku: "雾白 / 350ml", price: 68, qty: 1, pic: "mug" },
             { title: "日式粗陶茶杯 150ml", sku: "原色 / 150ml", price: 48, qty: 1, pic: "mug" }
           ] },
-        { id: "HW261031150918", buyer: "陈浩 139****8810", title: "304 不锈钢细口手冲壶", amount: 169, qty: 1, status: "待发货", paidAt: "今天 15:09", pic: "kettle" },
-        { id: "HW261030203455", buyer: "何雨桐 137****2048", status: "待收货", express: "SF3128904412", paidAt: "昨天 20:34", amount: 152,
+        { id: "HW261031150918", buyer: "陈浩 139****8810", title: "304 不锈钢细口手冲壶", sku: "原色 / 600ml", price: 169, amount: 169, qty: 1, status: "待发货", paidAt: "今天 15:09", pic: "kettle",
+          remark: "送人用，包裹里不要放价格单" },
+        { id: "HW261030203455", buyer: "何雨桐 137****2048", status: "待收货", express: "SF3128904412", paidAt: "昨天 20:34", amount: 191,
           items: [
             { title: "棉纸方格手帐本 A5", sku: "米白 / A5", price: 42, qty: 2, pic: "book" },
             { title: "雪松香氛洗手皂 3 块装", sku: "雪松 / 3块装", price: 39, qty: 1, pic: "soap" },
             { title: "雾面陶瓷马克杯 350ml", sku: "墨灰 / 350ml", price: 68, qty: 1, pic: "mug" }
           ] },
-        { id: "HW261028184732", buyer: "林晓薇 138****0001", title: "雾面陶瓷马克杯 350ml 哑光釉", amount: 68, qty: 1, status: "待收货", express: "SF3128965741", paidAt: "10-28 18:47", pic: "mug" },
-        { id: "HW261027152201", buyer: "林晓薇 138****0001", title: "304 不锈钢细口手冲壶 600ml", amount: 169, qty: 1, status: "待收货", express: "786512349012", paidAt: "10-27 15:22", pic: "kettle" },
-        { id: "HW261024091144", buyer: "林晓薇 138****0001", title: "胡桃木氛围台灯 三档调光", amount: 199, qty: 1, status: "待发货", paidAt: "10-24 09:11", pic: "lamp" },
-        { id: "HW261008091255", buyer: "林晓薇 138****0001", title: "日式粗陶茶杯 150ml", amount: 48, qty: 1, status: "已完成", express: "YT8844211563", paidAt: "10-08 09:12", pic: "mug" },
-        { id: "HW261012140902", buyer: "林晓薇 138****0001", title: "雪松香氛洗手皂 3 块装", amount: 39, qty: 1, status: "退款", refundStatus: "待收货", paidAt: "10-12 14:09", pic: "soap" },
-        { id: "HW260918203311", buyer: "赵倩 158****3340", title: "亚麻收纳篮 大号", amount: 59, qty: 1, status: "退款", refundStatus: "已同意", paidAt: "09-18 20:33", express: "YT7711002291", pic: "bag" }
+        { id: "HW261028184732", buyer: "林晓薇 138****0001", status: "待收货", paidAt: "10-28 18:47", amount: 116,
+          company: "顺丰速运", expressNo: "SF3128965741", express: "顺丰速运 SF3128965741",
+          logistics: "顺丰 SF3128965741 · 今日 11:26 派送中【深圳南山】",
+          items: [
+            { productId: 1, title: "雾面陶瓷马克杯 350ml 哑光釉", sku: "雾白 / 350ml", price: 68, qty: 1, pic: "mug" },
+            { productId: 7, title: "日式粗陶茶杯 150ml", sku: "原色 / 150ml", price: 48, qty: 1, pic: "mug" }
+          ] },
+        { id: "HW261027152201", buyer: "林晓薇 138****0001", productId: 2, title: "304 不锈钢细口手冲壶 600ml",
+          sku: "原色 / 600ml", amount: 169, qty: 1, status: "待收货", paidAt: "10-27 15:22", pic: "kettle",
+          company: "中通快递", expressNo: "786512349012", express: "中通快递 786512349012",
+          logistics: "中通 786512349012 · 昨日 21:08 到达【广州转运中心】" },
+        { id: "HW261024091144", buyer: "林晓薇 138****0001", productId: 5, title: "胡桃木氛围台灯 三档调光",
+          sku: "原木色", amount: 199, qty: 1, status: "待发货", paidAt: "10-24 09:11", pic: "lamp" },
+        { id: "HW261008091255", buyer: "林晓薇 138****0001", productId: 7, title: "日式粗陶茶杯 150ml",
+          sku: "原色", amount: 48, qty: 1, status: "已完成", paidAt: "10-08 09:12", pic: "mug",
+          company: "圆通速递", expressNo: "YT8844211563", express: "圆通速递 YT8844211563",
+          logistics: "圆通 YT8844211563 · 10-10 已签收" },
+        { id: "HW261012140902", buyer: "林晓薇 138****0001", productId: 6, title: "雪松香氛洗手皂 3 块装",
+          sku: "雪松 / 3块装", amount: 39, qty: 1, status: "退款", refundStatus: "待收货", paidAt: "10-12 14:09", pic: "soap",
+          returnCompany: "顺丰速运", returnExpressNo: "SF9988776655", returnLogistics: "退货已寄出，商家待收" },
+        { id: "HW260918203311", buyer: "赵倩 158****3340", title: "亚麻收纳篮 大号", amount: 59, qty: 1, status: "退款", refundStatus: "已同意", paidAt: "09-18 20:33",
+          company: "圆通速递", expressNo: "YT7711002291", express: "圆通速递 YT7711002291", pic: "bag" }
       ],
       refunds: [
         { id: "RF261012143301", orderId: "HW261012140902", title: "雪松香氛洗手皂 3 块装", amount: 39, status: "待收货",
@@ -499,7 +607,11 @@
     let withdrawPickReturn = null;
     let waEditDraft = null;
     let goodsEditDraft = null;
+    let goodsOpsDraft = null;
     let viewingOrderId = null;
+    let editingFreightTplId = null;
+    let freightDraft = null;
+    let freightCalc = { region: "广东省 深圳市", qty: 1, unitWeight: 1, amount: 68 };
 
     function normalizeShelf(g) {
       if (g?.shelf === "pending" || g?.shelf === "on" || g?.shelf === "off") return g.shelf;
@@ -507,25 +619,35 @@
     }
 
     function normalizeGoods(g) {
-      const price = Number(g?.price) || 0;
       const shelf = normalizeShelf(g);
       const specs = HP.normalizeProductSpecs(g).map((s) => ({
         name: s.name,
         values: s.values.length ? s.values : ["默认"]
       }));
+      const pic = HP.productCoverPic(g);
+      const banners = HP.productBanners({ ...g, pic });
+      const detailPics = HP.productDetailPics(g);
+      const skus = HP.normalizeProductSkus({ ...g, specs, pic });
+      const { price, old, stock } = HP.skuAggregate(skus, g?.price);
       return {
         id: g?.id ?? null,
         title: g?.title || "",
         sub: g?.sub || "",
         cat: g?.cat && PRODUCT_CATEGORIES.includes(g.cat) ? g.cat : "家居",
         price,
-        old: g?.old != null ? Number(g.old) : price + 20,
-        stock: Number(g?.stock) || 0,
+        old,
+        stock,
+        skus,
         shelf,
         on: shelf === "on",
-        pic: g?.pic || "mug",
+        pic,
+        banners,
+        detailPics,
         sales: Number(g?.sales) || 0,
+        virtualSales: Math.max(0, Math.floor(Number(g?.virtualSales) || 0)),
         tags: Array.isArray(g?.tags) ? g.tags.filter(Boolean) : [],
+        ...HP.applyGoodsFreightFields(g),
+        weight: Number(g?.weight) > 0 ? Number(g.weight) : null,
         specs,
         /* 兼容旧字段展示 */
         colors: specs[0]?.values || ["默认"],
@@ -540,8 +662,70 @@
       const shelf = normalizeShelf(g);
       if (shelf === "pending") return "审核中";
       if (shelf === "off") return "已下架";
-      if (Number(g.stock) <= 0) return "售罄";
+      if (HP.productStockTotal(g) <= 0) return "售罄";
       return "在售";
+    }
+
+    function skuEditorHtml(skus) {
+      const list = skus || [];
+      if (!list.length) return `<div class="muted">请先配置规格类型与选项</div>`;
+      return `
+        <div class="sku-head">
+          <span>规格</span><span>售价</span><span>划线价</span><span>库存</span>
+        </div>
+        ${list.map((s, i) => {
+          const label = Object.values(s.attrs || {}).join(" / ") || "默认";
+          const price = s.price != null && s.price !== "" ? s.price : "";
+          const old = s.old != null && s.old !== "" ? s.old : "";
+          const stock = s.stock != null && s.stock !== "" ? s.stock : 0;
+          return `<div class="sku-row">
+            <div class="sku-lab" title="${label}">${label}</div>
+            <input data-sku-price="${i}" type="number" step="0.01" value="${price}" placeholder="售价" />
+            <input data-sku-old="${i}" type="number" step="0.01" value="${old}" placeholder="划线价" />
+            <input data-sku-stock="${i}" type="number" value="${stock}" placeholder="库存" />
+          </div>`;
+        }).join("")}`;
+    }
+
+    /** 资料页：运费方式（模板 / 无运费 / 固定运费）；仅按重量模板才填规格重量 */
+    function freightEditHtml(d) {
+      const mode = HP.normalizeFreightMode(d);
+      const tpls = HP.loadFreightTpls();
+      const def = tpls.find((t) => t.def) || tpls[0];
+      const bound = d.freightTplId != null && tpls.some((t) => String(t.id) === String(d.freightTplId));
+      const tplItems = [
+        { value: "", label: `跟随默认模板（${def?.name || "无"}）` },
+        ...tpls.map((t) => ({ value: String(t.id), label: `${t.name} · ${t.mode === "weight" ? "按重量" : "按件数"}` }))
+      ];
+      const tpl = mode === "template" ? HP.freightTplOf(tpls, d.freightTplId) : null;
+      const needWeight = !!(tpl && tpl.mode === "weight");
+      const skus = HP.mergeProductSkus(d, d.skus);
+      const fixedVal = Number(d.freightFixed) > 0 ? d.freightFixed : "";
+      return `
+        <div class="field"><label>运费方式</label>${HP.hwSelectHtml("g-freight-mode", HP.FREIGHT_MODE_OPTIONS, mode)}</div>
+        ${mode === "template" ? `
+          <div class="field"><label>运费模板</label>${HP.hwSelectHtml("g-freight-tpl", tplItems, bound ? String(d.freightTplId) : "")}</div>
+          ${needWeight ? `
+            <div class="sku-head" style="grid-template-columns:minmax(72px,1.6fr) minmax(0,1fr)"><span>规格</span><span>重量（kg）</span></div>
+            ${skus.map((s, i) => {
+              const label = Object.values(s.attrs || {}).join(" / ") || "默认";
+              const weight = Number(s.weight) > 0 ? s.weight : "";
+              return `<div class="sku-row" style="grid-template-columns:minmax(72px,1.6fr) minmax(0,1fr)">
+                <div class="sku-lab" title="${label}">${label}</div>
+                <input data-sku-weight="${i}" type="number" min="0" step="0.01" value="${weight}" placeholder="如 0.5" />
+              </div>`;
+            }).join("") || `<div class="muted">请先配置销售规格</div>`}
+            <div class="muted">按重量计费必须给每个规格填写重量；按件数模板不用填。</div>
+          ` : `<div class="muted">当前模板按件数计费，无需填写规格重量。</div>`}
+        ` : ""}
+        ${mode === "none" ? `<div class="muted">结算时该商品不计运费。</div>` : ""}
+        ${mode === "fixed" ? `
+          <div class="field"><label>固定运费（元 / 件）</label>
+            <input id="g-freight-fixed" type="number" min="0" step="0.01" value="${fixedVal}" placeholder="如 8" />
+          </div>
+          <div class="muted">按购买件数相加，不走运费模板与地区规则。</div>
+        ` : ""}
+        <div class="muted" data-freight-summary style="margin-top:8px">${opsFreightSummary(d)}</div>`;
     }
 
     function ensureGoodsDraft() {
@@ -549,12 +733,56 @@
       const existing = state.goods.find((x) => x.id === state.editingGoodsId);
       goodsEditDraft = normalizeGoods(existing || {
         id: null, title: "", sub: "", cat: "咖啡", price: 99, old: 129, stock: 100,
-        shelf: "pending", on: false, pic: "mug", sales: 0,
+        shelf: "pending", on: false, pic: "mug", banners: ["mug"], detailPics: [], sales: 0, virtualSales: 0,
+        freightMode: "none",
         tags: ["包邮"],
         specs: [{ name: "颜色", values: ["默认"] }, { name: "尺码/容量", values: ["标准"] }],
         params: [{ k: "材质", v: "" }, { k: "产地", v: "广东深圳" }]
       });
       return goodsEditDraft;
+    }
+
+    function ensureGoodsOpsDraft() {
+      if (goodsOpsDraft) return goodsOpsDraft;
+      const existing = state.goods.find((x) => x.id === state.editingGoodsId);
+      if (!existing) {
+        goodsOpsDraft = null;
+        return null;
+      }
+      goodsOpsDraft = normalizeGoods(existing);
+      /* 商品级重量已下放到各规格（normalize 时回填），此后以规格重量为准 */
+      goodsOpsDraft.weight = null;
+      return goodsOpsDraft;
+    }
+
+    function coverPickerHtml(currentKey) {
+      const cur = HP.picKeyRaw(currentKey || "mug");
+      return `
+        <div class="upload-row">
+          ${HP.uploadSlotHtml(cur, { action: "edit-upload-cover", badge: "封面", side: "m" })}
+        </div>
+        <div class="muted" style="margin-top:8px">点击上传 / 更换封面（演示循环样图）</div>`;
+    }
+
+    function skuPicEditorHtml(skus, cover) {
+      const list = skus || [];
+      const productCover = HP.picKeyRaw(cover || "mug");
+      if (!list.length) return `<div class="muted">请先配置规格类型与选项</div>`;
+      return `
+        <div class="muted" style="margin-bottom:8px">每规格一张封面；未单独上传时默认用商品封面。点击上传 / 更换。</div>
+        ${list.map((s, i) => {
+          const label = Object.values(s.attrs || {}).join(" / ") || "默认";
+          const pic = HP.picKeyRaw(s.pic || productCover);
+          const isDefault = pic === productCover;
+          return `
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              ${HP.uploadSlotHtml(pic, { action: "edit-upload-sku-pic", idx: i, size: "sm", side: "m", badge: isDefault ? "默认" : "" })}
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:650">${label}</div>
+                <div class="muted" style="margin-top:2px">${isDefault ? "继承商品封面" : "已上传规格封面"}</div>
+              </div>
+            </div>`;
+        }).join("")}`;
     }
 
     function chipEditorHtml(kind, list, placeholder) {
@@ -593,6 +821,21 @@
         <div class="muted" style="margin-top:4px">可自定义「颜色 / 容量 / 香型」等，C 端按此展示选购。</div>`;
     }
 
+    /** 读数字输入框；空 / 非法时保留 fallback */
+    function readNum(sel, fallback, { int = false } = {}) {
+      const el = document.querySelector(sel);
+      if (!el || el.value === "") return fallback;
+      const n = Number(el.value);
+      if (Number.isNaN(n)) return fallback;
+      return int ? Math.max(0, Math.floor(n)) : n;
+    }
+
+    /** 按当前规格矩阵合并 SKU 并回写 SPU 汇总字段 */
+    function applySkus(d, skus) {
+      d.skus = skus;
+      Object.assign(d, (({ price, old, stock }) => ({ price, old, stock }))(HP.skuAggregate(skus, d.price)));
+    }
+
     function syncGoodsDraftFromForm() {
       if (screen !== "goodsEdit") return;
       const d = ensureGoodsDraft();
@@ -601,20 +844,22 @@
       d.title = titleEl.value ?? d.title;
       d.sub = document.getElementById("g-sub")?.value ?? d.sub;
       d.cat = document.getElementById("g-cat")?.value || d.cat;
-      {
-        const shelfVal = document.getElementById("g-shelf")?.value;
-        if (shelfVal === "on" || shelfVal === "off" || shelfVal === "pending") {
-          d.shelf = shelfVal;
-          d.on = shelfVal === "on";
-        }
-      }
-      const price = Number(document.getElementById("g-price")?.value);
-      const old = Number(document.getElementById("g-old")?.value);
-      const stock = Number(document.getElementById("g-stock")?.value);
-      if (!Number.isNaN(price)) d.price = price;
-      if (!Number.isNaN(old)) d.old = old;
-      if (!Number.isNaN(stock)) d.stock = stock;
       if (!Array.isArray(d.specs)) d.specs = [];
+      d.pic = HP.productCoverPic(d);
+      /* 资料页同步规格结构、规格封面与规格重量；价库存在经营页维护 */
+      applySkus(d, HP.mergeProductSkus(d, d.skus).map((s, i) => {
+        const wEl = document.querySelector(`[data-sku-weight="${i}"]`);
+        return wEl ? { ...s, weight: Number(wEl.value) > 0 ? Number(wEl.value) : null } : s;
+      }));
+      const modeEl = document.getElementById("g-freight-mode");
+      const tplEl = document.getElementById("g-freight-tpl");
+      const fixedEl = document.getElementById("g-freight-fixed");
+      Object.assign(d, HP.applyGoodsFreightFields({
+        freightMode: modeEl?.value || d.freightMode,
+        freightTplId: tplEl ? (tplEl.value === "" ? null : Number(tplEl.value)) : d.freightTplId,
+        freightFixed: fixedEl ? (Number(fixedEl.value) > 0 ? Number(fixedEl.value) : null) : d.freightFixed
+      }));
+      d.weight = null;
       document.querySelectorAll("[data-spec-name]").forEach((el) => {
         const i = Number(el.getAttribute("data-spec-name"));
         if (d.specs[i]) d.specs[i].name = (el.value || "").trim() || d.specs[i].name || "规格";
@@ -626,6 +871,49 @@
       }).filter((p) => p.k || p.v);
     }
 
+    function syncGoodsOpsFromForm() {
+      if (screen !== "goodsOps") return;
+      const d = ensureGoodsOpsDraft();
+      if (!d) return;
+      applySkus(d, HP.mergeProductSkus(d, d.skus).map((s, i) => ({
+        ...s,
+        price: readNum(`[data-sku-price="${i}"]`, s.price),
+        old: readNum(`[data-sku-old="${i}"]`, s.old),
+        stock: readNum(`[data-sku-stock="${i}"]`, s.stock, { int: true })
+      })));
+      d.virtualSales = readNum("#g-virtual-sales", d.virtualSales || 0, { int: true });
+    }
+
+    function opsFreightSummary(d) {
+      const mode = HP.normalizeFreightMode(d);
+      if (mode === "none") return "无运费：结算不计运费";
+      if (mode === "fixed") {
+        const fee = Number(d?.freightFixed) || 0;
+        return fee > 0 ? `固定运费：¥${fee} / 件` : "固定运费：请填写金额";
+      }
+      const tpls = HP.loadFreightTpls();
+      const tpl = HP.freightTplOf(tpls, d?.freightTplId);
+      if (!tpl) return "暂无运费模板";
+      const freeText = HP.freightFreeText(tpl.free);
+      let weightText = "";
+      if (tpl.mode === "weight") {
+        const missing = HP.mergeProductSkus(d, d?.skus).filter((s) => !(Number(s.weight) > 0)).length;
+        weightText = missing
+          ? `；按规格重量计费，还有 ${missing} 个规格未填重量`
+          : `；按规格重量计费（${HP.skuWeightText(d)}）`;
+      } else {
+        weightText = "；按件数计费，无需填重量";
+      }
+      return `运费模板「${tpl.name}」${HP.freightRuleText(tpl.base, tpl.mode)}${freeText ? `，${freeText}` : ""}${weightText}`;
+    }
+
+    function updateOpsFreightSummary() {
+      if (screen !== "goodsEdit") return;
+      syncGoodsDraftFromForm();
+      const el = document.querySelector("[data-freight-summary]");
+      if (el) el.textContent = opsFreightSummary(ensureGoodsDraft());
+    }
+
     const SCREEN_LABELS = {
       apply: "入驻申请",
       pending: "审核中",
@@ -633,11 +921,14 @@
       dash: "工作台",
       goods: "商品",
       goodsEdit: "编辑商品",
+      goodsOps: "经营编辑",
       orders: "订单",
       orderDetail: "订单详情",
       shop: "店铺",
       shopEdit: "店铺资料",
       shopReviews: "店铺评价",
+      freightTpls: "物流运费",
+      freightTplEdit: "编辑运费模板",
       wallet: "店铺资金",
       withdraw: "提现",
       withdrawAccounts: "提现账户",
@@ -645,9 +936,88 @@
       msgList: "消息通知"
     };
 
+    /** 左侧「当前页面」说明 */
+    const SCREEN_NOTES = {
+      apply: { desc: "商家入驻申请，顶部提示本项目仅用于演示；入驻协议等正文同样带演示声明。", points: [
+        "填写店铺名称、经营类目、联系人与电话，上传资质图",
+        "需同意入驻协议后提交，提交后进入审核"
+      ] },
+      pending: "入驻审核中。演示可点「审核通过 / 审核驳回」推进流程。",
+      rejected: "入驻被驳回：展示驳回原因，可修改后重新申请。",
+      dash: { desc: "工作台。", points: [
+        "店铺可提现余额，以及提现、提现账户、资金明细入口",
+        "待发货、待售后、在售商品、未读通知四项待办，点击直达对应页面",
+        "经营提示：发货与退货退款流程、提现手续费规则"
+      ] },
+      goods: { desc: "商品管理。", points: [
+        "按状态（在售 / 审核中 / 已下架 / 售罄）和分类筛选",
+        "在售商品对用户端可见；下架后立即从用户端撤出",
+        "审核中可撤销，演示可点「通过 / 驳回」；通过后整份资料同步到用户端",
+        "在售商品改资料审核期间，用户端仍展示旧版；驳回或撤销后恢复为线上版本",
+        "用户端支付后自动扣减库存，实际销量同步增加"
+      ] },
+      goodsEdit: { desc: "编辑商品资料（改动需审核）。", points: [
+        "名称、副标题、分类、标签、商品参数",
+        "商品封面、轮播图、详情图、规格封面；新规格默认继承商品封面",
+        "规格类型与选项，自动生成规格组合",
+        "物流运费：运费方式可选运费模板 / 无运费 / 固定运费（元/件）；选模板时可指定模板（不选则跟随默认）",
+        "仅「运费模板 + 按重量计费」需填写各规格重量；按件数模板、无运费、固定运费都不用填重量",
+        "本页所有改动（含物流运费）都需审核；在售商品审核期间，用户端仍按旧版运费规则计算",
+        "底部「保存资料」仅落草稿（暂不上架 / 下架），「提交审核」进入审核；不能直接上架"
+      ] },
+      goodsOps: { desc: "经营编辑（免审）。", points: [
+        "各规格的售价、划线价、库存，以及虚拟销量",
+        "物流运费只读展示，在资料页修改",
+        "保存后用户端即时生效；审核中的商品只更新线上旧版里仍存在的规格",
+        "库存会随用户端支付自动扣减"
+      ] },
+      orders: { desc: "订单管理。", points: [
+        "按状态分栏；待发货订单填写快递公司与运单号发货，运单同步到用户端",
+        "售后栏处理退款：同意退货、确认收货退款或拒绝（需选原因）"
+      ] },
+      orderDetail: { desc: "订单详情。", points: [
+        "顶部状态与下一步提示，下方为付款 → 发货 → 收货 → 完成进度",
+        "收货信息与买家留言（来自用户端下单），地址可一键复制",
+        "商品明细与金额：商品金额、运费、优惠（含券名）、实收",
+        "发货 / 退货物流与订单信息，单号、订单号可复制",
+        "待发货可直接发货，售后订单可跳转处理"
+      ] },
+      shop: "店铺：经营待办、店铺资料、店铺评价、物流运费与资金入口。",
+      shopEdit: { desc: "编辑店铺资料（改动需审核）。", points: [
+        "店铺名称、经营类目、店铺公告、营业状态",
+        "本页所有改动都需审核，通过后才同步到用户端；审核期间用户端仍展示旧版",
+        "审核中可撤销；演示可点「通过 / 驳回」，驳回或撤销后恢复为线上版本"
+      ] },
+      shopReviews: { desc: "店铺评价。", points: [
+        "按全部 / 隐藏审核中 / 已隐藏筛选",
+        "回复：发布后展示在用户端该评价下方，可修改",
+        "申请隐藏：选原因并补充说明，提交平台审核；审核期间用户端照常展示",
+        "平台审核（演示可点通过 / 驳回）：通过后用户端不再展示；驳回可重新申请"
+      ] },
+      freightTpls: { desc: "物流运费（运费模板）。", points: [
+        "每个模板显示计费方式、默认运费、指定地区、包邮条件、不配送地区和使用商品数",
+        "可新建、复制、设为默认；默认模板不能删除，删除被商品使用的模板需确认，商品改用默认模板",
+        "用户端结算时按商品绑定的模板分组计费，各组运费相加"
+      ] },
+      freightTplEdit: { desc: "编辑运费模板，保存后用户端结算即时生效。", points: [
+        "计费方式：按件数（首件 / 续件）或按重量（首重 / 续重，单位 kg）",
+        "运费 = 首费 + ⌈(计费量 − 首件) ÷ 续件⌉ × 续费；地区第一级省、第二级市（直辖市为区），匹配时市优先于省",
+        "不配送地区：用户端无法下单；包邮条件可选满金额 / 满件数 / 满重量，并可设包邮除外地区",
+        "同一省/市只能出现在一条指定地区规则或不配送地区中；选全省后其下城市不可再拆分到别处",
+        "运费试算：可选省/市，按当前编辑内容实时计算"
+      ] },
+      wallet: "店铺资金：可提现余额与资金流水（订单结算入账、提现、退款出账）。",
+      withdraw: "余额提现：选择到账账户，显示手续费与实际到账金额。",
+      withdrawAccounts: "提现账户：管理银行卡、微信、支付宝账户，可设默认。",
+      withdrawAccountEdit: "编辑提现账户：选择账户类型并填写户名、账号等信息。",
+      msgList: "消息通知：订单、售后、经营、资金等站内通知，点击跳转到对应页面，可一键全部已读。"
+    };
+
     function syncAsideTabs() {
       const el = document.getElementById("tabs");
       if (el) el.innerHTML = HP.asideTabsHtml(SCREEN_LABELS, screen);
+      const note = document.getElementById("screen-note");
+      if (note) note.innerHTML = HP.screenNoteHtml(SCREEN_LABELS[screen], SCREEN_NOTES[screen]);
     }
 
     /** 左侧屏列表跳转：不拦入驻状态，便于预览各页 */
@@ -658,6 +1028,10 @@
       if (name === "goodsEdit") {
         if (state.editingGoodsId == null) state.editingGoodsId = state.goods[0]?.id ?? null;
         goodsEditDraft = null;
+      }
+      if (name === "goodsOps") {
+        if (state.editingGoodsId == null) state.editingGoodsId = state.goods[0]?.id ?? null;
+        goodsOpsDraft = null;
       }
       if (name === "orderDetail") {
         viewingOrderId = viewingOrderId || state.orders[0]?.id || null;
@@ -670,6 +1044,10 @@
         }
       }
       if (name === "withdrawAccounts") withdrawPickReturn = "wallet";
+      if (name === "freightTpls" || name === "freightTplEdit") freightDraft = null;
+      if (name === "freightTplEdit" && editingFreightTplId == null) {
+        editingFreightTplId = HP.loadFreightTpls()[0]?.id ?? null;
+      }
       render();
     }
 
@@ -700,6 +1078,134 @@
     const loadNotifsM = () => HP.loadNotifs("m", defaultNotifs);
     const notifUnreadM = () => HP.notifUnread(loadNotifsM());
     const syncRefundToC = HP.upsertRefundSync;
+    const syncOrderToC = (o, extras) => {
+      if (!o?.id || o.status === "待付款") return;
+      const express = o.express || "";
+      let company = o.company || "";
+      let expressNo = o.expressNo || "";
+      if (express && !expressNo) {
+        const parts = String(express).trim().split(/\s+/);
+        if (parts.length >= 2) { company = parts[0]; expressNo = parts.slice(1).join(" "); }
+        else expressNo = express;
+      }
+      HP.upsertOrderSync(HP.buildOrderSyncPayload({
+        ...o,
+        amount: o.amount != null ? o.amount : o.price,
+        price: o.amount != null ? o.amount : o.price,
+        company,
+        expressNo,
+        express,
+        logistics: o.logistics || (express ? `${express} · 运输中` : "")
+      }, { src: "m", ...(extras || {}) }));
+    };
+
+    function applySyncedOrderFromC(row) {
+      if (!row?.id || row.status === "待付款") return;
+      const items = (row.items || []).map((it) => ({
+        ...it,
+        pic: HP.picForSide(it.pic, "m")
+      }));
+      let o = state.orders.find((x) => String(x.id) === String(row.id));
+      const express = row.express || [row.company, row.expressNo].filter(Boolean).join(" ");
+      const patch = {
+        status: row.status,
+        amount: row.amount != null ? Number(row.amount) : undefined,
+        title: row.title,
+        buyer: row.buyer || "买家",
+        paidAt: row.paidAt || "",
+        pic: HP.picForSide(row.pic || items[0]?.pic, "m"),
+        express: express || undefined,
+        refundStatus: row.refundStatus ? HP.mapRefundStatus("m", row.refundStatus) : undefined,
+        returnCompany: row.returnCompany,
+        returnExpressNo: row.returnExpressNo,
+        address: row.address || undefined,
+        remark: row.remark || undefined,
+        goodsAmount: row.goodsAmount != null ? Number(row.goodsAmount) : undefined,
+        freightAmount: row.freightAmount != null ? Number(row.freightAmount) : undefined,
+        discountAmount: row.discountAmount != null ? Number(row.discountAmount) : undefined,
+        couponTitle: row.couponTitle || undefined,
+        shippedAt: row.shippedAt || undefined
+      };
+      if (items.length) {
+        patch.items = items;
+        delete patch.title;
+        // keep title summary for single-line UIs
+        patch.title = row.title || HP.orderTitleSummary({ items });
+      }
+      Object.keys(patch).forEach((k) => { if (patch[k] === undefined) delete patch[k]; });
+      if (o) {
+        Object.assign(o, patch);
+        if (items.length) o.items = items;
+      } else {
+        state.orders.unshift({
+          id: String(row.id),
+          qty: HP.orderItemCount({ items }),
+          ...patch,
+          items: items.length ? items : undefined
+        });
+      }
+    }
+
+    function syncOrdersFromC() {
+      const snap = JSON.stringify(state.orders);
+      HP.loadOrderSync().forEach(applySyncedOrderFromC);
+      if (JSON.stringify(state.orders) !== snap) save();
+    }
+
+    /** 发布缓存缺失或版本变了：按当前在售商品重建 C 端目录 */
+    function bootstrapGoodsSync({ force = false } = {}) {
+      if (!force && HP.loadGoodsSync()) return;
+      HP.saveGoodsSync(state.goods.filter((g) => normalizeShelf(g) === "on").map(HP.goodsPublishSnapshot));
+    }
+
+    /** C 端支付后的库存扣减回写到本端商品（每单一次），同步增加实际销量 */
+    function applyStockDeductsFromC() {
+      const fresh = HP.applyStockDeducts(state.goods, state.appliedDeducts);
+      if (!fresh.length) return false;
+      state.goods.forEach((g) => Object.assign(g, normalizeGoods(g)));
+      state.appliedDeducts = [...(state.appliedDeducts || []), ...fresh];
+      save();
+      return true;
+    }
+
+    /** 审核通过 → 整份发布；下架 → 撤出 C 端 */
+    function publishGoods(g) {
+      HP.publishGoodsSync(normalizeGoods({ ...g, shelf: "on" }));
+    }
+
+    function ensureShopLive() {
+      if (!state.shopLive) state.shopLive = HP.shopPublishSnapshot(state.shop);
+      return state.shopLive;
+    }
+
+    function applyShopProfile(target, src) {
+      const snap = HP.shopPublishSnapshot(src);
+      target.name = snap.name;
+      target.category = snap.category;
+      target.notice = snap.notice;
+      target.open = snap.open;
+      return target;
+    }
+
+    function publishShopLive() {
+      state.shopLive = HP.shopPublishSnapshot(state.shop);
+      HP.publishShopSync(state.shopLive);
+      state.shopAudit = null;
+    }
+
+    /** 入驻通过或首次加载：把当前店铺资料推给 C 端 */
+    function bootstrapShopSync({ force = false } = {}) {
+      ensureShopLive();
+      if (force || !HP.loadShopSync()) HP.publishShopSync(state.shopLive);
+    }
+
+    function bootstrapOrderSync() {
+      state.orders.forEach((o) => {
+        if (o.status === "待付款") return;
+        const exists = HP.loadOrderSync().some((x) => String(x.id) === String(o.id));
+        if (!exists) syncOrderToC(o, { updatedAt: Date.now() - 7 * 86400000 });
+      });
+    }
 
     function load() {
       try {
@@ -708,11 +1214,23 @@
         const parsed = JSON.parse(raw);
         const base = defaultState();
         const staleSeed = parsed.seedVer !== SEED_VER;
-        const goods = (staleSeed ? base.goods : (Array.isArray(parsed.goods) ? parsed.goods : base.goods))
+        const staleGoods = staleSeed || parsed.goodsSeedVer !== HP.GOODS_SEED_VER;
+        const goods = (staleGoods ? base.goods : (Array.isArray(parsed.goods) ? parsed.goods : base.goods))
           .map(normalizeGoods);
+        const shop = Object.assign({}, base.shop, parsed.shop || {});
+        const shopLive = staleSeed
+          ? HP.shopPublishSnapshot(shop)
+          : HP.shopPublishSnapshot(parsed.shopLive || shop);
+        const shopAudit = staleSeed
+          ? null
+          : (parsed.shopAudit && (parsed.shopAudit.status === "pending" || parsed.shopAudit.status === "rejected")
+            ? { status: parsed.shopAudit.status, rejectReason: parsed.shopAudit.rejectReason || "" }
+            : null);
         return Object.assign(base, parsed, {
           seedVer: SEED_VER,
-          shop: Object.assign(base.shop, parsed.shop || {}),
+          shop,
+          shopLive,
+          shopAudit,
           apply: Object.assign(base.apply, parsed.apply || {}),
           balance: staleSeed ? base.balance : (parsed.balance != null ? Number(parsed.balance) : base.balance),
           ledgers: staleSeed ? base.ledgers : (Array.isArray(parsed.ledgers) ? parsed.ledgers : base.ledgers),
@@ -725,6 +1243,7 @@
             ? base.selectedWithdrawAccountId
             : (parsed.selectedWithdrawAccountId != null ? parsed.selectedWithdrawAccountId : base.selectedWithdrawAccountId),
           goods,
+          appliedDeducts: staleGoods ? [] : (Array.isArray(parsed.appliedDeducts) ? parsed.appliedDeducts : []),
           goodsTab: parsed.goodsTab || "全部",
           goodsStatusTab: parsed.goodsStatusTab || "全部",
           orders: staleSeed ? base.orders : (Array.isArray(parsed.orders) ? parsed.orders : base.orders),
@@ -737,8 +1256,11 @@
     function save() {
       localStorage.setItem(STORE_KEY, JSON.stringify({
         seedVer: SEED_VER,
+        goodsSeedVer: HP.GOODS_SEED_VER,
         settleStatus: state.settleStatus,
         shop: state.shop,
+        shopLive: state.shopLive || HP.shopPublishSnapshot(state.shop),
+        shopAudit: state.shopAudit || null,
         apply: state.apply,
         balance: state.balance,
         ledgers: state.ledgers,
@@ -747,6 +1269,7 @@
         goodsTab: state.goodsTab,
         goodsStatusTab: state.goodsStatusTab || "全部",
         goods: state.goods.map(normalizeGoods),
+        appliedDeducts: state.appliedDeducts || [],
         orders: state.orders,
         refunds: state.refunds
       }));
@@ -768,6 +1291,22 @@
       return rs ? `售后${rs}` : "售后";
     }
 
+    /** 早期演示订单未带收货地址，按买家兜底 */
+    const DEMO_BUYER_ADDR = {
+      "周敏": { region: "广东省 广州市 海珠区", detail: "新港中路 397 号 3 栋 1203" },
+      "陈浩": { region: "浙江省 杭州市 西湖区", detail: "文三路 90 号东部软件园 2 号楼 501" },
+      "何雨桐": { region: "上海市 徐汇区", detail: "漕溪北路 88 号 1502 室" },
+      "林晓薇": { region: "广东省 深圳市 南山区", detail: "粤海街道科技园南路 16 号深圳湾科技生态园 11 栋 A 座 1806" },
+      "赵倩": { region: "江苏省 南京市 鼓楼区", detail: "中山北路 30 号 702 室" }
+    };
+
+    function orderAddress(o) {
+      if (o?.address?.detail) return { ...o.address, phone: HP.maskPhone(o.address.phone) };
+      const [name = "买家", phone = ""] = String(o?.buyer || "").split(/\s+/);
+      const fb = DEMO_BUYER_ADDR[name] || { region: "广东省 深圳市 南山区", detail: "科技园南路 16 号" };
+      return { name, phone, ...fb };
+    }
+
     function orderDisplayStatus(o) {
       if (o.status === "退款") {
         const rs = o.refundStatus || refundForOrder(o.id)?.status;
@@ -787,6 +1326,7 @@
     }
 
     function syncRefundsFromC() {
+      syncOrdersFromC();
       HP.loadRefundSync().forEach((row) => {
         if (!row?.id) return;
         const statusM = HP.mapRefundStatus("m", row.status);
@@ -827,7 +1367,7 @@
         refund: state.refunds.filter((r) => r.status === "待处理" || r.status === "待收货").length,
         onSale: state.goods.filter((g) => goodsStatusOf(g) === "在售").length,
         pendingGoods: state.goods.filter((g) => goodsStatusOf(g) === "审核中").length,
-        gmv: state.orders.filter((o) => o.status !== "待发货").reduce((s, o) => s + HP.orderGoodsAmount(o), 0)
+        gmv: state.orders.filter((o) => o.status !== "待发货").reduce((s, o) => s + HP.orderPayAmount(o), 0)
       };
     }
     function toast(msg) {
@@ -857,18 +1397,33 @@
         ${tab ? `
           <div class="tabbar">
             ${tabs.map(([k, label, badge]) => `
-              <span class="${screen === k || (k === "goods" && screen === "goodsEdit") || (k === "shop" && (screen === "shopEdit" || screen === "shopReviews")) ? "on" : ""}" data-nav="${k}">
-                <i class="ico"></i>${label}
-                ${badge ? `<b class="badge">${badge}</b>` : ""}
+              <span class="${screen === k || (k === "goods" && (screen === "goodsEdit" || screen === "goodsOps")) || (k === "shop" && ["shopEdit", "shopReviews", "freightTpls", "freightTplEdit"].includes(screen)) ? "on" : ""}" data-nav="${k}">
+                <i class="ico">${badge ? `<b class="badge">${badge > 99 ? "99+" : badge}</b>` : ""}</i>${label}
               </span>`).join("")}
           </div>` : ""}
         <div class="toast"></div>
-        <div class="sheet-mask ${sheet ? "show" : ""}" data-action="close-sheet">
+        <div class="sheet-mask ${sheet ? "show" : ""}">
           ${sheet ? `<div class="sheet" data-stop>${renderSheet()}</div>` : `<div class="sheet"></div>`}
         </div>`;
     }
 
     function renderSheet() {
+      if (sheet?.type === "province-pick") return provincePickSheetHtml();
+      if (sheet?.type === "freight-del") {
+        const tpls = HP.loadFreightTpls();
+        const t = tpls.find((x) => String(x.id) === String(sheet.tplId));
+        const def = tpls.find((x) => x.def) || tpls[0];
+        const n = t ? freightBoundGoods(t, tpls).length : 0;
+        return `
+          <h3>删除运费模板</h3>
+          <div style="font-size:13px;line-height:1.65;color:#444">
+            「${attrVal(t?.name || "")}」正被 ${n} 个商品使用，删除后这些商品改用默认模板「${attrVal(def?.name || "")}」计算运费，用户端即时生效。
+          </div>
+          <div class="acts">
+            <button class="btn ghost" data-action="close-sheet">取消</button>
+            <button class="btn danger" data-action="confirm-fr-del">确认删除</button>
+          </div>`;
+      }
       if (sheet?.type === "ship") {
         const o = state.orders.find((x) => x.id === sheet.orderId);
         const co = sheet.company || EXPRESS_COMPANIES[0];
@@ -900,6 +1455,36 @@
             <button class="btn danger" data-action="confirm-reject-refund">确认拒绝</button>
           </div>`;
       }
+      if (sheet?.type === "review-reply" || sheet?.type === "review-hide") {
+        const r = HP.loadReviews().find((x) => String(x.id) === String(sheet.reviewId));
+        const head = `<div class="muted" style="margin-bottom:10px">${r?.user || ""} · ${"★".repeat(r?.stars || 0)} · ${r?.text || ""}</div>`;
+        if (sheet.type === "review-reply") {
+          return `
+            <h3>${r?.reply ? "修改回复" : "回复评价"}</h3>
+            ${head}
+            <div class="field"><label>回复内容</label>
+              <textarea id="review-reply" rows="3" maxlength="200" placeholder="回复会展示在用户端该评价下方">${r?.reply || ""}</textarea>
+            </div>
+            <div class="acts">
+              <button class="btn ghost" data-action="close-sheet">取消</button>
+              <button class="btn solid" data-action="confirm-review-reply">发布回复</button>
+            </div>`;
+        }
+        return `
+          <h3>申请隐藏评价</h3>
+          ${head}
+          <div class="field"><label>隐藏原因</label>
+            ${HP.hwSelectHtml("review-hide-reason", HP.REVIEW_HIDE_REASONS, HP.REVIEW_HIDE_REASONS[0])}
+          </div>
+          <div class="field"><label>补充说明</label>
+            <textarea id="review-hide-note" rows="2" maxlength="100" placeholder="选填，便于平台审核"></textarea>
+          </div>
+          <div class="muted" style="margin:-4px 0 12px">提交后由平台审核；通过后用户端不再展示该评价，审核期间照常展示。</div>
+          <div class="acts">
+            <button class="btn ghost" data-action="close-sheet">取消</button>
+            <button class="btn solid" data-action="confirm-review-hide">提交审核</button>
+          </div>`;
+      }
       if (sheet?.type === "legal") {
         const docs = {
           settle: { title: "商家入驻协议", body: "入驻后须保证商品信息真实、发货时效达标，并配合平台售后规则处理退款与纠纷。严重违规将被清退。" },
@@ -909,6 +1494,7 @@
         const d = docs[sheet.doc] || docs.settle;
         return `
           <h3>${d.title}</h3>
+          ${HP.demoNoticeHtml()}
           <div style="font-size:13px;line-height:1.65;color:#444;margin:8px 0 14px">${d.body}</div>
           <div class="acts">
             <button class="btn solid" data-action="close-sheet" style="flex:1">我知道了</button>
@@ -922,6 +1508,7 @@
       return shell(`
         <div class="scroll">
           <div class="panel" style="margin-top:12px">
+            ${HP.demoNoticeHtml({ compact: true })}
             <div class="muted" style="margin-bottom:12px">使用当前登录账号申请开店。</div>
             <div class="field"><label>店铺名称</label><input id="ap-name" value="${a.name}" placeholder="例如：衡物官方旗舰店" /></div>
             <div class="field"><label>经营类目</label>
@@ -930,7 +1517,10 @@
             <div class="field"><label>联系人</label><input id="ap-contact" value="${a.contact}" /></div>
             <div class="field"><label>联系电话</label><input id="ap-phone" value="${a.phone}" /></div>
             <div class="field"><label>资质材料</label>
-              <div class="upload" data-action="toast" data-msg="请上传资质图片">+</div>
+              <div class="upload-row">
+                ${HP.uploadSlotHtml(a.licensePic || "", { action: "upload-apply-license", badge: a.licensePic ? "执照" : "", msg: "请上传资质图片" })}
+              </div>
+              <div class="muted" style="margin-top:6px">点击上传营业执照等资质（演示）</div>
             </div>
             <div style="display:flex;align-items:flex-start;gap:8px;margin:4px 0 14px;font-size:12px;color:#888;line-height:1.5">
               <div id="agree-apply" data-action="toggle-agree-apply" style="width:16px;height:16px;border-radius:50%;border:1.5px solid #ccc;flex-shrink:0;margin-top:1px;cursor:pointer;${agreeApply ? "border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 3px #fff" : ""}"></div>
@@ -1042,6 +1632,7 @@
       const catTab = state.goodsTab || "全部";
       const statusTabs = ["全部", "在售", "审核中", "已下架", "售罄"];
       const catTabs = ["全部", ...PRODUCT_CATEGORIES];
+      const publishedIds = new Set((HP.loadGoodsSync() || []).map((x) => String(x.id)));
       const list = state.goods.filter((g) => {
         const st = goodsStatusOf(g);
         if (statusTab !== "全部" && st !== statusTab) return false;
@@ -1065,24 +1656,31 @@
               <div class="h">${catTab}${statusTab !== "全部" ? ` · ${statusTab}` : ""} · ${list.length} 件</div>
               ${list.map((g) => {
                 const st = goodsStatusOf(g);
+                const liveOld = st === "审核中" && publishedIds.has(String(g.id));
                 const specs = HP.normalizeProductSpecs(g);
                 const skuHint = specs.map((s) => `${s.name}:${(s.values || []).join("/") || "-"}`).join(" · ");
+                const skuN = HP.normalizeProductSkus(g).length;
                 return `
                 <div class="list-card">
                   <div class="body">
-                    <div class="thumb ${g.pic}"></div>
+                    ${HP.productThumbHtml(HP.productCoverPic(g), "thumb", "m")}
                     <div class="info">
                       <div class="title">${g.title}</div>
                       <div class="meta-line">${g.cat || "未分类"} · ${skuHint}</div>
-                      <div class="meta-line">库存 ${g.stock}${g.sales != null ? ` · 已售 ${g.sales}` : ""} · <span class="tag ${st === "在售" ? "on" : st === "审核中" || st === "售罄" ? "wait" : "off"}">${st}</span></div>
-                      <div class="price">¥${g.price}${g.old ? ` <span class="muted" style="text-decoration:line-through;font-weight:400">¥${g.old}</span>` : ""}</div>
+                      <div class="meta-line">库存 ${HP.productStockTotal(g)} · ${skuN} 个规格 · 已售 ${HP.productSoldLabel(g)}${g.virtualSales ? `（含虚拟 ${g.virtualSales}）` : ""} · <span class="tag ${st === "在售" ? "on" : st === "审核中" || st === "售罄" ? "wait" : "off"}">${st}</span></div>
+                      <div class="meta-line">物流运费：${HP.goodsFreightLabel(g)}</div>
+                      ${liveOld ? `<div class="meta-line">用户端仍在售旧版，通过后替换</div>` : ""}
+                      <div class="price">${HP.productPriceLabel(g)}</div>
                     </div>
                   </div>
                   <div class="ft">
                     ${st === "审核中"
-                      ? `<button class="btn ghost sm" data-action="goods-withdraw-audit" data-id="${g.id}">撤销审核</button>`
-                      : `<button class="btn ghost sm" data-action="toggle-goods" data-id="${g.id}">${st === "在售" ? "下架" : "提交审核"}</button>`}
-                    <button class="btn outline sm" data-action="edit-goods" data-id="${g.id}">编辑</button>
+                      ? `<button class="btn ghost sm" data-action="goods-withdraw-audit" data-id="${g.id}">撤销</button>
+                         <button class="btn ghost sm" data-action="goods-reject-audit" data-id="${g.id}">驳回（演示）</button>
+                         <button class="btn solid sm" data-action="goods-approve-audit" data-id="${g.id}">通过（演示）</button>`
+                      : `<button class="btn ghost sm" data-action="toggle-goods" data-id="${g.id}">${st === "在售" || st === "售罄" ? "下架" : "提交审核"}</button>`}
+                    <button class="btn outline sm" data-action="ops-goods" data-id="${g.id}">经营</button>
+                    <button class="btn outline sm" data-action="edit-goods" data-id="${g.id}">资料</button>
                   </div>
                 </div>`;
               }).join("") || `<div class="empty">暂无符合条件的商品</div>`}
@@ -1099,56 +1697,131 @@
     function renderGoodsEdit() {
       const d = ensureGoodsDraft();
       const cat = d.cat && PRODUCT_CATEGORIES.includes(d.cat) ? d.cat : "家居";
+      const canOps = !!d.id;
       return shell(`
-        <div class="scroll with-tab" style="padding-bottom:24px">
+        <div class="scroll with-tab">
           <div class="panel">
-            <div class="edit-sec-title">基础信息 <span class="hint">对齐 C 端详情</span></div>
+            <div class="edit-sec-title">基础信息 <span class="hint">改资料 / 改图需重新审核</span></div>
             <div class="field"><label>商品名称</label><input id="g-title" value="${d.title}" /></div>
             <div class="field"><label>卖点副标题</label><input id="g-sub" value="${d.sub || ""}" placeholder="如：哑光釉面 可微波" /></div>
             <div class="field"><label>商品分类</label>
               ${HP.hwSelectHtml("g-cat", PRODUCT_CATEGORIES, cat)}
             </div>
-            <div class="field"><label>主图</label>
-              <div class="upload" data-action="toast" data-msg="请上传商品主图">+</div>
-            </div>
-            <div class="field"><label>商品状态</label>
-              ${HP.hwSelectHtml("g-shelf", GOODS_SHELF_OPTIONS, d.shelf || "pending")}
-            </div>
-            <div class="muted" style="margin-top:-6px">新建默认「审核中」；通过后才会在 C 端展示为可售。</div>
+            <div class="muted" style="margin-top:-6px">本页所有改动（资料 / 封面 / 轮播 / 详情图 / 规格封面 / 物流运费）都需审核，审核通过才同步到用户端；在售商品审核期间用户端仍展示旧版。价库存请在「经营」页维护（免审、即时生效）。「保存资料」仅落草稿，「提交审核」才会进入审核。</div>
           </div>
           <div class="panel">
-            <div class="edit-sec-title">价格与库存</div>
-            <div class="field"><label>售价（元）</label><input id="g-price" type="number" step="0.01" value="${d.price}" /></div>
-            <div class="field"><label>划线价（元）</label><input id="g-old" type="number" step="0.01" value="${d.old}" /></div>
-            <div class="field"><label>总库存</label><input id="g-stock" type="number" value="${d.stock}" /></div>
-            <div class="muted">已售 ${d.sales}（由订单累计，编辑页只读示意）</div>
+            <div class="edit-sec-title">商品封面 <span class="hint">需审核</span></div>
+            ${coverPickerHtml(d.pic)}
+            <div class="muted" style="margin-top:8px">列表与默认规格封面用此图；新规格自动继承。</div>
           </div>
           <div class="panel">
-            <div class="edit-sec-title">销售规格 <span class="hint">类型可自定义</span>
+            <div class="edit-sec-title">商品轮播 <span class="hint">多图 · 需审核</span></div>
+            ${HP.multiUploadHtml(d.banners, "banners", { size: "sm", side: "m" })}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">商品详情 <span class="hint">多图 · 需审核</span></div>
+            ${HP.multiUploadHtml(d.detailPics, "detailPics", { size: "sm", side: "m" })}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">
+              <span>销售规格 <span class="hint">类型可自定义</span></span>
               <button type="button" class="btn ghost sm" data-action="add-goods-spec">加类型</button>
             </div>
             ${specEditorHtml(d.specs)}
+            <div class="muted" style="margin-top:8px">改规格结构后，请到「经营」页核对各 SKU 价库存，并在下方「物流运费」补填新规格的重量。</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">规格封面 <span class="hint">每规格一张 · 需审核</span></div>
+            ${skuPicEditorHtml(HP.mergeProductSkus(d, d.skus), d.pic)}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>物流运费 <span class="hint">需审核</span></span></div>
+            ${freightEditHtml(d)}
           </div>
           <div class="panel">
             <div class="edit-sec-title">营销标签 <span class="hint">详情页角标</span></div>
             ${chipEditorHtml("tags", d.tags, "如：包邮")}
           </div>
           <div class="panel">
-            <div class="edit-sec-title">商品参数 <span class="hint">材质 / 工艺等</span>
+            <div class="edit-sec-title">
+              <span>商品参数</span>
               <button type="button" class="btn ghost sm" data-action="add-goods-param">加一行</button>
             </div>
             ${(d.params || []).length ? d.params.map((p, i) => `
               <div class="param-row">
                 <input data-param-k="${i}" value="${p.k || ""}" placeholder="参数名" />
                 <input data-param-v="${i}" value="${p.v || ""}" placeholder="参数值" />
-                <button type="button" class="btn ghost sm" data-action="remove-goods-param" data-idx="${i}">×</button>
-              </div>`).join("") : `<div class="muted" style="margin-bottom:8px">暂无参数，可点击加一行</div>`}
+                <button type="button" class="param-del" data-action="remove-goods-param" data-idx="${i}" aria-label="删除">×</button>
+              </div>`).join("") : `<div class="muted">暂无参数，可点击加一行</div>`}
           </div>
           <div class="panel">
-            <button class="btn solid block" data-action="save-goods">保存商品</button>
+            ${canOps ? `<button class="btn outline block" data-action="ops-goods" data-id="${d.id}" style="margin-bottom:10px">去经营编辑（价库存 · 免审）</button>` : ""}
+            <button class="btn outline block" data-action="save-goods" data-mode="draft" style="margin-bottom:10px">保存资料</button>
+            <button class="btn solid block" data-action="save-goods" data-mode="submit">提交审核</button>
           </div>
         </div>
-      `, { title: d.id ? "编辑商品" : "新建商品", back: "goods", tab: true });
+      `, { title: d.id ? "编辑资料" : "新建商品", back: "goods", tab: true });
+    }
+
+    function opsSkuSummary(d) {
+      const a = HP.skuAggregate(d.skus, d.price);
+      return `总库存 ${a.stock} · 列表价 ${HP.priceRangeLabel(a.price, a.maxPrice)}`;
+    }
+
+    function opsSoldSummary(d) {
+      return `C 端展示：已售 ${HP.productSoldLabel(d)}`;
+    }
+
+    function renderGoodsOps() {
+      const d = ensureGoodsOpsDraft();
+      if (!d) {
+        return shell(`
+          <div class="scroll with-tab">
+            <div class="empty">请先选择商品</div>
+            <div class="panel"><button class="btn outline block" data-nav="goods">返回商品列表</button></div>
+          </div>
+        `, { title: "经营编辑", back: "goods", tab: true });
+      }
+      const st = goodsStatusOf(d);
+      return shell(`
+        <div class="scroll with-tab">
+          <div class="panel">
+            <div class="edit-sec-title">当前商品</div>
+            <div class="body" style="display:flex;gap:10px;align-items:flex-start">
+              ${HP.productThumbHtml(d.pic, "thumb", "m")}
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:650;font-size:14px">${d.title || "未命名"}</div>
+                <div class="muted" style="margin-top:4px">${d.cat || ""} · <span class="tag ${st === "在售" ? "on" : st === "审核中" || st === "售罄" ? "wait" : "off"}">${st}</span></div>
+                <div class="muted" style="margin-top:4px">改价 / 库存 / 虚拟销量立即生效；商品图片请在「资料」页修改并走审核</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title">规格价库存 <span class="hint">免审</span></div>
+            ${skuEditorHtml(d.skus)}
+            <div class="muted" style="margin-top:8px" data-sku-summary>${opsSkuSummary(d)}</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>销量 <span class="hint">免审</span></span></div>
+            <div class="sku-row kv">
+              <div class="sku-lab">实际销量</div>
+              <div style="font-size:13px;font-weight:650">${d.sales || 0}</div>
+            </div>
+            <div class="sku-row kv">
+              <div class="sku-lab">虚拟销量</div>
+              <input id="g-virtual-sales" type="number" min="0" step="1" value="${d.virtualSales || 0}" placeholder="0" />
+            </div>
+            <div class="muted" data-sold-summary>${opsSoldSummary(d)}</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>物流运费 <span class="hint">需审核</span></span><button type="button" class="btn ghost sm" data-action="edit-goods" data-id="${d.id}">去资料页修改</button></div>
+            <div class="muted">${opsFreightSummary(d)}${st === "审核中" ? "（审核通过后生效）" : ""}</div>
+          </div>
+          <div class="panel">
+            <button class="btn solid block" data-action="save-goods-ops">保存并立即生效</button>
+          </div>
+        </div>
+      `, { title: "经营编辑", back: "goods", tab: true });
     }
 
     function renderAfterSaleList() {
@@ -1202,7 +1875,7 @@
             const items = HP.normalizeOrderItems(o);
             const refund = refundForOrder(o.id);
             const refundSt = o.refundStatus || refund?.status;
-            const amount = HP.orderGoodsAmount(o);
+            const amount = HP.orderPayAmount(o);
             return `
             <div class="list-card">
               <div class="hd">
@@ -1212,7 +1885,7 @@
               <div data-action="open-order-detail" data-id="${o.id}" style="cursor:pointer">
                 ${items.map((it) => `
                 <div class="body" style="margin-bottom:8px">
-                  <div class="thumb ${it.pic || ""}"></div>
+                  ${HP.productThumbHtml(it.pic || "mug", "thumb", "m")}
                   <div class="info">
                     <div class="title">${it.title}</div>
                     <div class="meta-line">${it.sku || ""}${it.qty > 1 ? ` ×${it.qty}` : ""}</div>
@@ -1244,61 +1917,122 @@
         return renderOrders();
       }
       const items = HP.normalizeOrderItems(o);
-      const amount = HP.orderGoodsAmount(o);
       const refund = refundForOrder(o.id);
       const refundSt = o.refundStatus || refund?.status;
+      const addr = orderAddress(o);
+      const amt = HP.orderAmountBreakdown(o);
+      const shipped = !!(o.expressNo || o.express);
+      const hint = {
+        "待发货": "买家已付款，请在 48 小时内发货",
+        "待收货": "已发货，等待买家确认收货；确认后货款结算到店铺余额",
+        "已完成": "交易完成，货款已结算到店铺余额",
+        "已取消": "订单已取消"
+      }[o.status] || (o.status === "退款" && refundSt ? HP.refundStatusHint("m", refundSt) : "");
+      const stepAt = o.status === "已完成" ? 4 : o.status === "待收货" ? 2 : shipped ? 2 : 1;
+      const steps = ["付款", "发货", "收货", "完成"];
+      const addrText = `${addr.name} ${addr.phone} ${addr.region} ${addr.detail}`;
+      const expressText = o.express || [o.company, o.expressNo].filter(Boolean).join(" ");
+      const money = (n) => `¥${Number(n || 0).toFixed(2)}`;
       return shell(`
-        <div class="scroll with-tab" style="padding-bottom:24px">
+        <div class="scroll with-tab">
+          <div class="od-hero ${o.status === "退款" ? "warn" : o.status === "已取消" ? "off" : ""}">
+            <div class="st">${orderDisplayStatus(o)}</div>
+            ${hint ? `<div class="hint">${hint}</div>` : ""}
+          </div>
+          ${o.status !== "已取消" ? `
+          <div class="panel od-steps">
+            ${steps.map((s, i) => `<div class="step ${i < stepAt ? "done" : i === stepAt ? "now" : ""}"><i></i><span>${s}</span></div>`).join("")}
+          </div>` : ""}
           <div class="panel">
-            <div style="font-size:18px;font-weight:700;color:var(--brand)">${orderDisplayStatus(o)}</div>
-            <div class="muted" style="margin-top:6px">订单号 ${o.id}</div>
-            ${o.status === "退款" && refundSt ? `<div class="muted" style="margin-top:6px">${HP.refundStatusHint("m", refundSt)}</div>` : ""}
+            <div class="od-sec">收货信息 <button type="button" class="od-link" data-action="copy-text" data-text="${addrText}">复制</button></div>
+            <div class="od-addr-name">${addr.name} <span>${addr.phone}</span></div>
+            <div class="od-addr">${addr.region} ${addr.detail}</div>
+            ${o.remark ? `<div class="od-remark"><b>买家留言</b>${o.remark}</div>` : ""}
           </div>
           <div class="panel">
-            <div class="muted" style="margin-bottom:8px">买家</div>
-            <div style="font-size:14px;font-weight:650">${o.buyer || "-"}</div>
-            <div class="muted" style="margin-top:4px">下单 ${o.paidAt || "-"}</div>
-          </div>
-          <div class="panel">
-            <div class="edit-sec-title">商品 · ${HP.orderItemCount(o)} 件</div>
+            <div class="od-sec">商品 · ${HP.orderItemCount(o)} 件</div>
             ${items.map((it) => `
-              <div class="body" style="margin-bottom:12px">
-                <div class="thumb ${it.pic || ""}"></div>
+              <div class="od-item">
+                ${HP.productThumbHtml(it.pic || "mug", "thumb", "m")}
                 <div class="info">
                   <div class="title">${it.title}</div>
-                  <div class="meta-line">${it.sku || ""}</div>
-                  <div class="meta-line">¥${Number(it.price).toFixed(2)} × ${it.qty}</div>
+                  <div class="meta-line">${it.sku || "默认规格"}</div>
                 </div>
+                <div class="od-item-amt"><div>${money(it.price)}</div><div class="muted">×${it.qty}</div></div>
               </div>`).join("")}
-            <div style="text-align:right;font-size:14px;border-top:1px solid #f0f0f0;padding-top:10px">
-              实收 <span class="price">¥${Number(amount).toFixed(2)}</span>
+            <div class="od-amts">
+              <div><span>商品金额</span><span>${money(amt.goods)}</span></div>
+              <div><span>运费</span><span>${amt.freight ? money(amt.freight) : "包邮"}</span></div>
+              ${amt.discount ? `<div><span>优惠${amt.couponTitle ? `（${amt.couponTitle}）` : ""}</span><span class="minus">-${money(amt.discount)}</span></div>` : ""}
+              <div class="total"><span>实收</span><span class="price">${money(amt.pay)}</span></div>
             </div>
           </div>
+          ${shipped || refund?.returnExpressNo ? `
           <div class="panel">
-            <div class="field" style="margin:0"><label>物流</label>
-              <div style="font-size:14px;margin-top:4px">${o.express || "暂无运单"}</div>
-            </div>
+            ${shipped ? `
+            <div class="od-sec">发货物流 <button type="button" class="od-link" data-action="copy-text" data-text="${o.expressNo || expressText}">复制单号</button></div>
+            <div class="od-line">${expressText}</div>
+            ${o.logistics ? `<div class="muted" style="margin-top:4px">${o.logistics}</div>` : ""}` : ""}
             ${refund?.returnExpressNo ? `
-            <div class="field" style="margin:12px 0 0"><label>退货物流</label>
-              <div style="font-size:14px;margin-top:4px">${refund.returnCompany || "快递"} ${refund.returnExpressNo}</div>
-            </div>` : ""}
+            <div class="od-sec" style="${shipped ? "margin-top:14px" : ""}">退货物流 <button type="button" class="od-link" data-action="copy-text" data-text="${refund.returnExpressNo}">复制单号</button></div>
+            <div class="od-line">${refund.returnCompany || "快递"} ${refund.returnExpressNo}</div>` : ""}
+          </div>` : ""}
+          <div class="panel od-info">
+            <div class="od-sec">订单信息</div>
+            <div><span>订单编号</span><span>${o.id} <button type="button" class="od-link" data-action="copy-text" data-text="${o.id}">复制</button></span></div>
+            <div><span>买家</span><span>${o.buyer || "-"}</span></div>
+            <div><span>付款时间</span><span>${o.paidAt || "-"}</span></div>
+            ${o.shippedAt ? `<div><span>发货时间</span><span>${o.shippedAt}</span></div>` : ""}
+            <div><span>支付方式</span><span>余额支付</span></div>
           </div>
-          <div class="panel" style="display:flex;gap:8px;flex-wrap:wrap">
-            ${o.status === "待发货" ? `<button class="btn solid" style="flex:1" data-action="open-ship" data-id="${o.id}">发货</button>` : ""}
-            ${o.status === "退款" ? `<button class="btn outline" style="flex:1" data-action="open-order-refund" data-id="${o.id}">去售后</button>` : ""}
-            <button class="btn ghost" style="flex:1" data-nav="orders">返回列表</button>
+          <div class="panel od-acts">
+            <button class="btn ghost" data-action="toast" data-msg="演示：拨打买家隐私号">联系买家</button>
+            ${o.status === "待发货" ? `<button class="btn solid" data-action="open-ship" data-id="${o.id}">发货</button>` : ""}
+            ${o.status === "退款" ? `<button class="btn outline" data-action="open-order-refund" data-id="${o.id}">处理售后</button>` : ""}
           </div>
         </div>
       `, { title: "订单详情", back: "orders", tab: true });
     }
 
-    const SHOP_REVIEWS = [
-      { id: 1, product: "雾面陶瓷马克杯 350ml", user: "小***周", stars: 5, text: "釉面很细，和详情图一致。", time: "10-12", pics: ["mug", "mug"] },
-      { id: 2, product: "304 不锈钢细口手冲壶", user: "咖***迷", stars: 5, text: "出水很稳，手感沉但不累。", time: "10-20", pics: ["kettle"] },
-      { id: 3, product: "棉纸方格手帐本 A5", user: "阿***林", stars: 4, text: "纸张舒服，封面容易折角。", time: "10-08", pics: ["book"] },
-      { id: 4, product: "雪松香氛洗手皂", user: "陈***", stars: 5, text: "香味清爽，包装也完整。", time: "09-28", pics: ["soap", "soap"] },
-      { id: 5, product: "日式粗陶茶杯 150ml", user: "周***", stars: 5, text: "手作感强，喝茶很有仪式感。", time: "10-02" }
-    ];
+    let reviewTab = "全部";
+    const REVIEW_TABS = ["全部", "隐藏审核中", "已隐藏"];
+
+    function reviewProductTitle(r) {
+      return state.goods.find((g) => String(g.id) === String(r.productId))?.title || "商品";
+    }
+
+    function reviewMatchesTab(r, tab) {
+      const st = r.hide?.status;
+      if (tab === "隐藏审核中") return st === "pending";
+      if (tab === "已隐藏") return st === "approved";
+      return true;
+    }
+
+    function reviewHideTagHtml(r) {
+      const st = r.hide?.status;
+      if (st === "pending") return `<span class="tag wait">隐藏审核中</span>`;
+      if (st === "approved") return `<span class="tag off">已隐藏</span>`;
+      if (st === "rejected") return `<span class="tag off">隐藏被驳回</span>`;
+      return "";
+    }
+
+    function reviewActsHtml(r) {
+      const st = r.hide?.status;
+      const replyBtn = st === "approved"
+        ? ""
+        : `<button class="btn outline sm" data-action="open-review-reply" data-id="${r.id}">${r.reply ? "修改回复" : "回复"}</button>`;
+      if (st === "pending") {
+        return `
+          <button class="btn ghost sm" data-action="review-hide-withdraw" data-id="${r.id}">撤回申请</button>
+          <button class="btn ghost sm" data-action="review-hide-reject" data-id="${r.id}">驳回（演示）</button>
+          <button class="btn solid sm" data-action="review-hide-approve" data-id="${r.id}">通过（演示）</button>
+          ${replyBtn}`;
+      }
+      if (st === "approved") return "";
+      return `
+        <button class="btn ghost sm" data-action="open-review-hide" data-id="${r.id}">${st === "rejected" ? "重新申请隐藏" : "申请隐藏"}</button>
+        ${replyBtn}`;
+    }
 
     function renderShop() {
       const s = state.shop;
@@ -1340,13 +2074,14 @@
               </div>
             </div>
             <div class="shop-menu">
-              <div class="shop-cell" data-nav="shopEdit">店铺资料 <span>名称 / 类目 / 公告 ›</span></div>
-              <div class="shop-cell" data-nav="shopReviews">店铺评价 <span>${SHOP_REVIEWS.length} 条 ›</span></div>
+              <div class="shop-cell" data-nav="shopEdit">店铺资料 <span>${state.shopAudit?.status === "pending" ? `<span style="color:var(--price)">审核中 ›</span>` : state.shopAudit?.status === "rejected" ? `<span style="color:var(--price)">已驳回 ›</span>` : "名称 / 类目 / 公告 ›"}</span></div>
+              <div class="shop-cell" data-nav="shopReviews">店铺评价 <span>${HP.loadReviews().length} 条 ›</span></div>
+              <div class="shop-cell" data-nav="freightTpls">物流运费 <span>${HP.loadFreightTpls().length} 个运费模板 ›</span></div>
               <div class="shop-cell" data-nav="withdrawAccounts">提现账户 <span>${authChannel === "mp" ? "仅微信 ›" : "微信/支付宝/银行卡 ›"}</span></div>
               <div class="shop-cell" data-nav="msgList">消息通知 ${unread ? `<span style="color:var(--price)">${unread} 条未读 ›</span>` : "<span>›</span>"}</div>
               <a class="shop-cell" href="./c-end-ui-preview.html" style="color:inherit;text-decoration:none">切换 C 端 <span>买家视角 ›</span></a>
             </div>
-            <div class="muted" style="padding:0 4px;line-height:1.5">公告：${s.notice || "暂无公告"}</div>
+            <div class="muted" style="padding:0 4px;line-height:1.5">公告：${s.notice || "暂无公告"}${state.shopAudit?.status === "pending" ? "（资料审核中，用户端仍展示旧版）" : ""}</div>
           </div>
         </div>
       `, { tab: true });
@@ -1354,39 +2089,385 @@
 
     function renderShopEdit() {
       const s = state.shop;
+      const live = ensureShopLive();
+      const audit = state.shopAudit;
+      const pending = audit?.status === "pending";
+      const rejected = audit?.status === "rejected";
       return shell(`
-        <div class="scroll with-tab" style="padding-bottom:24px">
+        <div class="scroll with-tab">
           <div class="panel">
-            <div class="field"><label>店铺名称</label><input id="shop-name" value="${s.name}" /></div>
-            <div class="field"><label>经营类目</label>
+            <div class="edit-sec-title">基础信息 <span class="hint">改动需审核</span></div>
+            ${pending ? `<div class="muted" style="margin-bottom:10px;color:var(--price)">审核中：用户端仍展示「${live.name}」等旧版资料；通过后替换。</div>` : ""}
+            ${rejected ? `<div class="muted" style="margin-bottom:10px;color:var(--price)">上次审核驳回${audit.rejectReason ? `：${audit.rejectReason}` : ""}。修改后请重新提交。</div>` : ""}
+            <div class="field"><label>店铺名称 <span class="hint">需审核</span></label><input id="shop-name" value="${s.name}" /></div>
+            <div class="field"><label>经营类目 <span class="hint">需审核</span></label>
               ${HP.hwSelectHtml("shop-cat", BUSINESS_CATEGORIES, s.category || BUSINESS_CATEGORIES[0])}
             </div>
-            <div class="field"><label>店铺公告</label><textarea id="shop-notice" rows="3">${s.notice}</textarea></div>
-            <div class="field"><label>营业状态</label>
+            <div class="field"><label>店铺公告 <span class="hint">需审核</span></label><textarea id="shop-notice" rows="3">${s.notice}</textarea></div>
+            <div class="field"><label>营业状态 <span class="hint">需审核</span></label>
               ${HP.hwSelectHtml("shop-open", [{ value: "1", label: "营业中" }, { value: "0", label: "打烊" }], s.open ? "1" : "0")}
             </div>
-            <button class="btn solid block" data-action="save-shop">保存</button>
+            <div class="muted" style="margin-top:-6px;margin-bottom:12px">本页所有改动都需审核，审核通过才同步到用户端；审核期间用户端仍展示旧版。</div>
+            ${pending
+              ? `<div style="display:flex;flex-direction:column;gap:8px">
+                  <button class="btn solid block" data-action="save-shop">保存并继续等待审核</button>
+                  <button class="btn ghost block" data-action="shop-withdraw-audit">撤销审核</button>
+                  <button class="btn ghost block" data-action="shop-reject-audit">驳回（演示）</button>
+                  <button class="btn solid block" data-action="shop-approve-audit">通过（演示）</button>
+                </div>`
+              : `<button class="btn solid block" data-action="save-shop">提交审核</button>`}
           </div>
         </div>
       `, { title: "店铺资料", back: "shop", tab: true });
     }
 
+    const FREIGHT_MODE_ITEMS = [{ value: "piece", label: "按件数" }, { value: "weight", label: "按重量" }];
+    const attrVal = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+    /** 使用该模板的商品数（未绑定 / 绑定已删模板的计入默认模板） */
+    function freightBoundGoods(tpl, tpls) {
+      return state.goods.filter((g) =>
+        HP.normalizeFreightMode(g) === "template"
+        && HP.freightTplOf(tpls, g.freightTplId)?.id === tpl.id
+      );
+    }
+
+    function blankFreightTpl() {
+      return {
+        id: null, name: "", mode: "piece", def: false,
+        base: { first: 1, firstFee: 8, extra: 1, extraFee: 2 },
+        rules: [],
+        noDelivery: ["香港特别行政区", "澳门特别行政区", "台湾省"],
+        free: { on: false, type: "amount", value: 99, exclude: [] }
+      };
+    }
+
+    function ensureFreightDraft() {
+      if (freightDraft) return freightDraft;
+      const existing = HP.loadFreightTpls().find((t) => String(t.id) === String(editingFreightTplId));
+      freightDraft = HP.normalizeFreightTpl(existing || blankFreightTpl());
+      return freightDraft;
+    }
+
+    function syncFreightDraftFromForm() {
+      if (screen !== "freightTplEdit" || !freightDraft) return;
+      const d = freightDraft;
+      const nameEl = document.getElementById("fr-name");
+      if (!nameEl) return;
+      d.name = nameEl.value;
+      document.querySelectorAll("[data-fr-num]").forEach((el) => {
+        const [key, field] = el.getAttribute("data-fr-num").split("|");
+        const target = key === "base" ? d.base : d.rules[Number(key.slice(1))];
+        if (target) target[field] = el.value === "" ? "" : Number(el.value);
+      });
+      const fv = document.getElementById("fr-free-value");
+      if (fv) d.free.value = fv.value === "" ? "" : Number(fv.value);
+      const prov = document.getElementById("fr-calc-prov")?.value || HP.parseShipRegion(freightCalc.region).province;
+      const city = document.getElementById("fr-calc-city")?.value || "";
+      freightCalc.region = HP.areaCode(prov, city);
+      const num = (id, fb) => {
+        const el = document.getElementById(id);
+        return el ? Math.max(0, Number(el.value) || 0) : fb;
+      };
+      freightCalc.qty = num("fr-calc-qty", freightCalc.qty);
+      freightCalc.unitWeight = num("fr-calc-weight", freightCalc.unitWeight);
+      freightCalc.amount = num("fr-calc-amount", freightCalc.amount);
+    }
+
+    /** 草稿转可计算模板（空值按 0） */
+    function freightTplForCalc(d) {
+      const rule = (r) => ({
+        ...r,
+        areas: (r.areas || []).slice(),
+        first: Number(r.first) || 0, firstFee: Number(r.firstFee) || 0,
+        extra: Number(r.extra) || 0, extraFee: Number(r.extraFee) || 0
+      });
+      return {
+        ...d,
+        base: rule(d.base),
+        rules: d.rules.map(rule),
+        free: { ...d.free, value: Number(d.free.value) || 0, exclude: (d.free.exclude || []).slice() }
+      };
+    }
+
+    function freightCalcHtml(d) {
+      const tpl = freightTplForCalc(d);
+      const u = HP.freightUnitLabel(d.mode);
+      const ship = HP.parseShipRegion(freightCalc.region);
+      const qty = freightCalc.qty;
+      const weight = d.mode === "weight" ? Math.round(qty * freightCalc.unitWeight * 1000) / 1000 : qty;
+      const r = HP.freightForTpl(tpl, ship, { amount: freightCalc.amount, qty, weight });
+      const short = ship.city ? HP.regionShort(ship.city) : HP.provinceShort(ship.province);
+      if (r.blocked) {
+        return `<div class="bad">${short}在不配送地区</div><div>用户端收货地址在该地区时无法提交订单</div>`;
+      }
+      const freeText = HP.freightFreeText(tpl.free);
+      const excluded = tpl.free.on && !!HP.findCoveringArea(tpl.free.exclude || [], ship);
+      const freeLine = r.free
+        ? `已满足包邮条件（${freeText}）`
+        : excluded ? `${short}不参与包邮` : freeText ? `未达包邮门槛（${freeText}）` : "未设置包邮";
+      return `
+        <div class="fee">运费 <b>¥${r.fee.toFixed(2)}</b></div>
+        <div>命中：${r.rule.hit} · ${HP.freightRuleText(r.rule, d.mode)}</div>
+        <div>计费量：${r.units}${u.unit}${d.mode === "weight" ? `（${qty} 件 × ${freightCalc.unitWeight}kg）` : ""}</div>
+        <div>${freeLine}</div>`;
+    }
+
+    function updateFreightCalc() {
+      if (screen !== "freightTplEdit" || !freightDraft) return;
+      syncFreightDraftFromForm();
+      const el = document.querySelector("[data-fr-calc]");
+      if (el) el.innerHTML = freightCalcHtml(freightDraft);
+    }
+
+    /** 选择器中不可选地区：已被其他规则 / 不配送地区占用（市占用则全省不可选） */
+    function freightOccupied(d, target) {
+      const codes = [];
+      if (target === "freeExclude") {
+        codes.push(...(d.noDelivery || []));
+      } else {
+        d.rules.forEach((r, i) => {
+          if (target !== `rule:${i}`) codes.push(...(r.areas || []));
+        });
+        if (target !== "noDelivery") codes.push(...(d.noDelivery || []));
+      }
+      return HP.areaOccupiedSet(codes);
+    }
+
+    function freightTargetList(d, target) {
+      if (target === "noDelivery") return d.noDelivery;
+      if (target === "freeExclude") return d.free.exclude;
+      return d.rules[Number(String(target).split(":")[1])]?.areas || [];
+    }
+
+    function provincePickSheetHtml() {
+      const selected = sheet.selected || [];
+      const dis = sheet.disabled || new Set();
+      const disabled = dis instanceof Set ? dis : new Set(dis);
+      const cur = sheet.province || HP.PROVINCES[0];
+      const cities = HP.REGION_BY_PROV[cur]?.cities || [];
+      const st = HP.provinceSelectState(selected, cur);
+      const titles = { noDelivery: "选择不配送地区", freeExclude: "选择包邮除外地区" };
+      const cityCodes = cities.map((c) => HP.areaCode(cur, c));
+      const wholeDisabled = disabled.has(cur) && st === "none";
+      const cityAvail = cityCodes.filter((c) => !disabled.has(c) || selected.includes(c));
+      return `
+        <h3>${titles[sheet.target] || "选择指定地区"}</h3>
+        <div class="muted" style="margin:-6px 0 10px">已选 ${selected.length} 项 · 可选全省或具体城市；划线为已被占用</div>
+        <div class="region-pick">
+          <div class="region-prov">
+            ${HP.PROVINCES.map((p) => {
+              const pst = HP.provinceSelectState(selected, p);
+              const mark = pst === "whole" ? "全省" : pst === "partial" ? "部分" : "";
+              return `<button type="button" class="${p === cur ? "on" : ""}" data-action="region-prov" data-p="${p}">
+                <span>${HP.provinceShort(p)}</span>${mark ? `<span class="mark">${mark}</span>` : ""}
+              </button>`;
+            }).join("")}
+          </div>
+          <div class="region-city">
+            <div class="chd">
+              <span>${HP.provinceShort(cur)}</span>
+              ${cityAvail.length || !wholeDisabled ? `<button type="button" class="od-link" data-action="region-whole" data-p="${cur}"${wholeDisabled ? " disabled" : ""}>${st === "whole" ? "取消全省" : "选全省"}</button>` : ""}
+            </div>
+            <div class="prov-grid">
+              <button type="button" class="prov-chip${st === "whole" ? " on" : ""}" data-action="region-whole" data-p="${cur}"${wholeDisabled ? " disabled" : ""}>全省</button>
+              ${cities.map((c) => {
+                const code = HP.areaCode(cur, c);
+                const on = st === "whole" || selected.includes(code);
+                const off = disabled.has(code) && !selected.includes(code) && st !== "whole";
+                return `<button type="button" class="prov-chip${on ? " on" : ""}" data-action="region-city" data-code="${code}"${off || st === "whole" ? " disabled" : ""}>${HP.regionShort(c)}</button>`;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+        <div class="acts">
+          <button class="btn ghost" data-action="close-sheet">取消</button>
+          <button class="btn solid" data-action="prov-confirm">确定</button>
+        </div>`;
+    }
+
+    function rerenderSheet() {
+      const el = document.querySelector("#phone .sheet[data-stop]");
+      if (el) el.innerHTML = renderSheet();
+    }
+
+    /** 保存前校验；通过返回空串 */
+    function validateFreightDraft(d, tpls) {
+      const name = String(d.name || "").trim();
+      if (!name) return "请填写模板名称";
+      if (tpls.some((t) => t.name === name && String(t.id) !== String(d.id))) return "模板名称已存在";
+      const u = HP.freightUnitLabel(d.mode);
+      const checkRule = (r, label) => {
+        if ([r.first, r.firstFee, r.extra, r.extraFee].some((v) => v === "" || Number.isNaN(Number(v)))) return `${label}：请填写完整`;
+        if (!(Number(r.first) > 0) || !(Number(r.extra) > 0)) return `${label}：${u.first}和${u.extra}必须大于 0`;
+        if (d.mode === "piece" && (!Number.isInteger(Number(r.first)) || !Number.isInteger(Number(r.extra)))) return `${label}：件数须为整数`;
+        if (Number(r.firstFee) < 0 || Number(r.extraFee) < 0) return `${label}：运费不能为负数`;
+        return "";
+      };
+      const baseErr = checkRule(d.base, "默认运费");
+      if (baseErr) return baseErr;
+      let occupied = HP.areaOccupiedSet(d.noDelivery || []);
+      for (let i = 0; i < d.rules.length; i++) {
+        const r = d.rules[i];
+        const areas = r.areas || [];
+        if (!areas.length) return `指定地区 ${i + 1}：请选择地区`;
+        const err = checkRule(r, `指定地区 ${i + 1}`);
+        if (err) return err;
+        const dup = areas.find((code) => occupied.has(code));
+        if (dup) return `${HP.areaLabel(dup)}重复设置，同一地区只能出现在一处`;
+        occupied = HP.areaOccupiedSet([...(d.noDelivery || []), ...d.rules.slice(0, i + 1).flatMap((x) => x.areas || [])]);
+      }
+      if (d.free.on && !(Number(d.free.value) > 0)) return "请填写包邮门槛";
+      return "";
+    }
+
+    function renderFreightTpls() {
+      const list = HP.loadFreightTpls();
+      return shell(`
+        <div class="scroll with-tab">
+          <div class="panel" style="font-size:12px;color:#888;line-height:1.6">
+            用户下单时按商品绑定的运费模板和收货省/市计算运费；未绑定模板的商品使用默认模板。同一订单含多个模板的商品时，各模板分别计费后相加。商品的运费模板和规格重量在「商品 → 经营」中设置。
+          </div>
+          ${list.map((t) => {
+            const n = freightBoundGoods(t, list).length;
+            const freeText = HP.freightFreeText(t.free);
+            const exclude = t.free?.on && t.free.exclude?.length ? `（${HP.regionsText(t.free.exclude, 3)}除外）` : "";
+            return `<div class="list-card">
+              <div class="hd">
+                <span style="font-size:14px;font-weight:650;color:#222">${attrVal(t.name)}${t.def ? ` <span class="tag on">默认</span>` : ""}</span>
+                <span class="tag ${t.mode === "weight" ? "wait" : "ok"}">${t.mode === "weight" ? "按重量" : "按件数"}</span>
+              </div>
+              <div class="meta-line">默认运费：${HP.freightRuleText(t.base, t.mode)}</div>
+              <div class="meta-line">指定地区：${(t.rules || []).length
+                ? t.rules.map((r) => `${HP.regionsText(r.areas || [], 3)} ¥${r.firstFee} 起`).join("；")
+                : "无"}</div>
+              <div class="meta-line">包邮：${freeText ? freeText + exclude : "不包邮"}</div>
+              <div class="meta-line">不配送：${HP.regionsText(t.noDelivery, 4)}</div>
+              <div class="meta-line">使用商品：${n} 个</div>
+              <div class="ft">
+                ${t.def ? "" : `<button class="btn ghost sm" data-action="fr-default" data-id="${t.id}">设为默认</button>`}
+                <button class="btn ghost sm" data-action="fr-copy" data-id="${t.id}">复制</button>
+                <button class="btn outline sm" data-action="fr-edit" data-id="${t.id}">编辑</button>
+                <button class="btn danger sm" data-action="fr-del" data-id="${t.id}">删除</button>
+              </div>
+            </div>`;
+          }).join("") || `<div class="empty">暂无运费模板</div>`}
+          <div class="panel">
+            <button class="btn solid block" data-action="fr-new">新建运费模板</button>
+          </div>
+        </div>
+      `, { title: "物流运费", back: "shop", tab: true });
+    }
+
+    function renderFreightTplEdit() {
+      const d = ensureFreightDraft();
+      const u = HP.freightUnitLabel(d.mode);
+      const step = d.mode === "weight" ? "0.1" : "1";
+      const ship = HP.parseShipRegion(freightCalc.region);
+      const calcCities = HP.REGION_BY_PROV[ship.province]?.cities || [];
+      const numGrid = (key, r) => `
+        <div class="fr-grid">
+          <div><label>${u.first}（${u.unit}）</label><input type="number" min="0" step="${step}" data-fr-num="${key}|first" value="${r.first}" /></div>
+          <div><label>首费（元）</label><input type="number" min="0" step="0.01" data-fr-num="${key}|firstFee" value="${r.firstFee}" /></div>
+          <div><label>${u.extra}（${u.unit}）</label><input type="number" min="0" step="${step}" data-fr-num="${key}|extra" value="${r.extra}" /></div>
+          <div><label>续费（元）</label><input type="number" min="0" step="0.01" data-fr-num="${key}|extraFee" value="${r.extraFee}" /></div>
+        </div>`;
+      const pickBtn = (target, list, empty) => `<button type="button" class="fr-pick${list.length ? "" : " empty"}" data-action="fr-pick-prov" data-target="${target}">${list.length ? HP.regionsText(list, 10) : empty}</button>`;
+      const freeTypes = [
+        { value: "amount", label: "满金额" },
+        { value: "piece", label: "满件数" },
+        ...(d.mode === "weight" ? [{ value: "weight", label: "满重量" }] : [])
+      ];
+      const freeUnit = d.free.type === "piece" ? "件" : d.free.type === "weight" ? "kg" : "元";
+      return shell(`
+        <div class="scroll with-tab">
+          <div class="panel">
+            <div class="field"><label>模板名称</label><input id="fr-name" maxlength="20" value="${attrVal(d.name)}" placeholder="如：默认模板、大件按重量" /></div>
+            <div class="field" style="margin-bottom:0"><label>计费方式</label>${HP.typePicksHtml(FREIGHT_MODE_ITEMS, d.mode, { action: "fr-mode" })}</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>默认运费 <span class="hint">未指定的地区按此计费</span></span></div>
+            ${numGrid("base", d.base)}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>指定地区运费</span><button type="button" class="btn outline sm" data-action="fr-add-rule">添加地区</button></div>
+            ${d.rules.map((r, i) => `
+              <div class="fr-rule">
+                <div class="rhd">
+                  ${pickBtn(`rule:${i}`, r.areas || [], "点击选择省 / 市")}
+                  <button type="button" class="btn ghost sm" data-action="fr-del-rule" data-idx="${i}">删除</button>
+                </div>
+                ${numGrid(`r${i}`, r)}
+              </div>`).join("") || `<div class="muted">暂无，所有地区按默认运费计费</div>`}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>不配送地区</span></div>
+            ${pickBtn("noDelivery", d.noDelivery, "全国均可配送，点击设置")}
+            <div class="muted" style="margin-top:6px">收货地址在这些省 / 市时，用户端无法提交订单</div>
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>包邮条件</span></div>
+            ${HP.typePicksHtml([{ value: "1", label: "开启包邮" }, { value: "0", label: "不包邮" }], d.free.on ? "1" : "0", { action: "fr-free-on" })}
+            ${d.free.on ? `
+              <div style="margin-top:12px">${HP.typePicksHtml(freeTypes, d.free.type, { action: "fr-free-type" })}</div>
+              <div class="sku-row kv" style="margin-top:12px">
+                <div class="sku-lab">门槛（${freeUnit}）</div>
+                <input id="fr-free-value" type="number" min="0" step="${d.free.type === "piece" ? "1" : "0.01"}" value="${d.free.value}" />
+              </div>
+              <div class="field" style="margin:4px 0 0"><label>包邮除外地区</label>${pickBtn("freeExclude", d.free.exclude, "无，全部可配送地区均包邮")}</div>` : ""}
+          </div>
+          <div class="panel">
+            <div class="edit-sec-title"><span>运费试算 <span class="hint">按当前编辑内容</span></span></div>
+            <div class="field"><label>收货省份</label>${HP.hwSelectHtml("fr-calc-prov", HP.PROVINCES, ship.province || HP.PROVINCES[0])}</div>
+            <div class="field"><label>收货城市</label>${HP.hwSelectHtml("fr-calc-city", [{ value: "", label: "不限（按全省规则）" }, ...calcCities.map((c) => ({ value: c, label: c }))], ship.city || "")}</div>
+            <div class="fr-grid" style="grid-template-columns:repeat(${d.mode === "weight" ? 3 : 2}, minmax(0, 1fr))">
+              <div><label>件数</label><input id="fr-calc-qty" type="number" min="0" step="1" value="${freightCalc.qty}" /></div>
+              ${d.mode === "weight" ? `<div><label>单件重量（kg）</label><input id="fr-calc-weight" type="number" min="0" step="0.1" value="${freightCalc.unitWeight}" /></div>` : ""}
+              <div><label>商品金额（元）</label><input id="fr-calc-amount" type="number" min="0" step="0.01" value="${freightCalc.amount}" /></div>
+            </div>
+            <div class="fr-calc" data-fr-calc style="margin-top:10px">${freightCalcHtml(d)}</div>
+          </div>
+          <div class="panel">
+            <button class="btn solid block" data-action="save-freight-tpl">保存并立即生效</button>
+          </div>
+        </div>
+      `, { title: d.id != null ? "编辑运费模板" : "新建运费模板", back: "freightTpls", tab: true });
+    }
+
     function renderShopReviews() {
+      const all = HP.loadReviews();
+      const list = all.filter((r) => reviewMatchesTab(r, reviewTab));
+      const count = (t) => all.filter((r) => reviewMatchesTab(r, t)).length;
+      const good = all.filter((r) => !HP.reviewHidden(r));
+      const rate = good.length ? Math.round(good.filter((r) => r.stars >= 4).length / good.length * 100) : 100;
       return shell(`
         <div class="scroll with-tab">
           <div class="panel" style="margin-bottom:0">
             <div style="font-size:13px;font-weight:650;margin-bottom:4px">买家评价</div>
-            <div class="muted">好评率 98% · 共 ${SHOP_REVIEWS.length} 条（演示）</div>
+            <div class="muted">好评率 ${rate}% · 共 ${all.length} 条 · 回复与隐藏结果同步到用户端</div>
+          </div>
+          <div class="seg">
+            ${REVIEW_TABS.map((t) =>
+              `<button class="${reviewTab === t ? "on" : ""}" data-action="review-tab" data-tab="${t}">${t}${t === "全部" ? "" : ` ${count(t)}`}</button>`
+            ).join("")}
           </div>
           <div class="panel" style="margin-top:0;border-radius:0 0 12px 12px">
-            ${SHOP_REVIEWS.map((r) => `
-              <div class="shop-review">
-                <div class="who"><span>${r.user}</span><span class="stars">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</span></div>
-                <div class="prod">${r.product}</div>
+            ${list.map((r) => `
+              <div class="shop-review${HP.reviewHidden(r) ? " hidden" : ""}">
+                <div class="who"><span>${r.user} ${reviewHideTagHtml(r)}</span><span class="stars">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</span></div>
+                <div class="prod">${reviewProductTitle(r)}</div>
                 <div class="txt">${r.text}</div>
-                ${r.pics?.length ? `<div class="pics">${r.pics.map((p) => `<div class="rp thumb ${p}"></div>`).join("")}</div>` : ""}
+                ${r.pics?.length ? `<div class="pics">${r.pics.map((p) => HP.productThumbHtml(p, "rp thumb", "m")).join("")}</div>` : ""}
                 <div class="muted" style="margin-top:6px">${r.time}</div>
-              </div>`).join("")}
+                ${r.reply ? `<div class="review-reply"><b>商家回复：</b>${r.reply}</div>` : ""}
+                ${r.hide ? `<div class="hide-info">
+                  隐藏原因：${r.hide.reason}${r.hide.note ? `（${r.hide.note}）` : ""}
+                  ${r.hide.status === "approved" ? "<br>平台已同意，用户端不再展示该评价" : ""}
+                  ${r.hide.status === "rejected" ? `<br>平台驳回：${r.hide.rejectReason || HP.REVIEW_HIDE_REJECT_REASON}` : ""}
+                  ${r.hide.status === "pending" ? "<br>平台审核中，审核期间用户端照常展示" : ""}
+                </div>` : ""}
+                ${(() => { const acts = reviewActsHtml(r).trim(); return acts ? `<div class="acts">${acts}</div>` : ""; })()}
+              </div>`).join("") || `<div class="empty">暂无评价</div>`}
           </div>
         </div>
       `, { title: "店铺评价", back: "shop", tab: true });
@@ -1494,7 +2575,7 @@
             </div>`;
           }).join("") : `<div class="empty">${authChannel === "mp" ? "请绑定微信商家零钱" : "暂无提现账户"}</div>`}
           ${authChannel === "mp" && locked.length ? `
-            <div style="padding:12px 12px 8px;font-size:13px;font-weight:650;color:#888">App/H5 可用（本端不可选）</div>
+            <div style="padding:12px 12px 8px;font-size:13px;font-weight:650;color:#888">App 可用（本端不可选）</div>
             ${locked.map((a) => {
               const icon = withdrawAccountIcon(a);
               return `<div class="list-card" style="opacity:.55">
@@ -1502,7 +2583,7 @@
                   <span style="width:28px;height:28px;border-radius:8px;background:${icon.bg};color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700">${icon.t}</span>
                   <span>${withdrawAccountTitle(a)}</span>
                 </span></div>
-                <div class="meta-line" style="padding:0 0 8px">${withdrawAccountSub(a)} · 请使用 App/H5 提现</div>
+                <div class="meta-line" style="padding:0 0 8px">${withdrawAccountSub(a)} · 请使用 App 提现</div>
               </div>`;
             }).join("")}
           ` : ""}
@@ -1551,11 +2632,14 @@
         dash: renderDash,
         goods: renderGoods,
         goodsEdit: renderGoodsEdit,
+        goodsOps: renderGoodsOps,
         orders: renderOrders,
         orderDetail: renderOrderDetail,
         shop: renderShop,
         shopEdit: renderShopEdit,
         shopReviews: renderShopReviews,
+        freightTpls: renderFreightTpls,
+        freightTplEdit: renderFreightTplEdit,
         wallet: renderWallet,
         withdraw: renderWithdraw,
         withdrawAccounts: renderWithdrawAccounts,
@@ -1563,8 +2647,10 @@
         msgList: renderMsgList
       };
       const phone = document.getElementById("phone");
+      HP.capturePhoneScroll(phone, screen);
       phone.innerHTML = (map[screen] || renderDash)();
       HP.applyChannelChrome(phone, authChannel);
+      HP.restorePhoneScroll(phone);
     }
 
     document.getElementById("tabs").addEventListener("click", (e) => {
@@ -1577,10 +2663,40 @@
       if (e.target.classList.contains("sheet-mask")) {
         sheet = null; render(); return;
       }
+      /* 自定义下拉在本监听之后才写入隐藏域，延后刷新联动展示 */
+      if (e.target.closest("[data-hw-dd-pick]")) {
+        const pick = e.target.closest("[data-hw-dd-pick]");
+        const wrap = pick?.closest("[data-hw-dd]");
+        const hid = wrap?.querySelector('input[type="hidden"]')?.id;
+        setTimeout(() => {
+          if (screen === "freightTplEdit") {
+            if (hid === "fr-calc-prov") {
+              syncFreightDraftFromForm();
+              const prov = document.getElementById("fr-calc-prov")?.value || "广东省";
+              freightCalc.region = HP.areaCode(prov, "");
+              render();
+              return;
+            }
+            updateFreightCalc();
+          }
+          if (screen === "goodsEdit") {
+            if (hid === "g-freight-mode" || hid === "g-freight-tpl") {
+              syncGoodsDraftFromForm();
+              render();
+              return;
+            }
+            updateOpsFreightSummary();
+          }
+        }, 0);
+      }
 
       const nav = e.target.closest("[data-nav]");
       if (nav) {
-        if (nav.dataset.nav === "goods") goodsEditDraft = null;
+        if (nav.dataset.nav === "goods") {
+          goodsEditDraft = null;
+          goodsOpsDraft = null;
+        }
+        if (nav.dataset.nav === "freightTpls") freightDraft = null;
         if (nav.dataset.nav === "refunds") {
           state.orderTab = "售后";
           screen = "orders";
@@ -1599,6 +2715,11 @@
       const id = actionEl.dataset.id;
 
       if (action === "toast") { toast(actionEl.dataset.msg || "示意"); return; }
+      if (action === "copy-text") {
+        navigator.clipboard?.writeText(actionEl.dataset.text || "").catch(() => {});
+        toast("已复制");
+        return;
+      }
       if (action === "close-sheet") { sheet = null; render(); return; }
       if (action === "read-all-notifs") {
         HP.markAllNotifsRead("m", defaultNotifs);
@@ -1652,6 +2773,13 @@
       }
       if (action === "approve") {
         state.settleStatus = "approved";
+        applyShopProfile(state.shop, {
+          name: state.apply.name || state.shop.name,
+          category: state.apply.category || state.shop.category,
+          notice: state.shop.notice,
+          open: true
+        });
+        publishShopLive();
         save();
         screen = "dash";
         toast("入驻已通过");
@@ -1681,7 +2809,8 @@
           if (st === "在售" || (st === "售罄" && normalizeShelf(g) === "on")) {
             g.shelf = "off";
             g.on = false;
-            toast("已下架");
+            HP.unpublishGoodsSync(g.id);
+            toast("已下架，用户端不再展示");
           } else {
             g.shelf = "pending";
             g.on = false;
@@ -1692,13 +2821,76 @@
         }
         return;
       }
-      if (action === "goods-withdraw-audit") {
+      if (action === "goods-withdraw-audit" || action === "goods-reject-audit") {
         const g = state.goods.find((x) => String(x.id) === String(id));
         if (g) {
-          g.shelf = "off";
-          g.on = false;
+          const live = HP.findGoodsSync(g.id);
+          const verb = action === "goods-reject-audit" ? "审核驳回" : "已撤销审核";
+          if (live) {
+            /* 线上有旧版：资料回滚到线上版本，继续在售 */
+            Object.assign(g, normalizeGoods({ ...live, shelf: "on" }));
+            toast(`${verb}，已恢复线上版本`);
+          } else {
+            g.shelf = "off";
+            g.on = false;
+            toast(verb);
+          }
           save();
-          toast("已撤销审核");
+          render();
+        }
+        return;
+      }
+      if (action === "review-tab") {
+        reviewTab = actionEl.dataset.tab || "全部";
+        render();
+        return;
+      }
+      if (action === "open-review-reply" || action === "open-review-hide") {
+        sheet = { type: action === "open-review-reply" ? "review-reply" : "review-hide", reviewId: id };
+        render();
+        return;
+      }
+      if (action === "confirm-review-reply") {
+        const text = (document.getElementById("review-reply")?.value || "").trim();
+        if (!text) { toast("请填写回复内容"); return; }
+        HP.updateReview(sheet?.reviewId, { reply: text, replyAt: Date.now() });
+        sheet = null;
+        toast("回复已发布，用户端可见");
+        render();
+        return;
+      }
+      if (action === "confirm-review-hide") {
+        const reason = document.getElementById("review-hide-reason")?.value || HP.REVIEW_HIDE_REASONS[0];
+        const note = (document.getElementById("review-hide-note")?.value || "").trim();
+        HP.updateReview(sheet?.reviewId, { hide: { status: "pending", reason, note, at: Date.now() } });
+        sheet = null;
+        toast("已提交平台审核");
+        render();
+        return;
+      }
+      if (action === "review-hide-withdraw") {
+        HP.updateReview(id, { hide: null });
+        toast("已撤回隐藏申请");
+        render();
+        return;
+      }
+      if (action === "review-hide-approve" || action === "review-hide-reject") {
+        const ok = action === "review-hide-approve";
+        HP.updateReview(id, (r) => ({
+          hide: { ...(r.hide || {}), status: ok ? "approved" : "rejected", rejectReason: ok ? "" : HP.REVIEW_HIDE_REJECT_REASON, auditAt: Date.now() }
+        }));
+        toast(ok ? "平台已同意隐藏，用户端不再展示" : "平台驳回隐藏申请");
+        render();
+        return;
+      }
+      if (action === "goods-approve-audit") {
+        const g = state.goods.find((x) => String(x.id) === String(id));
+        if (g) {
+          g.shelf = "on";
+          g.on = true;
+          publishGoods(g);
+          save();
+          toast("审核通过，已同步到用户端");
           render();
         }
         return;
@@ -1707,6 +2899,86 @@
         state.editingGoodsId = id ? Number(id) : null;
         goodsEditDraft = null;
         screen = "goodsEdit";
+        render();
+        return;
+      }
+      if (action === "ops-goods") {
+        const gid = id ? Number(id) : state.editingGoodsId;
+        if (!gid) { toast("请先保存商品资料"); return; }
+        state.editingGoodsId = gid;
+        goodsOpsDraft = null;
+        screen = "goodsOps";
+        render();
+        return;
+      }
+      if (action === "upload-apply-license") {
+        const prev = state.apply.licensePic || "";
+        state.apply.licensePic = HP.demoNextPicKey(prev || "cover");
+        toast(prev ? "已更换资质图" : "已上传资质图");
+        render();
+        return;
+      }
+      if (action === "edit-upload-cover") {
+        syncGoodsDraftFromForm();
+        const d = ensureGoodsDraft();
+        const prevCover = d.pic;
+        d.pic = HP.demoNextPicKey(prevCover);
+        /* 仍跟旧商品封面的规格，随新封面一起更新；已单独设图的保留 */
+        d.skus = d.skus.map((s) => (s.pic === prevCover ? { ...s, pic: d.pic } : s));
+        toast("已更换商品封面");
+        render();
+        return;
+      }
+      if (action === "edit-upload-sku-pic") {
+        syncGoodsDraftFromForm();
+        const d = ensureGoodsDraft();
+        const sku = d.skus[Number(actionEl.dataset.idx)];
+        if (!sku) return;
+        sku.pic = HP.demoNextPicKey(sku.pic || d.pic);
+        toast("已上传规格封面");
+        render();
+        return;
+      }
+      if (action === "edit-add-pic" || action === "edit-replace-pic" || action === "edit-remove-pic") {
+        syncGoodsDraftFromForm();
+        const d = ensureGoodsDraft();
+        const field = actionEl.dataset.field;
+        if (field !== "banners" && field !== "detailPics") return;
+        const list = HP.normalizePicList(d[field]);
+        const idx = Number(actionEl.dataset.idx);
+        if (action === "edit-add-pic") {
+          if (list.length >= HP.PRODUCT_PIC_MAX) { toast(`最多 ${HP.PRODUCT_PIC_MAX} 张`); return; }
+          list.push(HP.demoNextPicKey(list[list.length - 1] || d.pic, list));
+          toast(field === "banners" ? "已上传轮播图" : "已上传详情图");
+        } else if (action === "edit-replace-pic") {
+          if (!list[idx]) return;
+          list[idx] = HP.demoNextPicKey(list[idx], list);
+          toast("已更换图片");
+        } else {
+          if (field === "banners" && list.length <= 1) { toast("轮播至少保留一张"); return; }
+          list.splice(idx, 1);
+          toast("已删除");
+        }
+        d[field] = list;
+        render();
+        return;
+      }
+      if (action === "save-goods-ops") {
+        syncGoodsOpsFromForm();
+        const d = ensureGoodsOpsDraft();
+        if (!d || !state.editingGoodsId) { toast("商品不存在"); return; }
+        const g = state.goods.find((x) => x.id === state.editingGoodsId);
+        if (!g) { toast("商品不存在"); return; }
+        if (!d.skus.length) { toast("请先在资料页配置规格"); return; }
+        if (d.skus.some((s) => !(Number(s.price) > 0))) { toast("请填写有效售价"); return; }
+        /* 仅回写价 / 库存 / 虚拟销量，不改图、不改 shelf、不改物流运费，免审即时生效 */
+        const { skus, price, old, stock, virtualSales } = d;
+        Object.assign(g, { skus, price, old, stock, virtualSales });
+        const live = HP.patchGoodsSyncOps(g.id, { skus, price, old, stock, virtualSales });
+        goodsOpsDraft = null;
+        save();
+        screen = "goods";
+        toast(live ? "经营数据已更新，用户端即时生效（免审）" : "经营数据已保存（免审）");
         render();
         return;
       }
@@ -1768,6 +3040,7 @@
       if (action === "save-goods") {
         syncGoodsDraftFromForm();
         const d = ensureGoodsDraft();
+        const submit = actionEl.dataset.mode !== "draft";
         const title = (d.title || "").trim();
         const cat = d.cat || "家居";
         if (!title) { toast("请填写商品名称"); return; }
@@ -1775,25 +3048,55 @@
         if (!(d.specs || []).length) { toast("请至少添加一个规格类型"); return; }
         if ((d.specs || []).some((s) => !(s.values || []).length)) { toast("每个规格类型至少要有一个选项"); return; }
         if ((d.specs || []).some((s) => !(s.name || "").trim())) { toast("请填写规格类型名称"); return; }
+        Object.assign(d, HP.applyGoodsFreightFields(d));
+        {
+          const freightErr = HP.validateGoodsFreight(d);
+          if (freightErr) { toast(freightErr); return; }
+        }
+        const prev = state.editingGoodsId
+          ? state.goods.find((x) => x.id === state.editingGoodsId)
+          : null;
+        /* 封面/轮播/详情/规格封面由 normalizeGoods 归一；价库存随 draft 保留（经营页维护） */
         const row = normalizeGoods({
           ...d,
           title,
           cat,
-          id: state.editingGoodsId || d.id || Date.now(),
-          sales: state.editingGoodsId
-            ? (state.goods.find((x) => x.id === state.editingGoodsId)?.sales || 0)
-            : 0
+          id: prev?.id || d.id || Date.now(),
+          sales: prev ? (prev.sales || 0) : 0,
+          shelf: submit ? "pending" : "off",
+          on: false
         });
-        if (state.editingGoodsId) {
-          const g = state.goods.find((x) => x.id === state.editingGoodsId);
-          if (g) Object.assign(g, row, { id: state.editingGoodsId });
+        /* 资料页不能直接上架：提交审核进 pending；保存资料仅落草稿/下架 */
+        const wasOn = prev && normalizeShelf(prev) === "on";
+        const wasPending = prev && normalizeShelf(prev) === "pending";
+        if (row.shelf === "off") {
+          HP.unpublishGoodsSync(row.id);
+        }
+        if (prev) {
+          Object.assign(prev, row);
         } else {
           state.goods.unshift(row);
+          state.editingGoodsId = row.id;
         }
         goodsEditDraft = null;
         save();
-        screen = "goods";
-        toast("已保存");
+        if (submit && (wasOn || wasPending)) {
+          toast("已提交审核，通过前用户端仍展示旧版");
+          screen = "goods";
+        } else if (wasOn && !submit) {
+          toast("资料已保存，商品已下架");
+          screen = "goods";
+        } else if (!prev) {
+          toast(submit ? "已提交审核，请继续完善价库存" : "资料已保存，请继续完善价库存");
+          goodsOpsDraft = null;
+          screen = "goodsOps";
+        } else if (submit) {
+          toast("已提交审核");
+          screen = "goods";
+        } else {
+          toast("资料已保存");
+          screen = "goods";
+        }
         render();
         return;
       }
@@ -1818,7 +3121,15 @@
         const no = document.getElementById("ship-no")?.value?.trim();
         const co = document.getElementById("ship-co")?.value || EXPRESS_COMPANIES[0];
         if (!no) { toast("请填写运单号"); return; }
-        if (o) { o.status = "待收货"; o.express = `${co} ${no}`; }
+        if (o) {
+          o.status = "待收货";
+          o.express = `${co} ${no}`;
+          o.company = co;
+          o.expressNo = no;
+          o.logistics = `${co} ${no} · 已发货`;
+          o.shippedAt = new Date().toLocaleString();
+          syncOrderToC(o);
+        }
         sheet = null;
         save();
         toast("已发货");
@@ -1842,6 +3153,12 @@
           r.status = "已拒绝";
           r.rejectReason = reason;
           applyOrderRefundStatus(r.orderId, "已拒绝");
+          const o = state.orders.find((x) => x.id === r.orderId);
+          if (o) {
+            o.status = "已完成";
+            o.refundStatus = "已拒绝";
+            syncOrderToC(o);
+          }
           syncRefundToC({
             id: r.id, orderId: r.orderId, title: r.title, amount: r.amount,
             status: "已拒绝", rejectReason: reason, reason: r.reason, buyer: r.buyer
@@ -1864,6 +3181,8 @@
         if (r) {
           r.status = "待寄回";
           applyOrderRefundStatus(r.orderId, "待寄回");
+          const o = state.orders.find((x) => x.id === r.orderId);
+          if (o) syncOrderToC(o);
           syncRefundToC({
             id: r.id, orderId: r.orderId, title: r.title, amount: r.amount,
             status: "待寄回", reason: r.reason, buyer: r.buyer,
@@ -1883,6 +3202,15 @@
         }
         r.status = "已同意";
         applyOrderRefundStatus(r.orderId, "已同意");
+        const amt = Number(r.amount) || 0;
+        if (amt > 0) {
+          state.balance = Math.round((Number(state.balance) - amt) * 100) / 100;
+          state.ledgers.unshift({
+            id: Date.now(), title: `退款支出 ${r.id}`, time: new Date().toLocaleString(), amount: -amt, type: "minus"
+          });
+        }
+        const o = state.orders.find((x) => x.id === r.orderId);
+        if (o) syncOrderToC(o);
         syncRefundToC({
           id: r.id, orderId: r.orderId, title: r.title, amount: r.amount,
           status: "已同意", reason: r.reason, buyer: r.buyer,
@@ -1893,14 +3221,213 @@
         render();
         return;
       }
+      if (action === "fr-new" || action === "fr-edit") {
+        editingFreightTplId = action === "fr-edit" ? Number(id) : null;
+        freightDraft = null;
+        screen = "freightTplEdit";
+        render();
+        return;
+      }
+      if (action === "fr-copy") {
+        const tpls = HP.loadFreightTpls();
+        const src = tpls.find((t) => String(t.id) === String(id));
+        if (!src) return;
+        const nid = Math.max(0, ...tpls.map((t) => Number(t.id) || 0)) + 1;
+        let name = `${src.name}（副本）`;
+        while (tpls.some((t) => t.name === name)) name += "+";
+        tpls.push({ ...JSON.parse(JSON.stringify(src)), id: nid, name, def: false });
+        HP.saveFreightTpls(tpls);
+        toast("已复制模板");
+        render();
+        return;
+      }
+      if (action === "fr-default") {
+        const tpls = HP.loadFreightTpls();
+        tpls.forEach((t) => { t.def = String(t.id) === String(id); });
+        HP.saveFreightTpls(tpls);
+        toast("已设为默认模板，未绑定模板的商品按此计费");
+        render();
+        return;
+      }
+      if (action === "fr-del" || action === "confirm-fr-del") {
+        const tplId = action === "fr-del" ? id : sheet?.tplId;
+        const tpls = HP.loadFreightTpls();
+        const t = tpls.find((x) => String(x.id) === String(tplId));
+        if (!t) { sheet = null; render(); return; }
+        if (t.def) { toast("默认模板不能删除，请先把其他模板设为默认"); return; }
+        if (action === "fr-del" && freightBoundGoods(t, tpls).length) {
+          sheet = { type: "freight-del", tplId: t.id };
+          render();
+          return;
+        }
+        HP.saveFreightTpls(tpls.filter((x) => x.id !== t.id));
+        state.goods.forEach((g) => {
+          if (String(g.freightTplId) === String(t.id)) g.freightTplId = null;
+        });
+        HP.reassignGoodsFreightTpl(t.id, null);
+        save();
+        sheet = null;
+        toast("模板已删除");
+        render();
+        return;
+      }
+      if (action === "fr-mode" || action === "fr-free-on" || action === "fr-free-type" || action === "fr-add-rule" || action === "fr-del-rule") {
+        syncFreightDraftFromForm();
+        const d = ensureFreightDraft();
+        const val = actionEl.dataset.value;
+        if (action === "fr-mode") {
+          d.mode = val === "weight" ? "weight" : "piece";
+          if (d.mode === "piece" && d.free.type === "weight") d.free.type = "amount";
+        } else if (action === "fr-free-on") {
+          d.free.on = val === "1";
+        } else if (action === "fr-free-type") {
+          d.free.type = val;
+        } else if (action === "fr-add-rule") {
+          d.rules.push({ areas: [], ...d.base });
+        } else {
+          d.rules.splice(Number(actionEl.dataset.idx), 1);
+        }
+        render();
+        return;
+      }
+      if (action === "fr-pick-prov") {
+        syncFreightDraftFromForm();
+        const d = ensureFreightDraft();
+        const target = actionEl.dataset.target;
+        const selected = freightTargetList(d, target).slice();
+        const first = HP.parseAreaCode(selected[0]);
+        sheet = {
+          type: "province-pick",
+          target,
+          selected,
+          disabled: freightOccupied(d, target),
+          province: first?.province || "广东省"
+        };
+        render();
+        return;
+      }
+      if (action === "region-prov" || action === "region-whole" || action === "region-city") {
+        if (sheet?.type !== "province-pick") return;
+        const selected = new Set(sheet.selected || []);
+        const disabled = sheet.disabled instanceof Set ? sheet.disabled : new Set(sheet.disabled || []);
+        if (action === "region-prov") {
+          sheet.province = actionEl.dataset.p;
+          rerenderSheet();
+          return;
+        }
+        const clearProvince = (p) => {
+          selected.delete(p);
+          (HP.REGION_BY_PROV[p]?.cities || []).forEach((c) => selected.delete(HP.areaCode(p, c)));
+        };
+        if (action === "region-whole") {
+          const p = actionEl.dataset.p;
+          if (disabled.has(p) && HP.provinceSelectState([...selected], p) === "none") return;
+          if (HP.provinceSelectState([...selected], p) === "whole") clearProvince(p);
+          else { clearProvince(p); selected.add(p); }
+        } else {
+          const code = actionEl.dataset.code;
+          const a = HP.parseAreaCode(code);
+          if (!a || (disabled.has(code) && !selected.has(code))) return;
+          if (selected.has(a.province)) selected.delete(a.province);
+          if (selected.has(code)) selected.delete(code); else selected.add(code);
+        }
+        /* 保持 REGION_TREE 顺序，便于展示稳定 */
+        const ordered = [];
+        HP.REGION_TREE.forEach((r) => {
+          if (selected.has(r.province)) ordered.push(r.province);
+          r.cities.forEach((c) => {
+            const code = HP.areaCode(r.province, c);
+            if (selected.has(code)) ordered.push(code);
+          });
+        });
+        sheet.selected = ordered;
+        rerenderSheet();
+        return;
+      }
+      if (action === "prov-confirm") {
+        if (sheet?.type !== "province-pick") return;
+        const d = ensureFreightDraft();
+        const list = sheet.selected.slice();
+        if (sheet.target === "noDelivery") d.noDelivery = list;
+        else if (sheet.target === "freeExclude") d.free.exclude = list;
+        else {
+          const r = d.rules[Number(String(sheet.target).split(":")[1])];
+          if (r) r.areas = list;
+        }
+        /* 被不配送覆盖的地区，从包邮除外里移除 */
+        const blocked = HP.areaOccupiedSet(d.noDelivery || []);
+        d.free.exclude = (d.free.exclude || []).filter((code) => !blocked.has(code));
+        sheet = null;
+        render();
+        return;
+      }
+      if (action === "save-freight-tpl") {
+        syncFreightDraftFromForm();
+        const d = ensureFreightDraft();
+        const tpls = HP.loadFreightTpls();
+        const err = validateFreightDraft(d, tpls);
+        if (err) { toast(err); return; }
+        const row = freightTplForCalc({ ...d, name: String(d.name).trim() });
+        if (row.id != null && tpls.some((t) => String(t.id) === String(row.id))) {
+          const i = tpls.findIndex((t) => String(t.id) === String(row.id));
+          tpls[i] = { ...row, def: tpls[i].def };
+        } else {
+          row.id = Math.max(0, ...tpls.map((t) => Number(t.id) || 0)) + 1;
+          row.def = !tpls.length;
+          tpls.push(row);
+        }
+        HP.saveFreightTpls(tpls);
+        freightDraft = null;
+        editingFreightTplId = row.id;
+        screen = "freightTpls";
+        toast("运费模板已保存，用户端结算即时生效");
+        render();
+        return;
+      }
       if (action === "save-shop") {
+        ensureShopLive();
         state.shop.name = document.getElementById("shop-name")?.value?.trim() || state.shop.name;
         state.shop.notice = document.getElementById("shop-notice")?.value || "";
         state.shop.category = document.getElementById("shop-cat")?.value || BUSINESS_CATEGORIES[0];
         state.shop.open = document.getElementById("shop-open")?.value === "1";
+        const draft = HP.shopPublishSnapshot(state.shop);
+        const live = HP.shopPublishSnapshot(state.shopLive);
+        if (JSON.stringify(draft) === JSON.stringify(live) && state.shopAudit?.status !== "pending") {
+          state.shopAudit = null;
+          save();
+          toast("资料未改动");
+          screen = "shop";
+          render();
+          return;
+        }
+        state.shopAudit = { status: "pending", rejectReason: "" };
         save();
-        toast("店铺资料已保存");
+        toast("已提交审核，通过前用户端仍展示旧版");
         screen = "shop";
+        render();
+        return;
+      }
+      if (action === "shop-approve-audit") {
+        ensureShopLive();
+        publishShopLive();
+        save();
+        toast("审核通过，已同步到用户端");
+        screen = "shop";
+        render();
+        return;
+      }
+      if (action === "shop-withdraw-audit" || action === "shop-reject-audit") {
+        ensureShopLive();
+        applyShopProfile(state.shop, state.shopLive);
+        const verb = action === "shop-reject-audit" ? "审核驳回" : "已撤销审核";
+        if (action === "shop-reject-audit") {
+          state.shopAudit = { status: "rejected", rejectReason: "店铺名称或公告不符合规范，请修改后重新提交。" };
+          toast(`${verb}，已恢复线上版本`);
+        } else {
+          state.shopAudit = null;
+          toast(verb);
+        }
+        save();
         render();
         return;
       }
@@ -2037,22 +3564,63 @@
     });
 
     document.getElementById("phone").addEventListener("input", (e) => {
-      if (e.target?.id !== "withdraw-amount") return;
-      const { fee, arrive } = HP.withdrawArrive(e.target.value);
-      const feeEl = document.getElementById("withdraw-fee");
-      const arrEl = document.getElementById("withdraw-arrive");
-      if (feeEl) feeEl.textContent = `¥${fee.toFixed(2)}`;
-      if (arrEl) arrEl.textContent = `¥${arrive.toFixed(2)}`;
+      if (e.target?.id === "withdraw-amount") {
+        const { fee, arrive } = HP.withdrawArrive(e.target.value);
+        const feeEl = document.getElementById("withdraw-fee");
+        const arrEl = document.getElementById("withdraw-arrive");
+        if (feeEl) feeEl.textContent = `¥${fee.toFixed(2)}`;
+        if (arrEl) arrEl.textContent = `¥${arrive.toFixed(2)}`;
+        return;
+      }
+      if (screen === "goodsOps" && e.target?.matches?.("[data-sku-price],[data-sku-old],[data-sku-stock],#g-virtual-sales")) {
+        syncGoodsOpsFromForm();
+        const d = ensureGoodsOpsDraft();
+        const skuEl = document.querySelector("[data-sku-summary]");
+        const soldEl = document.querySelector("[data-sold-summary]");
+        if (skuEl) skuEl.textContent = opsSkuSummary(d);
+        if (soldEl) soldEl.textContent = opsSoldSummary(d);
+      }
+      if (screen === "goodsEdit" && e.target?.matches?.("[data-sku-weight]")) updateOpsFreightSummary();
+      if (screen === "freightTplEdit" && e.target?.matches?.("[data-fr-num],#fr-free-value,#fr-calc-qty,#fr-calc-weight,#fr-calc-amount")) {
+        updateFreightCalc();
+      }
     });
 
+    const goodsSyncStale = (() => {
+      try {
+        return JSON.parse(localStorage.getItem(STORE_KEY) || "{}").goodsSeedVer !== HP.GOODS_SEED_VER;
+      } catch {
+        return true;
+      }
+    })();
     if (new URLSearchParams(location.search).get("reset") === "1") {
       localStorage.removeItem(STORE_KEY);
+      localStorage.removeItem(HP.SHOP_SYNC_KEY);
+      HP.clearStockDeducts();
+      HP.clearReviews();
+      HP.resetFreightTpls();
       state = defaultState();
       screen = "apply";
     }
     authChannel = HP.setPreviewChannel(authChannel);
     HP.bindPreviewChannelSwitch((ch) => applyAuthChannel(ch));
     HP.bindHwSelect(document.getElementById("phone"));
+    window.addEventListener("storage", (e) => {
+      if (e.key === HP.STOCK_DEDUCT_KEY) {
+        if (applyStockDeductsFromC() && screen === "goodsOps") goodsOpsDraft = null;
+        render();
+        return;
+      }
+      if (e.key === HP.ORDER_SYNC_KEY || e.key === HP.REFUND_SYNC_KEY || e.key === HP.GOODS_SYNC_KEY || e.key === HP.REVIEW_SYNC_KEY || e.key === HP.FREIGHT_SYNC_KEY) render();
+    });
+    applyStockDeductsFromC();
+    bootstrapGoodsSync({ force: goodsSyncStale || new URLSearchParams(location.search).get("reset") === "1" });
+    ensureShopLive();
+    if (state.settleStatus === "approved") {
+      bootstrapShopSync({ force: new URLSearchParams(location.search).get("reset") === "1" });
+    }
+    save();
+    bootstrapOrderSync();
     render();
   </script>
 </body>

@@ -1,3 +1,112 @@
+.muted { color: var(--muted, #8c8c8c); font-size: 12px; }
+
+/* 独立地图选点页 */
+.addr-map-page {
+  flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative;
+  background: #e8eee9;
+}
+.addr-map-search {
+  flex-shrink: 0; display: grid; grid-template-columns: 1fr auto auto; gap: 6px;
+  padding: 8px 10px; background: #fff; border-bottom: 1px solid #eee; z-index: 2;
+}
+.addr-map-search input {
+  width: 100%; border: 1px solid #e5e5e5; border-radius: 8px; padding: 8px 10px;
+  font: inherit; font-size: 13px; outline: none; background: #fafafa;
+}
+.addr-map-search input:focus { border-color: var(--brand, #2f6f5e); background: #fff; }
+.addr-map-canvas { flex: 1; min-height: 0; width: 100%; position: relative; }
+.addr-map-poi-list { max-height: 132px; overflow: auto; margin: 0 -14px 10px; border-top: 1px solid #f2f2f2; }
+.addr-map-poi-list .row {
+  padding: 9px 14px; border-bottom: 1px solid #f5f5f5; cursor: pointer;
+}
+.addr-map-poi-list .row .n { font-size: 13px; color: #222; }
+.addr-map-poi-list .row .d { font-size: 11px; color: #999; margin-top: 2px; }
+.addr-map-poi-list .row.on .n { color: var(--brand, #2f6f5e); font-weight: 650; }
+
+/* 示意底图 */
+.map-mock {
+  position: absolute; inset: 0; overflow: hidden;
+  background:
+    linear-gradient(#eef2ee 1px, transparent 1px) 0 0 / 100% 24px,
+    linear-gradient(90deg, #eef2ee 1px, transparent 1px) 0 0 / 24px 100%,
+    #f5f3ee;
+}
+.map-mock .mm-water {
+  position: absolute; left: -10%; bottom: -18%; width: 60%; height: 42%;
+  background: #cfe3ef; border-radius: 50% 60% 0 0;
+}
+.map-mock .mm-park { position: absolute; background: #d9ead3; border-radius: 10px; }
+.map-mock .mm-road { position: absolute; background: #fff; box-shadow: 0 0 0 1px #e4e0d6; }
+.map-mock .mm-road.h { left: 0; right: 0; height: 10px; }
+.map-mock .mm-road.v { top: 0; bottom: 0; width: 10px; }
+.map-mock .mm-road.h.thin { height: 6px; }
+.map-mock .mm-road.v.thin { width: 6px; }
+.map-mock .mm-poi {
+  position: absolute; transform: translate(-50%, -50%); border: 0; background: transparent;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 0; font: inherit;
+}
+.map-mock .mm-poi i {
+  width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid #8aa79c;
+}
+.map-mock .mm-poi span {
+  font-size: 10px; color: #555; background: rgba(255,255,255,.86); padding: 1px 4px; border-radius: 4px; white-space: nowrap;
+}
+.map-mock .mm-poi.on i { border-color: var(--brand, #2f6f5e); background: var(--brand, #2f6f5e); }
+.map-mock .mm-poi.on span { color: var(--brand, #2f6f5e); font-weight: 650; }
+.map-mock .mm-pin {
+  position: absolute; width: 22px; height: 22px; margin: -30px 0 0 -11px; pointer-events: none;
+  background: var(--price, #e4393c); border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.map-mock .mm-pin::after {
+  content: ""; position: absolute; left: 7px; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: #fff;
+}
+.map-mock .mm-tip {
+  position: absolute; right: 8px; top: 8px; font-size: 10px; color: #888;
+  background: rgba(255,255,255,.9); padding: 2px 6px; border-radius: 4px;
+}
+.addr-map-footer {
+  flex-shrink: 0; background: #fff; border-top: 1px solid #eee;
+  padding: 12px 14px 16px; z-index: 2;
+}
+.addr-map-footer .pick-title { font-size: 12px; color: #888; margin-bottom: 4px; }
+.addr-map-footer .pick-addr { font-size: 14px; font-weight: 650; color: #222; line-height: 1.45; min-height: 40px; }
+.addr-map-footer .pick-addr.empty { color: #aaa; font-weight: 500; }
+.addr-region-pick {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  border: 1px solid #e5e5e5; border-radius: 10px; padding: 12px 14px; background: #fafafa;
+  font-size: 15px; color: #222; cursor: pointer;
+}
+.addr-region-pick.empty span { color: #aaa; }
+.addr-region-pick i { font-style: normal; font-size: 12px; color: var(--brand, #2f6f5e); flex-shrink: 0; }
+
+.review-reply {
+  margin-top: 8px; padding: 8px 10px; background: #f6f8f7; border-radius: 6px;
+  font-size: 12px; color: #555; line-height: 1.5;
+}
+.review-reply b { color: var(--brand, #2f6f5e); font-weight: 650; }
+
+/* 演示声明（协议正文顶部 / 登录与入驻入口） */
+.demo-notice {
+  margin: 0 0 14px; padding: 10px 12px; border-radius: 8px;
+  background: #fff7f0; border: 1px solid #f3d9c2; color: #8a5a2a;
+  font-size: 12px; line-height: 1.6;
+}
+.demo-notice b { display: block; margin-bottom: 2px; color: #d96b2b; font-size: 13px; }
+.demo-notice.compact { padding: 8px 10px; font-size: 11px; line-height: 1.55; }
+.demo-notice.compact b { display: inline; margin: 0 6px 0 0; font-size: 12px; }
+
+/* 左侧「当前页面」功能说明 */
+.screen-note {
+  margin: 14px 0 12px; padding: 10px 12px;
+  background: #fff; border: 1px solid #e8e8e8; border-left: 3px solid var(--brand, #2f6f5e);
+  border-radius: 8px; font-size: 12px; line-height: 1.6; color: #555;
+}
+.screen-note .hd { font-size: 13px; font-weight: 650; color: #1a1a1a; margin-bottom: 4px; }
+.screen-note p { margin: 0; }
+.screen-note ul { margin: 6px 0 0; padding-left: 16px; }
+.screen-note li { margin: 2px 0; }
+
 /* 自定义下拉（替代原生 select，展开列表也可主题化） */
 .hw-dd { position: relative; width: 100%; }
 .hw-dd-trigger {
@@ -72,13 +181,52 @@
 .hw-dd.is-compact .hw-dd-opt { font-size: 13px; padding: 9px 10px; }
 .form-panel .hw-dd { margin-top: 6px; }
 
-/* 简易上传格 */
-.upload {
-  width: 88px; height: 88px; border: 1px dashed #ccc; border-radius: 10px;
-  display: grid; place-items: center; color: #aaa; font-size: 28px;
-  cursor: pointer; background: #fafafa; user-select: none;
+/* 统一上传格：空 = +；满 = 图 + 更换 */
+.upload-slot {
+  box-sizing: border-box;
+  width: 88px; height: 88px; border-radius: 10px;
+  position: relative; overflow: hidden;
+  cursor: pointer; flex-shrink: 0; user-select: none;
 }
-.upload:hover { border-color: #bbb; color: #999; }
+.upload-slot.empty {
+  border: 1px dashed #ccc;
+  display: grid; place-items: center;
+  color: #aaa; font-size: 28px; background: #fafafa;
+}
+.upload-slot.empty:hover { border-color: #bbb; color: #999; }
+.upload-slot.filled { border: 1px solid #eee; background: #f0f0f0; }
+.upload-slot.filled .thumb {
+  width: 100%; height: 100%; border-radius: 0; margin: 0;
+}
+.upload-slot .upload-tip {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.45); color: #fff;
+  font-size: 11px; text-align: center; padding: 3px 0; line-height: 1.2;
+  pointer-events: none;
+}
+.upload-slot .badge-main {
+  position: absolute; left: 4px; top: 4px; z-index: 1;
+  font-size: 9px; background: rgba(47,111,94,.92); color: #fff;
+  border-radius: 3px; padding: 1px 4px; pointer-events: none;
+}
+.upload-slot .rm {
+  position: absolute; top: 4px; right: 4px; z-index: 2;
+  width: 18px; height: 18px; border: 0; border-radius: 50%;
+  background: rgba(0,0,0,.55); color: #fff;
+  font-size: 12px; line-height: 18px; padding: 0; cursor: pointer;
+}
+.upload-slot.sm { width: 72px; height: 72px; }
+.upload-slot.sm.empty { font-size: 24px; }
+.upload-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+
+/* 商品图：色块或实拍 img */
+.thumb.has-img, .pic.has-img, .sthumb.has-img, .rp.has-img {
+  position: relative; overflow: hidden; background: #f0f0f0 !important;
+}
+.thumb.has-img::after, .pic.has-img::after, .sthumb.has-img::after, .rp.has-img::after { display: none !important; }
+.thumb img, .pic img, .sthumb img, .rp img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
 
 /* C 端 / 商家端预览共用：账户类型点选 */
 .type-picks { display: flex; gap: 8px; flex-wrap: wrap; }
