@@ -1,17 +1,25 @@
 {
-  // 按标签名自动引入组件库：模板写 wd-xxx 即对应 wot-design-uni 下同名组件，页面不必手写 import
+  // 组件库按标签名自动引入：模板写 wd-xxx 即加载对应组件，页面无需手写 import
   "easycom": {
     "autoscan": true,
     "custom": {
       "^wd-(.*)": "wot-design-uni/components/wd-$1/wd-$1.vue"
     }
   },
-  // 路由表：第一项为启动页；login 不进 Tab，供未登录或令牌失效时打开
+  // 页面路由表：数组第一项为启动页；login、search、detail 为普通栈页，不在底部 Tab 内
   "pages": [
     {
       "path": "pages/home/home",
       "style": {
-        "navigationBarTitleText": "衡物"
+        "navigationBarTitleText": "衡物",
+        // 首页自绘顶栏搜索区，隐藏系统导航栏
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/category/category",
+      "style": {
+        "navigationBarTitleText": "分类"
       }
     },
     {
@@ -31,16 +39,32 @@
       "style": {
         "navigationBarTitleText": "登录"
       }
+    },
+    {
+      "path": "pages/search/search",
+      "style": {
+        "navigationBarTitleText": "搜索",
+        // 搜索页自绘顶栏输入区，隐藏系统导航栏
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/detail/detail",
+      "style": {
+        "navigationBarTitleText": "商品详情",
+        // 详情页自绘头图返回按钮，隐藏系统导航栏
+        "navigationStyle": "custom"
+      }
     }
   ],
-  // 全局导航栏文字与窗口背景
+  // 全局默认导航栏与窗口背景
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "衡物",
     "navigationBarBackgroundColor": "#FFFFFF",
     "backgroundColor": "#F5F5F5"
   },
-  // 底部三个 Tab；selectedColor 为品牌绿（JSON 无法引用 SCSS 变量，改色时请与 uni.scss 中品牌色一起改）
+  // 底部四个 Tab；选中色写死为品牌绿，改品牌色时请同步修改此处色值
   "tabBar": {
     "color": "#999999",
     "selectedColor": "#2F6F5E",
@@ -52,6 +76,12 @@
         "text": "首页",
         "iconPath": "static/tab/home.png",
         "selectedIconPath": "static/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类",
+        "iconPath": "static/tab/category.png",
+        "selectedIconPath": "static/tab/category-active.png"
       },
       {
         "pagePath": "pages/cart/cart",
