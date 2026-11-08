@@ -5,12 +5,14 @@
     <parent>
         <artifactId>demo</artifactId>
         <groupId>com.qualitest</groupId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <!-- 被测系统 snapshot/restore HTTP 端点 Starter，接入方实现 SnapshotStrategy -->
     <artifactId>qualitest-test-support-spring-boot-starter</artifactId>
+    <!-- 与靶场 demo 版本解耦：本模块无契约变更时不跟升 -->
+    <version>1.0.0</version>
     <description>质衡被测系统 test-support snapshot/restore 端点 Starter</description>
 
     <dependencies>

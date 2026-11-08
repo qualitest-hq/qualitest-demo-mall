@@ -163,7 +163,13 @@
   },
   {
     "method": "DELETE",
-    "path": "/api/mall/mallCart/my/{cartId}",
+    "path": "/api/mall/mallCart/my/batch",
+    "controller": "MallCartApiController",
+    "file": "demo-admin/src/main/java/com/demo/web/apiController/mall/MallCartApiController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/mall/mallCart/my/selected",
     "controller": "MallCartApiController",
     "file": "demo-admin/src/main/java/com/demo/web/apiController/mall/MallCartApiController.java"
   },

@@ -28,6 +28,11 @@
       <el-table-column label="商品" align="center" key="productName" prop="productName" min-width="120" show-overflow-tooltip v-if="columnVisible['productName']" />
       <el-table-column label="SKU" align="center" key="skuName" prop="skuName" min-width="120" show-overflow-tooltip v-if="columnVisible['skuName']" />
       <el-table-column label="数量" align="center" key="quantity" prop="quantity" width="80" v-if="columnVisible['quantity']" />
+      <el-table-column label="勾选" align="center" key="selected" prop="selected" width="80" v-if="columnVisible['selected']">
+        <template #default="scope">
+          <span>{{ scope.row.selected === 1 ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="购物车ID" align="center" key="cartId" prop="cartId" width="100" v-if="columnVisible['cartId']" />
       <el-table-column label="账号ID" align="center" key="accountId" prop="accountId" width="100" v-if="columnVisible['accountId']" />
       <el-table-column label="商品ID" align="center" key="productId" prop="productId" width="100" v-if="columnVisible['productId']" />
@@ -71,6 +76,7 @@ const columns = ref([
   { key: 'productName', label: '商品', visible: true },
   { key: 'skuName', label: 'SKU', visible: true },
   { key: 'quantity', label: '数量', visible: true },
+  { key: 'selected', label: '勾选', visible: true },
   { key: 'cartId', label: '购物车ID', visible: false },
   { key: 'accountId', label: '账号ID', visible: false },
   { key: 'productId', label: '商品ID', visible: false },

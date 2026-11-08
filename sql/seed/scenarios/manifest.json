@@ -16,8 +16,22 @@
         "password": "Test@123456",
         "remark": "主测试账号"
       },
-      "expect": "购物车 2 行；preview 195 元",
+      "expect": "购物车 2 行均勾选；preview 195 元",
       "orderHint": "cart_id 5001/5002"
+    },
+    {
+      "id": "S09",
+      "name": "购物车部分勾选结算",
+      "type": "success",
+      "file": "scenarios/success/S09_cart_partial_selected.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "仅 cartIds=[5001] preview 106；5002 仍在车",
+      "orderHint": "5001 selected=1，5002 selected=0"
     },
     {
       "id": "S02",
@@ -284,6 +298,34 @@
       },
       "expect": "重复领取失败",
       "orderHint": "account_coupon_id 6001"
+    },
+    {
+      "id": "F13",
+      "name": "车内商品下架结算失败",
+      "type": "fail",
+      "file": "scenarios/fail/F13_cart_off_shelf_settle.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "列表 available=false；preview 含 5013 失败",
+      "orderHint": "cart_id 5013，商品 2002 已下架"
+    },
+    {
+      "id": "F14",
+      "name": "购物车单行超上限",
+      "type": "fail",
+      "file": "scenarios/fail/F14_cart_quantity_over_limit.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "quantity=100 失败「单行数量不能超过99」",
+      "orderHint": "cart_id 5014"
     }
   ]
 }

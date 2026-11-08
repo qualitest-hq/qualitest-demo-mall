@@ -75,18 +75,21 @@
 
 <script setup lang="ts">
 /**
- * 商品详情页。
- * 展示价、运费、单位与备注；通过半屏选择规格并回填已选信息。
- * 加购与立即购买在确认规格后暂以提示代替真实下单接口。
+ * 商品详情：展示信息与选规格。
+ * 加购写入购物车；立即购买进入确认订单。
  */
 import { computed, ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import AppPrice from "@/components/AppPrice.vue";
 import SkuSheet, { type SkuNext } from "@/components/SkuSheet.vue";
+import { addCartItem } from "@/api/cart";
 import { getProductDetail } from "@/api/product";
-import { navigateBackOrHome } from "@/constants/routes";
+import { navigateBackOrHome, openCheckout, ROUTES } from "@/constants/routes";
+import { useUserStore } from "@/stores/user";
 import type { MallProduct, MallProductSku } from "@/types/product";
 import { formatMoney, pickDefaultSku, productInitial } from "@/utils/product";
+
+const user = useUserStore();
 
 /** 当前商品详情；加载失败或无主键时为空 */
 const product = ref<MallProduct | null>(null);
@@ -154,19 +157,40 @@ function openSku(next: SkuNext) {
   skuVisible.value = true;
 }
 
+/** 未登录则去登录页 */
+function ensureLogin(): boolean {
+  if (user.isLoggedIn) {
+    return true;
+  }
+  uni.navigateTo({ url: ROUTES.LOGIN });
+  return false;
+}
+
 /**
- * 规格半屏确认回调。
- * 始终回填规格与数量；加购、购买在未接购物车/结算接口时只提示。
+ * 规格确认：回填已选；加购调接口；立即购买带 sku 去结算。
  */
-function onSkuConfirm(payload: { sku: MallProductSku; qty: number; next: SkuNext }) {
+async function onSkuConfirm(payload: { sku: MallProductSku; qty: number; next: SkuNext }) {
   selectedSkuId.value = payload.sku.skuId;
   selectedQty.value = payload.qty;
   if (payload.next === "add") {
-    uni.showToast({ title: "购物车暂未开放", icon: "none" });
+    if (!ensureLogin()) {
+      return;
+    }
+    try {
+      await addCartItem({ skuId: payload.sku.skuId, quantity: payload.qty });
+      uni.showToast({ title: "已加入购物车", icon: "success" });
+    } catch {
+      /* toast 已处理 */
+    }
     return;
   }
   if (payload.next === "buy") {
-    uni.showToast({ title: "结算暂未开放", icon: "none" });
+    if (!ensureLogin()) {
+      return;
+    }
+    openCheckout(
+      `buySkuId=${encodeURIComponent(payload.sku.skuId)}&buyQty=${encodeURIComponent(String(payload.qty))}`,
+    );
     return;
   }
   uni.showToast({ title: "已选择规格", icon: "none" });

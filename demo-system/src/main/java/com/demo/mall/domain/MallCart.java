@@ -9,11 +9,12 @@ import lombok.ToString;
 import org.apache.ibatis.type.Alias;
 import com.demo.common.core.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serial;
 
 /**
  * 商城购物车对象 mall_cart
- * 
+ *
  * @author demo
  * @date 2026-06-20
  */
@@ -57,6 +58,11 @@ public class MallCart extends BaseEntity {
      * 数量
      */
     private Integer quantity;
+
+    /**
+     * 是否勾选结算：0否 1是
+     */
+    private Integer selected;
 
     /**
      * 删除标志（0未删除 1已删除）

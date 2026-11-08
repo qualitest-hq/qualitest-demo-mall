@@ -9,6 +9,6 @@ SET NAMES utf8mb4;
 
 -- 账号 30001 购物车：2101×2 + 2111×1
 -- 商品总额 = 49×2 + 89 = 187.00；运费 = 8 + 0 = 8.00；应付 = 195.00
-INSERT INTO `mall_cart` (`cart_id`, `account_id`, `product_id`, `sku_id`, `quantity`, `del_flag`, `create_time`, `update_time`) VALUES
-(5001, 30001, 2001, 2101, 2, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00'),
-(5002, 30001, 2002, 2111, 1, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00');
+INSERT INTO `mall_cart` (`cart_id`, `account_id`, `product_id`, `sku_id`, `quantity`, `selected`, `del_flag`, `create_time`, `update_time`) VALUES
+(5001, 30001, 2001, 2101, 2, 1, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00'),
+(5002, 30001, 2002, 2111, 1, 1, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00');

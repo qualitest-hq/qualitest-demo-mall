@@ -31,13 +31,12 @@ import com.demo.mall.domain.MallProductSku;
 import com.demo.mall.mapper.MallCartMapper;
 import com.demo.mall.mapper.MallOrderItemMapper;
 import com.demo.mall.mapper.MallOrderMapper;
-import com.demo.mall.mapper.MallProductMapper;
-import com.demo.mall.mapper.MallProductSkuMapper;
 import com.demo.mall.params.MallOrderParams;
 import com.demo.mall.result.MallOrderResult;
 import com.demo.mall.service.IMallOrderItemService;
 import com.demo.mall.service.IMallOrderService;
 import com.demo.mall.service.MallOrderSupportService;
+import com.demo.mall.service.MallSkuSaleSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,12 +70,6 @@ public class MallOrderServiceImpl implements IMallOrderService {
     private MallCartMapper mallCartMapper;
 
     @Autowired
-    private MallProductSkuMapper mallProductSkuMapper;
-
-    @Autowired
-    private MallProductMapper mallProductMapper;
-
-    @Autowired
     private AccountAddressMapper accountAddressMapper;
 
     @Autowired
@@ -90,6 +83,9 @@ public class MallOrderServiceImpl implements IMallOrderService {
 
     @Autowired
     private MallOrderSupportService mallOrderSupportService;
+
+    @Autowired
+    private MallSkuSaleSupport mallSkuSaleSupport;
 
     /**
      * 查询商城订单列表
@@ -491,24 +487,13 @@ public class MallOrderServiceImpl implements IMallOrderService {
         }
     }
 
+    /**
+     * 校验 SKU 可售后组装一行订单明细（单价、小计、运费）
+     */
     private void addLineFromSku(Long skuId, int quantity, OrderBuildContext ctx) {
-        MallProductSku sku = mallProductSkuMapper.selectMallProductSkuById(skuId);
-        if (sku == null || (sku.getDelFlag() != null && sku.getDelFlag() == 1)) {
-            throw new ServiceException("SKU不存在");
-        }
-        if (sku.getStatus() != null && sku.getStatus() != 0) {
-            throw new ServiceException("SKU已停用");
-        }
-        if (sku.getStock() == null || sku.getStock() < quantity) {
-            throw new ServiceException("库存不足");
-        }
-        MallProduct product = mallProductMapper.selectMallProductById(sku.getProductId());
-        if (product == null || (product.getDelFlag() != null && product.getDelFlag() == 1)) {
-            throw new ServiceException("商品不存在");
-        }
-        if (product.getShelfStatus() == null || product.getShelfStatus() != 1) {
-            throw new ServiceException("商品已下架");
-        }
+        MallSkuSaleSupport.Saleable saleable = mallSkuSaleSupport.requireSaleable(skuId, quantity);
+        MallProductSku sku = saleable.getSku();
+        MallProduct product = saleable.getProduct();
         BigDecimal salePrice = sku.getSalePrice() != null ? sku.getSalePrice() : BigDecimal.ZERO;
         BigDecimal lineTotal = salePrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
         BigDecimal freight = product.getFreightAmount() != null ? product.getFreightAmount() : BigDecimal.ZERO;

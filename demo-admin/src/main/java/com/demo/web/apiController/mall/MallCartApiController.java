@@ -2,7 +2,9 @@ package com.demo.web.apiController.mall;
 
 import com.demo.mall.apiParams.MallCartAddApiParams;
 import com.demo.mall.apiParams.MallCartApiParams;
+import com.demo.mall.apiParams.MallCartIdsApiParams;
 import com.demo.mall.apiParams.MallCartQuantityApiParams;
+import com.demo.mall.apiParams.MallCartSelectedApiParams;
 import com.demo.mall.apiResult.MallCartApiResult;
 import com.demo.mall.service.IMallCartService;
 import com.demo.common.core.controller.ApiController;
@@ -10,7 +12,6 @@ import com.demo.common.core.domain.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +23,8 @@ import java.util.List;
 /**
  * 商城购物车客户端 API
  *
- * @api.group 客户端.商城.购物车
- *
  * @author demo
+ * @api.group 客户端.商城.购物车
  * @date 2026-06-20
  */
 @RestController
@@ -35,7 +35,7 @@ public class MallCartApiController extends ApiController {
     private final IMallCartService mallCartService;
 
     /**
-     * 我的购物车
+     * 查询当前账号购物车
      */
     @GetMapping("/my")
     public R<List<MallCartApiResult>> myList() {
@@ -56,7 +56,7 @@ public class MallCartApiController extends ApiController {
     }
 
     /**
-     * 修改购物车数量
+     * 修改购物车数量，数量为0时删除该行
      */
     @PutMapping("/my/quantity")
     public R<Void> myUpdateQuantity(@RequestBody MallCartQuantityApiParams params) {
@@ -66,7 +66,17 @@ public class MallCartApiController extends ApiController {
     }
 
     /**
-     * 清空购物车
+     * 批量勾选或取消勾选
+     */
+    @PutMapping("/my/selected")
+    public R<Void> myUpdateSelected(@RequestBody MallCartSelectedApiParams params) {
+        Long accountId = getAccountId();
+        mallCartService.updateMallCartSelected(accountId, params);
+        return ok();
+    }
+
+    /**
+     * 清空当前账号购物车
      */
     @DeleteMapping("/my/clear")
     public R<Void> myClear() {
@@ -75,13 +85,11 @@ public class MallCartApiController extends ApiController {
         return ok();
     }
 
-    /**
-     * 删除购物车单项
-     */
-    @DeleteMapping("/my/{cartId}")
-    public R<Void> myRemove(@PathVariable("cartId") Long cartId) {
+    /** 批量删除购物车行 */
+    @DeleteMapping("/my/batch")
+    public R<Void> myRemoveBatch(@RequestBody MallCartIdsApiParams params) {
         Long accountId = getAccountId();
-        mallCartService.deleteMallCartItem(accountId, cartId);
+        mallCartService.deleteMallCartItems(accountId, params == null ? null : params.getCartIds());
         return ok();
     }
 }

@@ -68,8 +68,28 @@
       gap: 2px; font-size: 10px; color: #888; position: relative; cursor: pointer;
     }
     .tabbar span.on { color: var(--brand); font-weight: 650; }
-    .tabbar .ico { width: 22px; height: 22px; border-radius: 7px; background: #ececec; position: relative; }
-    .tabbar span.on .ico { background: var(--brand); }
+    .tabbar .ico {
+      width: 22px; height: 22px; position: relative;
+      background: currentColor;
+      -webkit-mask: center / contain no-repeat;
+      mask: center / contain no-repeat;
+    }
+    .tabbar .ico.home {
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cg transform='translate(0 1.5)'%3E%3Cpath d='M4 10.5 12 4l8 6.5'/%3E%3Cpath d='M6 10v9h12v-9'/%3E%3Cpath d='M10 19v-5h4v5'/%3E%3C/g%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cg transform='translate(0 1.5)'%3E%3Cpath d='M4 10.5 12 4l8 6.5'/%3E%3Cpath d='M6 10v9h12v-9'/%3E%3Cpath d='M10 19v-5h4v5'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .tabbar .ico.category {
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cg transform='translate(0 1.5)'%3E%3Cg transform='translate(12 12) scale(0.86) translate(-12 -12)'%3E%3Crect x='3.5' y='3.5' width='7' height='7' rx='1.5'/%3E%3Crect x='13.5' y='3.5' width='7' height='7' rx='1.5'/%3E%3Crect x='3.5' y='13.5' width='7' height='7' rx='1.5'/%3E%3Crect x='13.5' y='13.5' width='7' height='7' rx='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cg transform='translate(0 1.5)'%3E%3Cg transform='translate(12 12) scale(0.86) translate(-12 -12)'%3E%3Crect x='3.5' y='3.5' width='7' height='7' rx='1.5'/%3E%3Crect x='13.5' y='3.5' width='7' height='7' rx='1.5'/%3E%3Crect x='3.5' y='13.5' width='7' height='7' rx='1.5'/%3E%3Crect x='13.5' y='13.5' width='7' height='7' rx='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .tabbar .ico.cart {
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cg transform='translate(0 1.5)'%3E%3Cpath d='M3 5h2l1.2 2.5L8 14h9l2-7H7'/%3E%3Ccircle cx='9' cy='19' r='1.4'/%3E%3Ccircle cx='17' cy='19' r='1.4'/%3E%3C/g%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Cg transform='translate(0 1.5)'%3E%3Cpath d='M3 5h2l1.2 2.5L8 14h9l2-7H7'/%3E%3Ccircle cx='9' cy='19' r='1.4'/%3E%3Ccircle cx='17' cy='19' r='1.4'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .tabbar .ico.mine {
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cg transform='translate(0 1.5)'%3E%3Ccircle cx='12' cy='8' r='3.2'/%3E%3Cpath d='M5.5 19c1.4-3.2 3.7-4.8 6.5-4.8S17.1 15.8 18.5 19'/%3E%3C/g%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cg transform='translate(0 1.5)'%3E%3Ccircle cx='12' cy='8' r='3.2'/%3E%3Cpath d='M5.5 19c1.4-3.2 3.7-4.8 6.5-4.8S17.1 15.8 18.5 19'/%3E%3C/g%3E%3C/svg%3E");
+    }
     .tabbar .badge {
       position: absolute; top: -6px; left: calc(100% - 7px); min-width: 14px; height: 14px;
       background: var(--price); color: #fff; border-radius: 8px; font-size: 9px; font-style: normal; font-weight: 650;
@@ -679,10 +699,11 @@
         "价格有变动会更新为新价格，需确认后再提交",
         "提交即占用所选优惠券，生成待付款订单"
       ] },
-      pay: { desc: "收银台（余额支付）。", points: [
+      pay: { desc: "收银台（余额支付；微信/支付宝占位）。", points: [
         "支付时扣减库存：整单库存都够才扣，不够则拦截支付",
         "扣减同步到商家端的商品库存与实际销量",
         "余额不足时提示充值",
+        "微信、支付宝展示为「暂未开通」，点选提示使用余额；真渠道模拟见后续批",
         "支付成功后订单同步到商家端「待发货」"
       ] },
       payResult: "支付结果页，可返回首页或查看订单。",
@@ -1686,10 +1707,10 @@
     function tabbarHtml(active) {
       const n = state.cart.length;
       return `<div class="tabbar" data-tabbar>
-        <span class="${active === "home" ? "on" : ""}" data-go="home" data-tab="1"><div class="ico"></div>首页</span>
-        <span class="${active === "category" ? "on" : ""}" data-go="category" data-tab="1"><div class="ico"></div>分类</span>
-        <span class="${active === "cart" ? "on" : ""}" data-go="cart" data-tab="1"><div class="ico">${n ? `<i class="badge">${n > 99 ? "99+" : n}</i>` : ""}</div>购物车</span>
-        <span class="${active === "mine" ? "on" : ""}" data-go="mine" data-tab="1"><div class="ico"></div>我的</span>
+        <span class="${active === "home" ? "on" : ""}" data-go="home" data-tab="1"><div class="ico home"></div>首页</span>
+        <span class="${active === "category" ? "on" : ""}" data-go="category" data-tab="1"><div class="ico category"></div>分类</span>
+        <span class="${active === "cart" ? "on" : ""}" data-go="cart" data-tab="1"><div class="ico cart">${n ? `<i class="badge">${n > 99 ? "99+" : n}</i>` : ""}</div>购物车</span>
+        <span class="${active === "mine" ? "on" : ""}" data-go="mine" data-tab="1"><div class="ico mine"></div>我的</span>
       </div>`;
     }
 
@@ -2178,6 +2199,10 @@
             <div class="pay-method" data-action="toast" data-msg="请使用余额支付">
               <div class="chk"></div>
               <div class="name">微信支付<div class="sub">暂未开通</div></div>
+            </div>
+            <div class="pay-method" data-action="toast" data-msg="请使用余额支付">
+              <div class="chk"></div>
+              <div class="name">支付宝<div class="sub">暂未开通</div></div>
             </div>
           </div>
           <div class="panel" data-go="balance" style="cursor:pointer">

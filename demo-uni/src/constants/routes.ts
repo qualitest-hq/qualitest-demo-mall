@@ -1,26 +1,63 @@
 /**
- * 页面路径常量与常用跳转。
- * 业务里通过本文件跳转，避免散落手写路径字符串。
+ * 页面路径与跳转封装，避免业务里手写路径字符串。
  */
 export const ROUTES = {
-  /** 首页（底部 Tab） */
+  /** 首页 Tab */
   HOME: "/pages/home/home",
-  /** 分类（底部 Tab） */
+  /** 分类 Tab */
   CATEGORY: "/pages/category/category",
-  /** 购物车（底部 Tab） */
+  /** 购物车 Tab */
   CART: "/pages/cart/cart",
-  /** 我的（底部 Tab） */
+  /** 我的 Tab */
   MINE: "/pages/mine/mine",
-  /** 登录页（普通栈页，不在 Tab 内） */
+  /** 登录页 */
   LOGIN: "/pages/login/login",
-  /** 搜索页（普通栈页） */
+  /** 搜索页 */
   SEARCH: "/pages/search/search",
-  /** 商品详情页（普通栈页） */
+  /** 商品详情页 */
   DETAIL: "/pages/detail/detail",
+  /** 确认订单页 */
+  CHECKOUT: "/pages/checkout/checkout",
+  /** 收银台 */
+  PAY: "/pages/pay/pay",
+  /** 支付成功页 */
+  PAY_RESULT: "/pages/pay-result/pay-result",
 } as const;
 
 /**
- * 拼出商品详情页地址（含商品主键查询参数）。
+ * 打开确认订单页。
+ * @param query 查询串，如 cartIds=1,2 或 buySkuId=xx&buyQty=1
+ */
+export function openCheckout(query: string) {
+  const q = query.startsWith("?") ? query : `?${query}`;
+  uni.navigateTo({ url: `${ROUTES.CHECKOUT}${q}` });
+}
+
+/**
+ * 打开收银台，携带订单主键、应付金额与可选订单编号。
+ */
+export function openPay(orderId: string, payAmount: string | number, orderNo?: string) {
+  const amount = encodeURIComponent(String(payAmount ?? ""));
+  const no = orderNo ? `&orderNo=${encodeURIComponent(orderNo)}` : "";
+  uni.navigateTo({
+    url: `${ROUTES.PAY}?orderId=${encodeURIComponent(orderId)}&payAmount=${amount}${no}`,
+  });
+}
+
+/**
+ * 打开支付成功页。
+ * 使用 redirectTo 替换收银台，避免用户返回再次支付。
+ */
+export function openPayResult(orderId: string, payAmount: string | number, orderNo?: string) {
+  const amount = encodeURIComponent(String(payAmount ?? ""));
+  const no = orderNo ? `&orderNo=${encodeURIComponent(orderNo)}` : "";
+  uni.redirectTo({
+    url: `${ROUTES.PAY_RESULT}?orderId=${encodeURIComponent(orderId)}&payAmount=${amount}${no}`,
+  });
+}
+
+/**
+ * 拼商品详情页地址。
  * @param productId 商品主键
  */
 export function toDetail(productId: string) {
@@ -41,7 +78,7 @@ export function openSearch() {
 }
 
 /**
- * 返回上一页；若当前没有上一页（例如冷启动直达详情），则切换到首页 Tab。
+ * 返回上一页；没有上一页时切到首页 Tab。
  */
 export function navigateBackOrHome() {
   uni.navigateBack({

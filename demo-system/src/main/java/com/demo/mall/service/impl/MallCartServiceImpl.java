@@ -1,10 +1,9 @@
 package com.demo.mall.service.impl;
 
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.demo.common.constant.HttpStatus;
 import com.demo.common.exception.ServiceException;
-import com.demo.common.utils.SecurityUtils;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import com.demo.common.utils.DateUtils;
@@ -12,17 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.demo.mall.mapper.MallCartMapper;
 import com.demo.mall.domain.MallCart;
-import com.demo.mall.domain.MallProduct;
 import com.demo.mall.domain.MallProductSku;
 import com.demo.mall.params.MallCartParams;
 import com.demo.mall.apiParams.MallCartAddApiParams;
 import com.demo.mall.apiParams.MallCartApiParams;
 import com.demo.mall.apiParams.MallCartQuantityApiParams;
+import com.demo.mall.apiParams.MallCartSelectedApiParams;
 import com.demo.mall.result.MallCartResult;
 import com.demo.mall.apiResult.MallCartApiResult;
 import com.demo.mall.service.IMallCartService;
-import com.demo.mall.service.IMallProductService;
-import com.demo.mall.service.IMallProductSkuService;
+import com.demo.mall.service.MallSkuSaleSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -33,14 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class MallCartServiceImpl implements IMallCartService {
+
     @Autowired
     private MallCartMapper mallCartMapper;
 
     @Autowired
-    private IMallProductSkuService mallProductSkuService;
-
-    @Autowired
-    private IMallProductService mallProductService;
+    private MallSkuSaleSupport mallSkuSaleSupport;
 
     /**
      * 查询商城购物车列表
@@ -87,11 +83,17 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 查询商城购物车ApiResult列表（客户端）
+     * 查询客户端购物车列表，并为每行填充是否可结算
      */
     @Override
     public List<MallCartApiResult> selectMallCartApiResultList(MallCartApiParams params) {
-        return mallCartMapper.selectMallCartApiResultList(params);
+        List<MallCartApiResult> list = mallCartMapper.selectMallCartApiResultList(params);
+        if (list != null) {
+            for (MallCartApiResult row : list) {
+                fillAvailability(row);
+            }
+        }
+        return list;
     }
 
     /**
@@ -103,16 +105,19 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 新增商城购物车
+     * 新增购物车行；未传勾选时默认勾选
      *
-     * @param mallCart 商城购物车
-     * @return 结果
+     * @param mallCart 购物车实体
+     * @return 影响行数
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public int insertMallCart(MallCart mallCart) {
         if (Objects.isNull(mallCart.getCartId())) {
             mallCart.setCartId(IdUtil.getSnowflakeNextId());
+        }
+        if (mallCart.getSelected() == null) {
+            mallCart.setSelected(1);
         }
         mallCart.setCreateTime(DateUtils.getNowDate());
         return mallCartMapper.insertMallCart(mallCart);
@@ -198,7 +203,7 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 加入购物车；校验 SKU 可售与库存，同 SKU 累加数量
+     * 加入购物车：校验可售；已有同 SKU 则累加数量并勾选，否则新建一行并勾选
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -210,17 +215,18 @@ public class MallCartServiceImpl implements IMallCartService {
         if (quantity <= 0) {
             throw new ServiceException("数量须大于0");
         }
-        MallProductSku sku = validateSkuForCart(params.getSkuId(), quantity);
+        MallProductSku sku = mallSkuSaleSupport.requireSaleable(params.getSkuId(), quantity).getSku();
         MallCartParams query = new MallCartParams();
         query.setAccountId(accountId);
         query.setSkuId(params.getSkuId());
         MallCart existing = mallCartMapper.selectMallCartOne(query);
         if (existing != null) {
             int newQty = existing.getQuantity() + quantity;
-            validateSkuForCart(params.getSkuId(), newQty);
+            mallSkuSaleSupport.requireSaleable(params.getSkuId(), newQty);
             MallCart update = new MallCart();
             update.setCartId(existing.getCartId());
             update.setQuantity(newQty);
+            update.setSelected(1);
             update.setUpdateTime(DateUtils.getNowDate());
             mallCartMapper.updateMallCart(update);
             return;
@@ -231,13 +237,14 @@ public class MallCartServiceImpl implements IMallCartService {
         cart.setProductId(sku.getProductId());
         cart.setSkuId(sku.getSkuId());
         cart.setQuantity(quantity);
+        cart.setSelected(1);
         cart.setDelFlag(0);
         cart.setCreateTime(DateUtils.getNowDate());
         mallCartMapper.insertMallCart(cart);
     }
 
     /**
-     * 修改购物车数量；校验归属与库存
+     * 修改购物车数量：为 0 则逻辑删除，否则校验可售后更新数量
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -245,11 +252,18 @@ public class MallCartServiceImpl implements IMallCartService {
         if (params == null || params.getCartId() == null) {
             throw new ServiceException("购物车ID不能为空");
         }
-        if (params.getQuantity() == null || params.getQuantity() <= 0) {
-            throw new ServiceException("数量须大于0");
+        if (params.getQuantity() == null) {
+            throw new ServiceException("数量不能为空");
         }
         MallCart cart = requireOwnedCart(accountId, params.getCartId());
-        validateSkuForCart(cart.getSkuId(), params.getQuantity());
+        if (params.getQuantity() == 0) {
+            mallCartMapper.logicDeleteMallCartById(cart.getCartId());
+            return;
+        }
+        if (params.getQuantity() < 0) {
+            throw new ServiceException("数量须大于等于0");
+        }
+        mallSkuSaleSupport.requireSaleable(cart.getSkuId(), params.getQuantity());
         MallCart update = new MallCart();
         update.setCartId(cart.getCartId());
         update.setQuantity(params.getQuantity());
@@ -258,13 +272,48 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 删除购物车项；逻辑删除
+     * 批量更新勾选状态；逐行校验归属后写入 selected
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void deleteMallCartItem(Long accountId, Long cartId) {
-        requireOwnedCart(accountId, cartId);
-        mallCartMapper.logicDeleteMallCartById(cartId);
+    public void updateMallCartSelected(Long accountId, MallCartSelectedApiParams params) {
+        if (params == null || params.getCartIds() == null || params.getCartIds().isEmpty()) {
+            throw new ServiceException("购物车ID不能为空");
+        }
+        if (params.getSelected() == null || (params.getSelected() != 0 && params.getSelected() != 1)) {
+            throw new ServiceException("勾选状态须为0或1");
+        }
+        for (Long cartId : params.getCartIds()) {
+            if (cartId == null) {
+                throw new ServiceException("购物车ID不能为空");
+            }
+            MallCart cart = requireOwnedCart(accountId, cartId);
+            MallCart update = new MallCart();
+            update.setCartId(cart.getCartId());
+            update.setSelected(params.getSelected());
+            update.setUpdateTime(DateUtils.getNowDate());
+            mallCartMapper.updateMallCart(update);
+        }
+    }
+
+    /**
+     * 批量逻辑删除购物车行；逐行校验归属后一次更新
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteMallCartItems(Long accountId, List<Long> cartIds) {
+        if (cartIds == null || cartIds.isEmpty()) {
+            throw new ServiceException("购物车ID不能为空");
+        }
+        List<Long> ownedIds = new ArrayList<>();
+        for (Long cartId : cartIds) {
+            if (cartId == null) {
+                throw new ServiceException("购物车ID不能为空");
+            }
+            requireOwnedCart(accountId, cartId);
+            ownedIds.add(cartId);
+        }
+        mallCartMapper.logicDeleteMallCartByIdList(ownedIds);
     }
 
     /**
@@ -274,6 +323,36 @@ public class MallCartServiceImpl implements IMallCartService {
     @Override
     public void clearMallCartByAccountId(Long accountId) {
         mallCartMapper.logicDeleteByAccountId(accountId);
+    }
+
+    /**
+     * 按上架、SKU 状态、库存填写 available 与 unavailableReason
+     */
+    private void fillAvailability(MallCartApiResult row) {
+        if (row.getShelfStatus() == null || row.getShelfStatus() != 1) {
+            row.setAvailable(false);
+            row.setUnavailableReason("商品已下架");
+            return;
+        }
+        if (row.getSkuStatus() != null && row.getSkuStatus() != 0) {
+            row.setAvailable(false);
+            row.setUnavailableReason("SKU已停用");
+            return;
+        }
+        int stock = row.getStock() == null ? 0 : row.getStock();
+        int qty = row.getQuantity() == null ? 0 : row.getQuantity();
+        if (stock <= 0) {
+            row.setAvailable(false);
+            row.setUnavailableReason("库存不足");
+            return;
+        }
+        if (stock < qty) {
+            row.setAvailable(false);
+            row.setUnavailableReason("库存不足");
+            return;
+        }
+        row.setAvailable(true);
+        row.setUnavailableReason(null);
     }
 
     /**
@@ -290,27 +369,4 @@ public class MallCartServiceImpl implements IMallCartService {
         return cart;
     }
 
-    /**
-     * 校验 SKU 可售、商品上架且库存充足
-     */
-    private MallProductSku validateSkuForCart(Long skuId, int quantity) {
-        MallProductSku sku = mallProductSkuService.selectMallProductSkuById(skuId);
-        if (sku == null || (sku.getDelFlag() != null && sku.getDelFlag() == 1)) {
-            throw new ServiceException("SKU不存在");
-        }
-        if (sku.getStatus() != null && sku.getStatus() != 0) {
-            throw new ServiceException("SKU已停用");
-        }
-        if (sku.getStock() == null || sku.getStock() < quantity) {
-            throw new ServiceException("库存不足");
-        }
-        MallProduct product = mallProductService.selectMallProductById(sku.getProductId());
-        if (product == null || (product.getDelFlag() != null && product.getDelFlag() == 1)) {
-            throw new ServiceException("商品不存在");
-        }
-        if (product.getShelfStatus() == null || product.getShelfStatus() != 1) {
-            throw new ServiceException("商品已下架");
-        }
-        return sku;
-    }
 }

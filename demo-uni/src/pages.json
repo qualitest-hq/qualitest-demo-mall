@@ -55,6 +55,27 @@
         // 详情页自绘头图返回按钮，隐藏系统导航栏
         "navigationStyle": "custom"
       }
+    },
+    {
+      // 确认订单：算价、选地址、创建订单
+      "path": "pages/checkout/checkout",
+      "style": {
+        "navigationBarTitleText": "确认订单"
+      }
+    },
+    {
+      // 收银台：余额支付与渠道占位
+      "path": "pages/pay/pay",
+      "style": {
+        "navigationBarTitleText": "收银台"
+      }
+    },
+    {
+      // 支付成功结果页
+      "path": "pages/pay-result/pay-result",
+      "style": {
+        "navigationBarTitleText": "支付成功"
+      }
     }
   ],
   // 全局默认导航栏与窗口背景
@@ -64,7 +85,7 @@
     "navigationBarBackgroundColor": "#FFFFFF",
     "backgroundColor": "#F5F5F5"
   },
-  // 底部四个 Tab；选中色写死为品牌绿，改品牌色时请同步修改此处色值
+  // 底部四个原生 Tab；图标为 static/tab 下 PNG；选中色为品牌绿
   "tabBar": {
     "color": "#999999",
     "selectedColor": "#2F6F5E",
@@ -74,26 +95,26 @@
       {
         "pagePath": "pages/home/home",
         "text": "首页",
-        "iconPath": "static/tab/home.png",
-        "selectedIconPath": "static/tab/home-active.png"
+        "iconPath": "static/tab/tab-home.png",
+        "selectedIconPath": "static/tab/tab-home-active.png"
       },
       {
         "pagePath": "pages/category/category",
         "text": "分类",
-        "iconPath": "static/tab/category.png",
-        "selectedIconPath": "static/tab/category-active.png"
+        "iconPath": "static/tab/tab-category.png",
+        "selectedIconPath": "static/tab/tab-category-active.png"
       },
       {
         "pagePath": "pages/cart/cart",
         "text": "购物车",
-        "iconPath": "static/tab/cart.png",
-        "selectedIconPath": "static/tab/cart-active.png"
+        "iconPath": "static/tab/tab-cart.png",
+        "selectedIconPath": "static/tab/tab-cart-active.png"
       },
       {
         "pagePath": "pages/mine/mine",
         "text": "我的",
-        "iconPath": "static/tab/mine.png",
-        "selectedIconPath": "static/tab/mine-active.png"
+        "iconPath": "static/tab/tab-mine.png",
+        "selectedIconPath": "static/tab/tab-mine-active.png"
       }
     ]
   }

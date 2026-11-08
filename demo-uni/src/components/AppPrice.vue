@@ -1,6 +1,6 @@
 <template>
-  <!-- 商城价格：价格色金额，可选人民币符号 -->
-  <text class="app-price" :class="{ muted: muted }">
+  <!-- 价格：品牌价色 + 可选人民币符号 + 字号档 -->
+  <text class="app-price" :class="[size, { muted: muted }]">
     <text v-if="showSymbol" class="symbol">¥</text>
     <text class="value">{{ display }}</text>
   </text>
@@ -9,7 +9,7 @@
 <script setup lang="ts">
 /**
  * 价格展示组件。
- * 统一价格色与两位小数，列表与详情复用，避免各页各自拼接货币符号。
+ * 统一价格色与两位小数，列表、底栏合计、收银台大额等复用，避免各页自行拼接货币符号。
  */
 import { computed } from "vue";
 
@@ -19,13 +19,19 @@ const props = withDefaults(
     value?: number | string | null;
     /** 是否显示人民币符号，默认显示 */
     showSymbol?: boolean;
-    /** 弱化样式，用于次要金额 */
+    /** 弱化样式，用于次要或失效金额 */
     muted?: boolean;
+    /**
+     * 字号档。
+     * md 默认列表价；lg 底栏合计；xl 支付结果；hero 收银台大额。
+     */
+    size?: "md" | "lg" | "xl" | "hero";
   }>(),
   {
     value: 0,
     showSymbol: true,
     muted: false,
+    size: "md",
   },
 );
 
@@ -40,7 +46,7 @@ const display = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-/* 价格色来自全局 SCSS 变量注入 */
+/* 价格色来自全局 SCSS 变量 */
 .app-price {
   color: $color-price;
   font-weight: 600;
@@ -49,6 +55,30 @@ const display = computed(() => {
   &.muted {
     color: #999;
     font-weight: 400;
+  }
+
+  &.lg {
+    font-size: 36rpx;
+    font-weight: 700;
+  }
+
+  &.xl {
+    font-size: 56rpx;
+    font-weight: 750;
+
+    .symbol {
+      font-size: 32rpx;
+    }
+  }
+
+  &.hero {
+    font-size: 72rpx;
+    font-weight: 750;
+
+    .symbol {
+      font-size: 32rpx;
+      margin-right: 4rpx;
+    }
   }
 
   .symbol {

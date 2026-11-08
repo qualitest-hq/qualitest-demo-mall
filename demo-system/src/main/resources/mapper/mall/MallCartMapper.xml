@@ -10,6 +10,7 @@
         <result property="productId" column="product_id"/>
         <result property="skuId" column="sku_id"/>
         <result property="quantity" column="quantity"/>
+        <result property="selected" column="selected"/>
         <result property="delFlag" column="del_flag"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -21,6 +22,7 @@
                product_id,
                sku_id,
                quantity,
+               selected,
                del_flag,
                create_time,
                update_time
@@ -33,6 +35,7 @@
                mc.product_id  as productId,
                mc.sku_id      as skuId,
                mc.quantity    as quantity,
+               mc.selected    as selected,
                mc.del_flag    as delFlag,
                mc.create_time as createTime,
                mc.update_time as updateTime
@@ -70,6 +73,7 @@
         mc.sku_id as skuId,
         mps.sku_name as skuName,
         mc.quantity as quantity,
+        mc.selected as selected,
         mc.del_flag as delFlag,
         mc.create_time as createTime,
         mc.update_time as updateTime
@@ -108,6 +112,7 @@
                mc.product_id  as productId,
                mc.sku_id      as skuId,
                mc.quantity    as quantity,
+               mc.selected    as selected,
                mc.del_flag    as delFlag,
                mc.create_time as createTime,
                mc.update_time as updateTime
@@ -126,6 +131,10 @@
                mps.sku_name    as skuName,
                mps.sale_price  as salePrice,
                mc.quantity     as quantity,
+               mc.selected     as selected,
+               mps.stock       as stock,
+               mp.shelf_status as shelfStatus,
+               mps.status      as skuStatus,
                (mps.sale_price * mc.quantity) as subtotal
         from mall_cart mc
                  inner join mall_product mp on mc.product_id = mp.product_id and mp.del_flag = 0
@@ -141,6 +150,7 @@
                mc.product_id  as productId,
                mc.sku_id      as skuId,
                mc.quantity    as quantity,
+               mc.selected    as selected,
                mc.del_flag    as delFlag,
                mc.create_time as createTime,
                mc.update_time as updateTime
@@ -172,6 +182,7 @@
         mc.product_id,
         mc.sku_id,
         mc.quantity,
+        mc.selected,
         mc.del_flag,
         mc.create_time,
         mc.update_time
@@ -208,6 +219,9 @@
             <if test="quantity != null">
                 quantity,
             </if>
+            <if test="selected != null">
+                selected,
+            </if>
             <if test="delFlag != null">
                 del_flag,
             </if>
@@ -233,6 +247,9 @@
             </if>
             <if test="quantity != null">
                 #{quantity},
+            </if>
+            <if test="selected != null">
+                #{selected},
             </if>
             <if test="delFlag != null">
                 #{delFlag},
@@ -260,6 +277,9 @@
             </if>
             <if test="quantity != null">
                 quantity = #{quantity},
+            </if>
+            <if test="selected != null">
+                selected = #{selected},
             </if>
             <if test="delFlag != null">
                 del_flag = #{delFlag},

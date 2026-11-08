@@ -10,9 +10,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 
-/**
- * 客户端修改购物车数量 ApiParams
- */
+/** 修改购物车数量入参 */
 @Getter
 @Setter
 @ToString
@@ -21,14 +19,10 @@ import java.io.Serializable;
 @Builder
 public class MallCartQuantityApiParams implements Serializable {
 
-    /**
-     * 购物车 ID
-     */
+    /** 购物车主键 */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long cartId;
 
-    /**
-     * 购买数量
-     */
+    /** 数量，传0删除该行 */
     private Integer quantity;
 }

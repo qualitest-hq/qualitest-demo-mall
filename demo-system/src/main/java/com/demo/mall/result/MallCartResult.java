@@ -3,8 +3,10 @@ package com.demo.mall.result;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
+
 import java.util.Date;
 import java.math.BigDecimal;
+
 import com.demo.common.annotation.Excel;
 
 import java.io.Serializable;
@@ -78,5 +80,10 @@ public class MallCartResult implements Serializable {
     @Excel(name = "数量")
     private Integer quantity;
 
+    /**
+     * 是否勾选结算：0否 1是
+     */
+    @Excel(name = "勾选")
+    private Integer selected;
 
 }

@@ -6,6 +6,7 @@ import com.demo.mall.params.MallCartParams;
 import com.demo.mall.apiParams.MallCartAddApiParams;
 import com.demo.mall.apiParams.MallCartApiParams;
 import com.demo.mall.apiParams.MallCartQuantityApiParams;
+import com.demo.mall.apiParams.MallCartSelectedApiParams;
 import com.demo.mall.result.MallCartResult;
 import com.demo.mall.apiResult.MallCartApiResult;
 
@@ -49,10 +50,7 @@ public interface IMallCartService {
     MallCartResult selectMallCartResult(Long cartId);
 
     /**
-     * 查询商城购物车ApiResult列表（客户端）
-     *
-     * @param params 商城购物车ApiParams
-     * @return 商城购物车ApiResult集合
+     * 查询客户端购物车列表，并填充是否可结算
      */
     List<MallCartApiResult> selectMallCartApiResultList(MallCartApiParams params);
 
@@ -129,22 +127,27 @@ public interface IMallCartService {
     MallCart selectMallCartOne(MallCartParams params);
 
     /**
-     * 加入购物车（客户端）；同 SKU 已存在则累加数量
+     * 加入购物车：校验可售；同账号同 SKU 累加数量并默认勾选
      */
     void addMallCartItem(Long accountId, MallCartAddApiParams params);
 
     /**
-     * 修改购物车数量（客户端）
+     * 修改购物车数量：数量为 0 时逻辑删除该行，否则校验可售后更新
      */
     void updateMallCartQuantity(Long accountId, MallCartQuantityApiParams params);
 
     /**
-     * 删除购物车项（客户端）；逻辑删除
+     * 批量更新购物车行勾选状态
      */
-    void deleteMallCartItem(Long accountId, Long cartId);
+    void updateMallCartSelected(Long accountId, MallCartSelectedApiParams params);
 
     /**
-     * 清空当前账号购物车（客户端）
+     * 批量逻辑删除购物车行（逐行校验归属）
+     */
+    void deleteMallCartItems(Long accountId, List<Long> cartIds);
+
+    /**
+     * 逻辑删除当前账号全部购物车行
      */
     void clearMallCartByAccountId(Long accountId);
 }

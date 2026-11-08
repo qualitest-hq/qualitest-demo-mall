@@ -297,6 +297,7 @@ CREATE TABLE `mall_cart` (
   `product_id` bigint DEFAULT '0' COMMENT '商品ID',
   `sku_id` bigint DEFAULT '0' COMMENT 'SKU ID',
   `quantity` int DEFAULT '0' COMMENT '数量',
+  `selected` tinyint NOT NULL DEFAULT '1' COMMENT '是否勾选结算（0否 1是）',
   `del_flag` tinyint DEFAULT '0' COMMENT '删除标志（0未删除 1已删除）',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
