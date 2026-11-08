@@ -10,7 +10,7 @@
 
 按**小批次**落地：一次只盯一批，合入后再翻下一批。  
 「状态」取值：未开始 / 进行中 / 已完成。  
-**当前批次**：`U0`（改这里即可）。
+**当前批次**：`U1`（改这里即可）。
 
 ---
 
@@ -53,7 +53,7 @@ U0 就要落齐；后续批次只增量，不另起一套习惯。
 
 **不上**：整仓换 unibest 模板、UnoCSS 先行、过早 i18n / E2E、并行再引一套 uview。
 
-U0 接入要点：`pnpm add wot-design-uni`；`pages.json` easycom `^wd-(.*)`；`tsconfig` 挂 `wot-design-uni/global`；主题变量与 `styles/tokens.scss` 对齐。
+U0 接入要点：`pnpm add wot-design-uni`；`pages.json` easycom `^wd-(.*)`；组件全局类型用 `src/types/wot-components.d.ts`（勿直接挂 `wot-design-uni/global`，会把库源码拉进 `vue-tsc`）；色板与 `$uni-*` 写在 `uni.scss`（勿再拆文件 `@import`），`App.vue` 挂 CSS 变量给 wot。
 
 ### 2.2 目录约定
 
@@ -66,9 +66,9 @@ demo-uni/src/
   pages/         # 路由页；薄：组组件 + 调 store/api
   composables/   # 可复用组合逻辑（分页、倒计时等，按需加）
   utils/         # request、storage、format、navigate
-  styles/        # token；映射 uni / wot 主题变量；业务页少写魔法色
+  styles/        # 按需；全局色板以 uni.scss 为准（框架注入，勿拆文件互引）
   constants/     # 存储 key、路由 path、业务枚举文案
-  config/        # 品牌名、主题与功能开关
+  config/        # 品牌名、slogan 等集中配置
 ```
 
 | 层 | 职责 | 禁止 |
@@ -86,10 +86,9 @@ demo-uni/src/
 | 面 | 放哪 | 说明 |
 |---|---|---|
 | 品牌名 / slogan | `config/app.ts` | 导航标题、关于、分享文案共用 |
-| 色板与圆角 | `styles/tokens.scss` → `$uni-color-primary` + wot CSS 变量 | 对齐 §6.1；禁止页面硬编码品牌色 |
-| 功能开关 | `config/features.ts` | 如三方登录、提现渠道、商家入口 |
+| 色板与圆角 | `uni.scss`（令牌 + `$uni-*`）→ `App.vue` CSS 变量 / wot | 对齐 §6.1；禁止页面硬编码品牌色；uni.scss 内禁止再 @import 色板文件 |
 | 环境 | `.env` / `.env.development` / `.env.production` | `VITE_API_BASE_URL`；H5 开发可走 Vite proxy |
-| 渠道差 | `#ifdef` + 少量 `platform` 工具 | 登录 / 支付 / 分享；差异写进页内或 SCREEN 级注释，勿复制整页 |
+| 渠道差 | `#ifdef` + 少量 `platform` 工具 | 登录 / 支付 / 提现 / 分享按端分支；勿用全局布尔开关冒充端能力；勿复制整页 |
 
 ### 2.4 请求与类型
 
@@ -122,7 +121,7 @@ demo-uni/src/
 
 | 批次 | 范围 | 本批要落地的点 | 合入标准 | 状态 |
 |---|---|---|---|---|
-| U0 | 工程骨架 | §2 目录与基线；接入 wot；token；request + Pinia user；env/proxy；Tab 壳；清 Hello；品牌 config | `dev:h5` 起得来；`type-check` 过；请求能打 8801；未登录逛购壳不炸 | 未开始 |
+| U0 | 工程骨架 | §2 目录与基线；接入 wot；token；request + Pinia user；env/proxy；Tab 壳；清 Hello；品牌 config | `dev:h5` 起得来；`type-check` 过；请求能打 8801；未登录逛购壳不炸 | 已完成 |
 | U1 | 登录 + 逛购 | App/H5 登录（密码优先）；首页双列；分类；搜索；详情 + SKU；`api/auth` `api/product` | 登录落 token；能浏览并选 SKU | 未开始 |
 | U2 | 车 + 结算 + 付 | 购物车；结算 preview；下单；余额收银台；成功页；`api/cart` `api/order` | 主路径余额下单支付可演示 | 未开始 |
 | U3 | 订单与售后 | 订单列表/详情；取消/确认收货；退款申请+列表；物流可占位 | 订单态对齐预览；退款能申请 | 未开始 |
@@ -142,17 +141,17 @@ demo-uni/src/
 
 | 点 | 建议 | 位置 / 改动 | 状态 |
 |---|---|---|---|
-| 目录骨架 | 建好 `api/ types/ stores/ components/ composables/ utils/ styles/ constants/ config/`（可先空 `index` 占位） | `src/*` | 未开始 |
-| 路径别名 | `@/` → `src/` | `vite.config.ts`、`tsconfig` | 未开始 |
-| 品牌 config | 名称「衡物」、默认演示说明 | `config/app.ts` | 未开始 |
-| 设计 token | brand/price/bg/surface/ink/radius；映射 `$uni-color-primary` + wot 主题变量 | `styles/tokens.scss`、`uni.scss` | 未开始 |
-| 接入 wot | 依赖 + easycom + 全局类型；用 `wd-button` 等冒烟一处即可 | `package.json`、`pages.json`、`tsconfig` | 未开始 |
-| 请求封装 | 泛型解包、Bearer、401、可关 toast | `utils/request.ts` | 未开始 |
-| 登录态 | Pinia `user` + storage key 常量 | `stores/user.ts`、`constants/storage.ts` | 未开始 |
-| 环境 | `VITE_API_BASE_URL`；H5 proxy `/api` → 8801 | `.env*`、`vite.config.ts` | 未开始 |
-| Tab 壳 | 首页 / 购物车 / 我的三页占位；选中色用 brand | `pages.json`、`pages/home|cart|mine` | 未开始 |
-| 业务组件壳 | `AppPrice` 等商城特有先空壳；Empty 等通用走 wot | `components/` | 未开始 |
-| 清理脚手架 | 去掉 Hello；manifest/导航「衡物」 | `pages/`、`manifest.json` | 未开始 |
+| 目录骨架 | 建好 `api/ types/ stores/ components/ composables/ utils/ styles/ constants/ config/`（可先空 `index` 占位） | `src/*` | 已完成 |
+| 路径别名 | `@/` → `src/` | `vite.config.ts`、`tsconfig` | 已完成 |
+| 品牌 config | 名称「衡物」、默认演示说明 | `config/app.ts` | 已完成 |
+| 设计 token | brand/price/bg/surface/ink/radius；映射 `$uni-color-primary`；App 挂 CSS 变量 | `uni.scss`、`App.vue` | 已完成 |
+| 接入 wot | 依赖 + easycom + 全局类型；用 `wd-button` 等冒烟一处即可 | `package.json`、`pages.json`、`tsconfig` | 已完成 |
+| 请求封装 | 泛型解包、Bearer、401、可关 toast | `utils/request.ts` | 已完成 |
+| 登录态 | Pinia `user` + storage key 常量 | `stores/user.ts`、`constants/storage.ts` | 已完成 |
+| 环境 | `VITE_API_BASE_URL`；H5 proxy `/api` → 8801 | `.env*`、`vite.config.ts` | 已完成 |
+| Tab 壳 | 首页 / 购物车 / 我的三页占位；选中色用 brand | `pages.json`、`pages/home|cart|mine` | 已完成 |
+| 业务组件壳 | `AppPrice` 等商城特有先空壳；Empty 等通用走 wot | `components/` | 已完成 |
+| 清理脚手架 | 去掉 Hello；manifest/导航「衡物」 | `pages/`、`manifest.json` | 已完成 |
 
 ### 4.2 U1 · 登录 + 逛购
 
@@ -206,7 +205,7 @@ demo-uni/src/
 | 评价 | 列表 / 发表 | 后端未就绪则示意 | 未开始 |
 | 空态 / 加载 | 统一 `AppEmpty` / 骨架 | 体验 | 未开始 |
 | 渠道差异 | 登录、支付、分享 | `#ifdef` + 说明 | 未开始 |
-| 商家中心入口 | 功能开关控制显示 | expansion §6.3 | 未开始 |
+| 商家中心入口 | 需要时再挂入口；端差用 `#ifdef` | expansion §6.3 | 未开始 |
 | 预览 C 批搬迁 | 收藏 / 秒杀 / 分享等 | 不挡主路径 | 未开始 |
 
 ---
@@ -231,3 +230,4 @@ demo-uni/src/
 - 预览增强批次：[c-end-preview-roadmap.md](./c-end-preview-roadmap.md)  
 - 商家预览：[merchant-ui-preview.html](./merchant-ui-preview.html)  
 - 联调端口 / 账号：[deploy.md](./deploy.md)、仓根 README  
+

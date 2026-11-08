@@ -1,7 +1,8 @@
 {
-    "name" : "",
+    /* 应用名称与简介，安装包信息及部分端启动展示会读取 */
+    "name" : "衡物",
     "appid" : "",
-    "description" : "",
+    "description" : "衡物 · 精选日用演示商城",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
