@@ -1,7 +1,8 @@
 # C 端视觉预览扩充清单
 
 针对 [c-end-ui-preview.html](./c-end-ui-preview.html)（衡物 · C 端机框原型）。  
-**范围**：只改预览 HTML / 共享 JS·CSS 交互示意；**不**要求同期改 `/api` 或开 uni 工程。  
+**范围**：只改预览 HTML / 共享 JS·CSS 交互示意；**不**要求同期改 `/api`。  
+uni 落地另见 [c-end-uni-roadmap.md](./c-end-uni-roadmap.md)（可并行，不互为硬门槛）。  
 后端与接口批次仍看 [expansion-roadmap.md](./expansion-roadmap.md)；商家预览另见同仓 `merchant-ui-preview.html`。
 
 按**小批次**落地：一次只盯一批，合入后再翻下一批。  
@@ -112,6 +113,7 @@
 ## 5. 相关文档
 
 - 业务与接口扩充：[expansion-roadmap.md](./expansion-roadmap.md)（§6 可选 C 端客户端）  
+- uni 分步落地：[c-end-uni-roadmap.md](./c-end-uni-roadmap.md)  
 - C 端预览：[c-end-ui-preview.html](./c-end-ui-preview.html)  
 - 商家预览：[merchant-ui-preview.html](./merchant-ui-preview.html)  
 - AI 测试流提示：[ai-test-flow-prompts.md](./ai-test-flow-prompts.md)（后端场景用，预览批次可不改）

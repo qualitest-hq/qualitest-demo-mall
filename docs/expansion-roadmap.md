@@ -207,12 +207,12 @@ B6 先用 HMAC 简单签名即可（质衡现有脚本已支持）；要仿真�
 
 > 可选、附属。有需要时再开独立目录；**不**阻塞 §3 / §4，也**不**要求贡献者实现。
 
-**页面优先**：以 [c-end-ui-preview.html](./c-end-ui-preview.html) 定稿交互与信息架构；现有 `/api` 对不上时，**改接口适配页面**（面试向真实商城），而不是把 UI 砍瘦。`demo-mall-uni/` 仍后置，预览定稿后再开。  
-预览屏增强（收藏 / 秒杀闭环、搜索排序等）分批清单见 [c-end-preview-roadmap.md](./c-end-preview-roadmap.md)，与本文 §3/§4 后端批次独立推进。
+**页面优先**：以 [c-end-ui-preview.html](./c-end-ui-preview.html) 定稿交互与信息架构；现有 `/api` 对不上时，**改接口适配页面**（面试向真实商城），而不是把 UI 砍瘦。  
+uni 分步清单见 [c-end-uni-roadmap.md](./c-end-uni-roadmap.md)（工程目录 `demo-uni/`）；预览示意增强见 [c-end-preview-roadmap.md](./c-end-preview-roadmap.md)。二者与本文 §3/§4 后端批次均可独立推进，主路径以 uni U0–U2 为准。
 
 | 项 | 建议 |
 |---|---|
-| 工程位置 | 独立目录（例如 `demo-mall-uni/`），**勿**塞进 `demo-ui` |
+| 工程位置 | `demo-uni/`（独立目录），**勿**塞进 `demo-ui` |
 | 技术 | 自选（uni-app / 纯 H5 / 其他）；若选 uni-app，可同时编微信小程序与 App |
 | 对接 | 客户端 Bearer + `/api/**`；缺口见 §6.2，按页补齐/加厚 |
 | 造数 | 客户端不负责；场景仍走 `POST /web/test/scenario/load/{id}` 或 SQL |
