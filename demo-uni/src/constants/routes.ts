@@ -34,9 +34,17 @@ export const ROUTES = {
   MERCHANT_DASH: "/pages/merchant/dash",
   /** 店铺资料变更 */
   MERCHANT_PROFILE: "/pages/merchant/profile",
-  /** 商家商品（占位） */
+  /** 商家商品列表 */
   MERCHANT_GOODS: "/pages/merchant/goods",
+  /** 商家商品新建/编辑 */
+  MERCHANT_GOODS_EDIT: "/pages/merchant/goods-edit",
 } as const;
+
+/** 打开本店商品编辑页，不传 ID 为新建 */
+export function openMerchantGoodsEdit(productId?: string) {
+  const q = productId ? `?productId=${encodeURIComponent(productId)}` : "";
+  uni.navigateTo({ url: `${ROUTES.MERCHANT_GOODS_EDIT}${q}` });
+}
 
 /** 打开商家中心入口 */
 export function openMerchantIndex() {

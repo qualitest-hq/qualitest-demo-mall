@@ -64,7 +64,7 @@ public class MallProductController extends BaseController {
     }
 
     /**
-     * 上架/下架
+     * 切换商品上架/下架；上架时要求所属店铺未停用
      */
     @PreAuthorize("@ss.hasPermi('mall:mallProduct:edit')")
     @Log(title = "商城商品SPU", businessType = BusinessType.UPDATE)

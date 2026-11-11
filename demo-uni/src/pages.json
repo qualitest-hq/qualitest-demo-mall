@@ -118,6 +118,12 @@
       "style": {
         "navigationBarTitleText": "商品管理"
       }
+    },
+    {
+      "path": "pages/merchant/goods-edit",
+      "style": {
+        "navigationBarTitleText": "编辑商品"
+      }
     }
   ],
   // 全局默认导航栏与窗口背景

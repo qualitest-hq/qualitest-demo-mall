@@ -298,7 +298,6 @@ CREATE TABLE `mall_cart` (
   `sku_id` bigint DEFAULT '0' COMMENT 'SKU ID',
   `quantity` int DEFAULT '0' COMMENT '数量',
   `selected` tinyint NOT NULL DEFAULT '1' COMMENT '是否勾选结算（0否 1是）',
-  `del_flag` tinyint DEFAULT '0' COMMENT '删除标志（0未删除 1已删除）',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`cart_id`),
@@ -314,6 +313,115 @@ CREATE TABLE `mall_cart` (
 LOCK TABLES `mall_cart` WRITE;
 /*!40000 ALTER TABLE `mall_cart` DISABLE KEYS */;
 /*!40000 ALTER TABLE `mall_cart` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `merchant_category`
+--
+
+DROP TABLE IF EXISTS `merchant_category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `merchant_category` (
+  `category_id` bigint NOT NULL AUTO_INCREMENT COMMENT '经营类目ID',
+  `category_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '类目名称',
+  `sort_num` int DEFAULT '0' COMMENT '排序',
+  `status` tinyint DEFAULT '0' COMMENT '状态（0正常 1停用）',
+  `del_flag` tinyint DEFAULT '0' COMMENT '删除标志（0未删除 1已删除）',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='商家经营类目';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `merchant_category`
+--
+
+LOCK TABLES `merchant_category` WRITE;
+/*!40000 ALTER TABLE `merchant_category` DISABLE KEYS */;
+/*!40000 ALTER TABLE `merchant_category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `merchant`
+--
+
+DROP TABLE IF EXISTS `merchant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `merchant` (
+  `merchant_id` bigint NOT NULL AUTO_INCREMENT COMMENT '商家ID',
+  `account_id` bigint NOT NULL COMMENT '账号ID',
+  `merchant_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '店铺名称',
+  `category_id` bigint DEFAULT '0' COMMENT '经营类目ID',
+  `logo` varchar(255) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '商家图标',
+  `contact_name` varchar(32) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '联系人',
+  `contact_phone` varchar(11) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '联系电话',
+  `license_files` json DEFAULT NULL COMMENT '资质文件',
+  `open_status` tinyint DEFAULT '1' COMMENT '营业状态（0打烊 1营业）',
+  `status` tinyint DEFAULT '0' COMMENT '商家状态（0正常 1停用）',
+  `del_flag` tinyint DEFAULT '0' COMMENT '删除标志（0未删除 1已删除）',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`merchant_id`),
+  UNIQUE KEY `uk_account_id` (`account_id`),
+  KEY `idx_category_id` (`category_id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='商家';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `merchant`
+--
+
+LOCK TABLES `merchant` WRITE;
+/*!40000 ALTER TABLE `merchant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `merchant` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `merchant_apply`
+--
+
+DROP TABLE IF EXISTS `merchant_apply`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `merchant_apply` (
+  `apply_id` bigint NOT NULL AUTO_INCREMENT COMMENT '申请ID',
+  `account_id` bigint NOT NULL COMMENT '账号ID',
+  `merchant_id` bigint DEFAULT NULL COMMENT '商家ID',
+  `apply_type` tinyint NOT NULL DEFAULT '1' COMMENT '申请类型（1入驻 2资料变更）',
+  `merchant_name` varchar(64) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '店铺名称',
+  `category_id` bigint DEFAULT '0' COMMENT '经营类目ID',
+  `logo` varchar(255) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '商家图标',
+  `contact_name` varchar(32) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '联系人',
+  `contact_phone` varchar(11) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '联系电话',
+  `license_files` json DEFAULT NULL COMMENT '资质文件',
+  `open_status` tinyint DEFAULT '1' COMMENT '营业状态（0打烊 1营业）',
+  `status` tinyint DEFAULT '0' COMMENT '申请状态（0待审 1已通过 2已驳回 3已撤销）',
+  `reject_reason` varchar(255) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '驳回原因',
+  `audit_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `del_flag` tinyint DEFAULT '0' COMMENT '删除标志（0未删除 1已删除）',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`apply_id`),
+  KEY `idx_account_id` (`account_id`),
+  KEY `idx_merchant_id` (`merchant_id`),
+  KEY `idx_apply_type_status` (`apply_type`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='商家申请';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `merchant_apply`
+--
+
+LOCK TABLES `merchant_apply` WRITE;
+/*!40000 ALTER TABLE `merchant_apply` DISABLE KEYS */;
+/*!40000 ALTER TABLE `merchant_apply` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -528,6 +636,7 @@ DROP TABLE IF EXISTS `mall_product`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mall_product` (
   `product_id` bigint NOT NULL COMMENT '商品ID',
+  `merchant_id` bigint NOT NULL COMMENT '商家ID',
   `category_id` bigint DEFAULT '0' COMMENT '分类ID',
   `product_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '商品名称',
   `unit_name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '件' COMMENT '计量单位',
@@ -543,6 +652,7 @@ CREATE TABLE `mall_product` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`product_id`),
+  KEY `idx_merchant_id` (`merchant_id`),
   KEY `idx_category_id` (`category_id`),
   KEY `idx_shelf_status` (`shelf_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='商城商品SPU';

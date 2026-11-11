@@ -50,20 +50,38 @@ public interface MallProductMapper {
     MallProductResult selectMallProductResult(Long productId);
 
     /**
-     * 查询商城商品SPUApiResult列表（客户端）
+     * 查询已上架且所属店铺有效的商品列表
      *
-     * @param params 商城商品SPUApiParams
-     * @return 商城商品SPUApiResult集合
+     * @param params 查询条件
+     * @return 商品集合
      */
     List<MallProductApiResult> selectMallProductApiResultList(MallProductApiParams params);
 
     /**
-     * 获取商城商品SPUApiResult详细信息（客户端）
+     * 查询已上架且所属店铺有效的商品详情
      *
-     * @param productId 商城商品SPU主键
-     * @return 商城商品SPUApiResult
+     * @param productId 商品ID
+     * @return 商品详情
      */
     MallProductApiResult selectMallProductApiResult(Long productId);
+
+    /**
+     * 按商家ID查询本店商品列表（含下架）
+     *
+     * @param params 查询条件，须带商家ID
+     * @return 本店商品集合
+     */
+    List<MallProductApiResult> selectMallProductMerchantApiResultList(MallProductApiParams params);
+
+    /**
+     * 按商品ID与商家ID查询本店商品详情
+     *
+     * @param productId  商品ID
+     * @param merchantId 商家ID
+     * @return 本店商品详情，不存在或不属于该店时返回 null
+     */
+    MallProductApiResult selectMallProductMerchantApiResult(@Param("productId") Long productId,
+                                                           @Param("merchantId") Long merchantId);
 
     /**
      * 查询商城商品SPU数量

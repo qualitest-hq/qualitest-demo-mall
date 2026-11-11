@@ -11,7 +11,6 @@
         <result property="skuId" column="sku_id"/>
         <result property="quantity" column="quantity"/>
         <result property="selected" column="selected"/>
-        <result property="delFlag" column="del_flag"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
@@ -23,7 +22,6 @@
                sku_id,
                quantity,
                selected,
-               del_flag,
                create_time,
                update_time
         from mall_cart
@@ -36,7 +34,6 @@
                mc.sku_id      as skuId,
                mc.quantity    as quantity,
                mc.selected    as selected,
-               mc.del_flag    as delFlag,
                mc.create_time as createTime,
                mc.update_time as updateTime
         from mall_cart mc
@@ -74,35 +71,35 @@
         mps.sku_name as skuName,
         mc.quantity as quantity,
         mc.selected as selected,
-        mc.del_flag as delFlag,
         mc.create_time as createTime,
         mc.update_time as updateTime
         from mall_cart mc
         left join account a on mc.account_id = a.account_id and a.del_flag = 0
         left join mall_product mp on mc.product_id = mp.product_id and mp.del_flag = 0
         left join mall_product_sku mps on mc.sku_id = mps.sku_id and mps.del_flag = 0
-        where mc.del_flag = 0
-        <if test="accountId != null">
-            and mc.account_id = #{accountId}
-        </if>
-        <if test="accountNickName != null and accountNickName != ''">
-            and a.nick_name like concat('%', #{accountNickName}, '%')
-        </if>
-        <if test="accountMobile != null and accountMobile != ''">
-            and a.mobile like concat('%', #{accountMobile}, '%')
-        </if>
-        <if test="productId != null">
-            and mc.product_id = #{productId}
-        </if>
-        <if test="productName != null and productName != ''">
-            and mp.product_name like concat('%', #{productName}, '%')
-        </if>
-        <if test="skuId != null">
-            and mc.sku_id = #{skuId}
-        </if>
-        <if test="skuName != null and skuName != ''">
-            and mps.sku_name like concat('%', #{skuName}, '%')
-        </if>
+        <where>
+            <if test="accountId != null">
+                and mc.account_id = #{accountId}
+            </if>
+            <if test="accountNickName != null and accountNickName != ''">
+                and a.nick_name like concat('%', #{accountNickName}, '%')
+            </if>
+            <if test="accountMobile != null and accountMobile != ''">
+                and a.mobile like concat('%', #{accountMobile}, '%')
+            </if>
+            <if test="productId != null">
+                and mc.product_id = #{productId}
+            </if>
+            <if test="productName != null and productName != ''">
+                and mp.product_name like concat('%', #{productName}, '%')
+            </if>
+            <if test="skuId != null">
+                and mc.sku_id = #{skuId}
+            </if>
+            <if test="skuName != null and skuName != ''">
+                and mps.sku_name like concat('%', #{skuName}, '%')
+            </if>
+        </where>
         order by mc.cart_id desc
     </select>
 
@@ -113,12 +110,10 @@
                mc.sku_id      as skuId,
                mc.quantity    as quantity,
                mc.selected    as selected,
-               mc.del_flag    as delFlag,
                mc.create_time as createTime,
                mc.update_time as updateTime
         from mall_cart mc
-        where mc.del_flag = 0
-          and mc.cart_id = #{cartId}
+        where mc.cart_id = #{cartId}
         limit 1
     </select>
 
@@ -139,8 +134,7 @@
         from mall_cart mc
                  inner join mall_product mp on mc.product_id = mp.product_id and mp.del_flag = 0
                  inner join mall_product_sku mps on mc.sku_id = mps.sku_id and mps.del_flag = 0
-        where mc.del_flag = 0
-          and mc.account_id = #{accountId}
+        where mc.account_id = #{accountId}
         order by mc.cart_id desc
     </select>
 
@@ -151,28 +145,27 @@
                mc.sku_id      as skuId,
                mc.quantity    as quantity,
                mc.selected    as selected,
-               mc.del_flag    as delFlag,
                mc.create_time as createTime,
                mc.update_time as updateTime
         from mall_cart mc
-        where mc.del_flag = 0
-          and mc.cart_id = #{cartId}
+        where mc.cart_id = #{cartId}
         limit 1
     </select>
 
     <select id="selectMallCartCount" parameterType="MallCartParams" resultType="int">
         select count(1)
         from mall_cart mc
-        where mc.del_flag = 0
-        <if test="accountId != null ">
-            and mc.account_id = #{accountId}
-        </if>
-        <if test="productId != null ">
-            and mc.product_id = #{productId}
-        </if>
-        <if test="skuId != null ">
-            and mc.sku_id = #{skuId}
-        </if>
+        <where>
+            <if test="accountId != null ">
+                and mc.account_id = #{accountId}
+            </if>
+            <if test="productId != null ">
+                and mc.product_id = #{productId}
+            </if>
+            <if test="skuId != null ">
+                and mc.sku_id = #{skuId}
+            </if>
+        </where>
     </select>
 
     <select id="selectMallCartOne" parameterType="MallCartParams" resultMap="MallCartResult">
@@ -183,20 +176,20 @@
         mc.sku_id,
         mc.quantity,
         mc.selected,
-        mc.del_flag,
         mc.create_time,
         mc.update_time
         from mall_cart mc
-        where mc.del_flag = 0
-        <if test="accountId != null ">
-            and mc.account_id = #{accountId}
-        </if>
-        <if test="productId != null ">
-            and mc.product_id = #{productId}
-        </if>
-        <if test="skuId != null ">
-            and mc.sku_id = #{skuId}
-        </if>
+        <where>
+            <if test="accountId != null ">
+                and mc.account_id = #{accountId}
+            </if>
+            <if test="productId != null ">
+                and mc.product_id = #{productId}
+            </if>
+            <if test="skuId != null ">
+                and mc.sku_id = #{skuId}
+            </if>
+        </where>
         order by mc.cart_id desc
         limit 1
     </select>
@@ -221,9 +214,6 @@
             </if>
             <if test="selected != null">
                 selected,
-            </if>
-            <if test="delFlag != null">
-                del_flag,
             </if>
             <if test="createTime != null">
                 create_time,
@@ -250,9 +240,6 @@
             </if>
             <if test="selected != null">
                 #{selected},
-            </if>
-            <if test="delFlag != null">
-                #{delFlag},
             </if>
             <if test="createTime != null">
                 #{createTime},
@@ -281,9 +268,6 @@
             <if test="selected != null">
                 selected = #{selected},
             </if>
-            <if test="delFlag != null">
-                del_flag = #{delFlag},
-            </if>
             <if test="createTime != null">
                 create_time = #{createTime},
             </if>
@@ -307,24 +291,9 @@
         </foreach>
     </delete>
 
-    <update id="logicDeleteMallCartById" parameterType="Long">
-        update mall_cart
-        set del_flag = 1
-        where cart_id = #{cartId}
-    </update>
-
-    <update id="logicDeleteMallCartByIdList" parameterType="java.util.List">
-        update mall_cart set del_flag = 1 where cart_id in
-        <foreach item="cartId" collection="list" open="(" separator="," close=")">
-            #{cartId}
-        </foreach>
-    </update>
-
-    <update id="logicDeleteByAccountId">
-        update mall_cart
-        set del_flag    = 1,
-            update_time = now()
+    <delete id="deleteByAccountId">
+        delete
+        from mall_cart
         where account_id = #{accountId}
-          and del_flag = 0
-    </update>
+    </delete>
 </mapper>

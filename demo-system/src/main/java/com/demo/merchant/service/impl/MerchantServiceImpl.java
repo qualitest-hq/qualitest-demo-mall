@@ -2,10 +2,11 @@ package com.demo.merchant.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.demo.common.exception.ServiceException;
+import com.demo.common.utils.DateUtils;
 import com.demo.common.utils.SecurityUtils;
 import java.util.List;
 import java.util.Objects;
-import com.demo.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.demo.merchant.mapper.MerchantMapper;
@@ -181,5 +182,47 @@ public class MerchantServiceImpl implements IMerchantService {
     @Override
     public Merchant selectMerchantOne(MerchantParams params) {
         return merchantMapper.selectMerchantOne(params);
+    }
+
+    /**
+     * 校验商家存在、未删除且未停用；失败抛业务异常
+     *
+     * @param merchantId 商家ID
+     * @return 有效商家
+     */
+    @Override
+    public Merchant requireActiveMerchant(Long merchantId) {
+        if (merchantId == null) {
+            throw new ServiceException("商家ID不能为空");
+        }
+        Merchant merchant = selectMerchantById(merchantId);
+        if (merchant == null || Objects.equals(merchant.getDelFlag(), 1)) {
+            throw new ServiceException("商家不存在");
+        }
+        if (merchant.getStatus() != null && merchant.getStatus() != 0) {
+            throw new ServiceException("店铺已停用");
+        }
+        return merchant;
+    }
+
+    /**
+     * 校验当前账号已开店且店铺未停用；失败抛业务异常
+     *
+     * @param accountId 账号ID
+     * @return 本店
+     */
+    @Override
+    public Merchant requireOwnedActiveMerchant(Long accountId) {
+        if (accountId == null) {
+            throw new ServiceException("账号未登录");
+        }
+        Merchant merchant = selectMerchantOne(MerchantParams.builder().accountId(accountId).build());
+        if (merchant == null) {
+            throw new ServiceException("尚未开通店铺，无法管理商品");
+        }
+        if (merchant.getStatus() != null && merchant.getStatus() != 0) {
+            throw new ServiceException("店铺已停用，无法管理商品");
+        }
+        return merchant;
     }
 }

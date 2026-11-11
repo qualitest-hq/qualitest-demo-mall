@@ -21,6 +21,11 @@ import java.io.Serializable;
 public class MallProductApiParams implements Serializable {
 
     /**
+     * 商家ID
+     */
+    private Long merchantId;
+
+    /**
      * 分类ID
      */
     private Long categoryId;

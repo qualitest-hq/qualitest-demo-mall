@@ -7,7 +7,7 @@
 
 SET NAMES utf8mb4;
 
-INSERT INTO `mall_cart` (`cart_id`, `account_id`, `product_id`, `sku_id`, `quantity`, `selected`, `del_flag`, `create_time`, `update_time`) VALUES
-(5013, 30001, 2002, 2111, 1, 1, 0, '2026-06-21 11:00:00', '2026-06-21 11:00:00');
+INSERT INTO `mall_cart` (`cart_id`, `account_id`, `product_id`, `sku_id`, `quantity`, `selected`, `create_time`, `update_time`) VALUES
+(5013, 30001, 2002, 2111, 1, 1, '2026-06-21 11:00:00', '2026-06-21 11:00:00');
 
 UPDATE `mall_product` SET `shelf_status` = 0, `update_time` = '2026-06-21 11:00:00', `remark` = 'F13车内下架' WHERE `product_id` = 2002;

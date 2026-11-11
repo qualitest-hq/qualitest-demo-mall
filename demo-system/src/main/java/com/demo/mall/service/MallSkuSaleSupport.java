@@ -5,12 +5,13 @@ import com.demo.mall.domain.MallProduct;
 import com.demo.mall.domain.MallProductSku;
 import com.demo.mall.mapper.MallProductMapper;
 import com.demo.mall.mapper.MallProductSkuMapper;
+import com.demo.merchant.service.IMerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 校验 SKU 是否可购买：数量上限、停用、库存、商品上架。
- * 加购与下单共用本类，避免两处规则分叉。
+ * SKU 可购校验：数量上限、SKU 状态、库存、商品上架、所属店铺未停用。
+ * 加购与下单共用。
  */
 @Service
 public class MallSkuSaleSupport {
@@ -24,11 +25,15 @@ public class MallSkuSaleSupport {
     @Autowired
     private MallProductMapper mallProductMapper;
 
+    @Autowired
+    private IMerchantService merchantService;
+
     /**
-     * 校验通过后返回 SKU 与所属商品；失败抛业务异常。
+     * 校验 SKU 可购买；通过后返回 SKU 与所属商品，失败抛业务异常
      *
      * @param skuId    SKU 主键
-     * @param quantity 购买数量，调用方须保证大于 0
+     * @param quantity 购买数量，须大于 0
+     * @return 可购 SKU 与商品
      */
     public Saleable requireSaleable(Long skuId, int quantity) {
         if (quantity > MAX_LINE_QUANTITY) {
@@ -51,6 +56,10 @@ public class MallSkuSaleSupport {
         if (product.getShelfStatus() == null || product.getShelfStatus() != 1) {
             throw new ServiceException("商品已下架");
         }
+        if (product.getMerchantId() == null) {
+            throw new ServiceException("商品未归属店铺");
+        }
+        merchantService.requireActiveMerchant(product.getMerchantId());
         return new Saleable(sku, product);
     }
 

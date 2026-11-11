@@ -37,6 +37,8 @@
     <el-table v-loading="loading" :data="mallProductList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="商品ID" align="center" key="productId" prop="productId" width="100" v-if="columnVisible['productId']" />
+      <el-table-column label="店铺" align="center" key="merchantName" prop="merchantName" min-width="120" show-overflow-tooltip v-if="columnVisible['merchantName']" />
+      <el-table-column label="商家ID" align="center" key="merchantId" prop="merchantId" width="100" v-if="columnVisible['merchantId']" />
       <el-table-column label="分类" align="center" key="categoryName" prop="categoryName" min-width="120" show-overflow-tooltip v-if="columnVisible['categoryName']" />
       <el-table-column label="商品名称" align="center" key="productName" prop="productName" min-width="140" show-overflow-tooltip v-if="columnVisible['productName']" />
       <el-table-column label="销售价" align="center" key="salePrice" prop="salePrice" width="90" v-if="columnVisible['salePrice']" />
@@ -62,6 +64,9 @@
 
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="mallProductRef" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="商家ID" prop="merchantId">
+          <el-input v-model="form.merchantId" placeholder="演示店默认 5001" />
+        </el-form-item>
         <el-form-item label="分类" prop="categoryId">
           <RemoteSelect v-model="form.categoryId" :remote="categoryRemote" placeholder="分类名称搜索" width="100%" />
         </el-form-item>
@@ -123,6 +128,8 @@ const title = ref("")
 
 const columns = ref([
   { key: 'productId', label: '商品ID', visible: false },
+  { key: 'merchantName', label: '店铺', visible: true },
+  { key: 'merchantId', label: '商家ID', visible: false },
   { key: 'categoryName', label: '分类', visible: true },
   { key: 'categoryId', label: '分类ID', visible: false },
   { key: 'productName', label: '商品名称', visible: true },
@@ -150,6 +157,7 @@ const data = reactive({
     shelfStatus: undefined,
   },
   rules: {
+    merchantId: [{ required: true, message: "商家ID不能为空", trigger: "blur" }],
     categoryId: [{ required: true, message: "请选择分类", trigger: "change" }],
     productName: [{ required: true, message: "商品名称不能为空", trigger: "blur" }],
   }
@@ -174,6 +182,7 @@ function cancel() {
 function reset() {
   form.value = {
     productId: null,
+    merchantId: '5001',
     categoryId: null,
     productName: null,
     unitName: null,

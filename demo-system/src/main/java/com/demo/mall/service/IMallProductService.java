@@ -4,6 +4,7 @@ import java.util.List;
 import com.demo.mall.domain.MallProduct;
 import com.demo.mall.params.MallProductParams;
 import com.demo.mall.apiParams.MallProductApiParams;
+import com.demo.mall.apiParams.MallProductMerchantSaveApiParams;
 import com.demo.mall.result.MallProductResult;
 import com.demo.mall.apiResult.MallProductApiResult;
 
@@ -47,34 +48,34 @@ public interface IMallProductService {
     MallProductResult selectMallProductResult(Long productId);
 
     /**
-     * 查询商城商品SPUApiResult列表（客户端）
+     * 查询已上架且所属店铺有效的商品列表
      *
-     * @param params 商城商品SPUApiParams
-     * @return 商城商品SPUApiResult集合
+     * @param params 查询条件
+     * @return 商品集合
      */
     List<MallProductApiResult> selectMallProductApiResultList(MallProductApiParams params);
 
     /**
-     * 获取商城商品SPUApiResult详细信息（客户端）
+     * 查询已上架且所属店铺有效的商品详情，并填充 SKU
      *
-     * @param productId 商城商品SPU主键
-     * @return 商城商品SPUApiResult
+     * @param productId 商品ID
+     * @return 商品详情
      */
     MallProductApiResult selectMallProductApiResult(Long productId);
 
     /**
-     * 新增商城商品SPU
-     * 
-     * @param mallProduct 商城商品SPU
-     * @return 结果
+     * 新增商品；须指定商家且店铺未停用
+     *
+     * @param mallProduct 商品
+     * @return 影响行数
      */
     int insertMallProduct(MallProduct mallProduct);
 
     /**
-     * 修改商城商品SPU
-     * 
-     * @param mallProduct 商城商品SPU
-     * @return 结果
+     * 修改商品；若传入商家ID则校验店铺未停用
+     *
+     * @param mallProduct 商品
+     * @return 影响行数
      */
     int updateMallProduct(MallProduct mallProduct);
 
@@ -127,7 +128,63 @@ public interface IMallProductService {
     MallProduct selectMallProductOne(MallProductParams params);
 
     /**
-     * 上架/下架
+     * 切换商品上架/下架；上架时要求所属店铺未停用
+     *
+     * @param productId   商品ID
+     * @param shelfStatus 上架状态（0下架 1上架）
      */
     void changeMallProductShelfStatus(Long productId, Integer shelfStatus);
+
+    /**
+     * 查询当前账号本店商品列表（含下架）
+     *
+     * @param accountId 账号ID
+     * @param params    查询条件，商家ID由服务端写入
+     * @return 本店商品集合
+     */
+    List<MallProductApiResult> selectMerchantProductList(Long accountId, MallProductApiParams params);
+
+    /**
+     * 查询当前账号本店商品详情，并填充 SKU
+     *
+     * @param accountId 账号ID
+     * @param productId 商品ID
+     * @return 本店商品详情
+     */
+    MallProductApiResult selectMerchantProductDetail(Long accountId, Long productId);
+
+    /**
+     * 新建本店商品，同时写入 SPU 与 SKU
+     *
+     * @param accountId 账号ID
+     * @param params    保存入参
+     * @return 新建后的商品详情
+     */
+    MallProductApiResult createMerchantProduct(Long accountId, MallProductMerchantSaveApiParams params);
+
+    /**
+     * 更新本店商品，同时覆盖保存 SKU
+     *
+     * @param accountId 账号ID
+     * @param params    保存入参
+     * @return 更新后的商品详情
+     */
+    MallProductApiResult updateMerchantProduct(Long accountId, MallProductMerchantSaveApiParams params);
+
+    /**
+     * 对本店商品执行上下架
+     *
+     * @param accountId   账号ID
+     * @param productId   商品ID
+     * @param shelfStatus 上架状态（0下架 1上架）
+     */
+    void changeMerchantProductShelfStatus(Long accountId, Long productId, Integer shelfStatus);
+
+    /**
+     * 统计当前账号本店在售商品数量
+     *
+     * @param accountId 账号ID
+     * @return 在售数量
+     */
+    int countMerchantOnsaleProduct(Long accountId);
 }

@@ -1,6 +1,6 @@
 import { getLatestSettleApply, getMyMerchant } from "@/api/merchant";
 import { ROUTES } from "@/constants/routes";
-import { APPLY_STATUS } from "@/types/merchant";
+import { APPLY_STATUS, type Merchant } from "@/types/merchant";
 import { useUserStore } from "@/stores/user";
 
 export type MerchantGateTarget = "apply" | "pending" | "rejected" | "dash";
@@ -59,4 +59,14 @@ export async function openMerchantCenter() {
 export async function redirectMerchantGate() {
   const target = await resolveMerchantGate();
   uni.redirectTo({ url: GATE_ROUTE[target] });
+}
+
+/** 已开店则返回本店，否则回商家中心入口 */
+export async function requireOpenMerchant(): Promise<Merchant | null> {
+  const merchant = await getMyMerchant();
+  if (!merchant?.merchantId) {
+    uni.redirectTo({ url: ROUTES.MERCHANT_INDEX });
+    return null;
+  }
+  return merchant;
 }

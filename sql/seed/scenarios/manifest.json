@@ -326,6 +326,48 @@
       },
       "expect": "quantity=100 失败「单行数量不能超过99」",
       "orderHint": "cart_id 5014"
+    },
+    {
+      "id": "S10",
+      "name": "商家本店商品可管理",
+      "type": "success",
+      "file": "scenarios/success/S10_merchant_product_ready.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号=演示店主"
+      },
+      "expect": "本店列表含「演示下架杯」shelf=0；上架后 C 端可见",
+      "orderHint": "product 2004 / sku 2141"
+    },
+    {
+      "id": "F15",
+      "name": "停用店铺商品不可见",
+      "type": "fail",
+      "file": "scenarios/fail/F15_disabled_merchant_hidden.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "C 端列表不含演示店商品；加购透明款失败",
+      "orderHint": "merchant 5001 status=1"
+    },
+    {
+      "id": "F16",
+      "name": "越权改他店商品",
+      "type": "fail",
+      "file": "scenarios/fail/F16_cross_merchant_product.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测账号改 30003 的店货"
+      },
+      "expect": "对本店外商品上下架失败「无权操作他店商品」",
+      "orderHint": "product 2099 / merchant 5002"
     }
   ]
 }

@@ -30,9 +30,7 @@ public class MallProductApiController extends ApiController {
 
     private final IMallProductService mallProductService;
 
-    /**
-     * 查询已上架商品列表
-     */
+    /** 已上架商品分页列表 */
     @Anonymous
     @GetMapping("/list")
     public R<TableData<MallProductApiResult>> list(MallProductApiParams params) {
@@ -41,18 +39,14 @@ public class MallProductApiController extends ApiController {
         return getTableData(list);
     }
 
-    /**
-     * 商品详情含 SKU 列表
-     */
+    /** 商品详情（含 SKU） */
     @Anonymous
     @GetMapping("/{productId}/detail")
     public R<MallProductApiResult> detail(@PathVariable("productId") Long productId) {
         return ok(mallProductService.selectMallProductApiResult(productId));
     }
 
-    /**
-     * 获取商城商品SPU详细信息
-     */
+    /** 商品详情 */
     @Anonymous
     @GetMapping("/{productId}")
     public R<MallProductApiResult> getInfo(@PathVariable("productId") Long productId) {

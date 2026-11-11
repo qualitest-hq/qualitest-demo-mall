@@ -12,7 +12,7 @@
     <view class="stats">
       <view class="stat" @click="goGoods">
         <text class="lab">在售商品</text>
-        <text class="num">—</text>
+        <text class="num">{{ onsaleCountText }}</text>
         <text class="hint">去管理 ›</text>
       </view>
       <view class="stat disabled">
@@ -53,15 +53,21 @@
 </template>
 
 <script setup lang="ts">
+/** 商家工作台：店铺概览、在售数、商品入口 */
 import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
-import { getLatestProfileApply, getMyMerchant } from "@/api/merchant";
+import { getLatestProfileApply } from "@/api/merchant";
+import { getMyOnsaleCount } from "@/api/merchantProduct";
+import { requireOpenMerchant } from "@/composables/useMerchantGate";
 import { ROUTES } from "@/constants/routes";
 import { APPLY_STATUS, type Merchant } from "@/types/merchant";
 import { resolveResourceUrl } from "@/utils/resource";
 
 const merchant = ref<Merchant | null>(null);
+/** 是否有资料变更待审 */
 const profilePending = ref(false);
+/** 本店在售商品数 */
+const onsaleCount = ref<number | null>(null);
 
 const logoUrl = computed(() => resolveResourceUrl(merchant.value?.logo));
 const openStatusText = computed(() =>
@@ -70,22 +76,31 @@ const openStatusText = computed(() =>
 const merchantStatusText = computed(() =>
   Number(merchant.value?.status) === 1 ? "已停用" : "正常",
 );
+const onsaleCountText = computed(() =>
+  onsaleCount.value == null ? "—" : String(onsaleCount.value),
+);
 
+/** 加载店铺与在售数 */
 async function load() {
-  const mine = await getMyMerchant();
-  if (!mine?.merchantId) {
-    uni.redirectTo({ url: ROUTES.MERCHANT_INDEX });
+  const mine = await requireOpenMerchant();
+  if (!mine) {
     return;
   }
   merchant.value = mine;
-  const profile = await getLatestProfileApply();
+  const [profile, onsale] = await Promise.all([
+    getLatestProfileApply(),
+    getMyOnsaleCount(),
+  ]);
   profilePending.value = Number(profile?.status) === APPLY_STATUS.PENDING;
+  onsaleCount.value = Number(onsale?.count ?? 0);
 }
 
+/** 进入商品管理 */
 function goGoods() {
   uni.navigateTo({ url: ROUTES.MERCHANT_GOODS });
 }
 
+/** 进入店铺资料 */
 function goProfile() {
   uni.navigateTo({ url: ROUTES.MERCHANT_PROFILE });
 }

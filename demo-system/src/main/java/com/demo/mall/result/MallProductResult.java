@@ -31,6 +31,18 @@ public class MallProductResult implements Serializable {
     private Long productId;
 
     /**
+     * 商家ID
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long merchantId;
+
+    /**
+     * 店铺名称
+     */
+    @Excel(name = "店铺名称")
+    private String merchantName;
+
+    /**
      * 分类ID
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING)

@@ -228,7 +228,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
             mallOrderSupportService.holdCoupon(ctx.accountCoupon.getAccountCouponId(), orderId, accountId);
         }
         if (!ctx.cartIds.isEmpty()) {
-            mallCartMapper.logicDeleteMallCartByIdList(ctx.cartIds);
+            mallCartMapper.deleteMallCartByIdList(ctx.cartIds);
         }
         return toPreviewResult(ctx, orderId, orderNo);
     }
@@ -488,7 +488,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
     }
 
     /**
-     * 校验 SKU 可售后组装一行订单明细（单价、小计、运费）
+     * 校验 SKU 可购后组装一行订单明细（单价、小计、运费）
      */
     private void addLineFromSku(Long skuId, int quantity, OrderBuildContext ctx) {
         MallSkuSaleSupport.Saleable saleable = mallSkuSaleSupport.requireSaleable(skuId, quantity);

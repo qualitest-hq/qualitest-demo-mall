@@ -114,20 +114,10 @@ public interface MallCartMapper {
     int deleteMallCartByIdList(@Param("list") List<Long> cartIdList);
 
     /**
-     * 逻辑删除商城购物车
-     * 
-     * @param cartId 商城购物车主键
-     * @return 结果
+     * 按账号物理删除全部购物车行
+     *
+     * @param accountId 账号ID
+     * @return 影响行数
      */
-    int logicDeleteMallCartById(Long cartId);
-
-    /**
-     * 批量逻辑删除商城购物车
-     * 
-     * @param cartIdList 商城购物车主键集合
-     * @return 结果
-     */
-    int logicDeleteMallCartByIdList(@Param("list") List<Long> cartIdList);
-
-    int logicDeleteByAccountId(@Param("accountId") Long accountId);
+    int deleteByAccountId(@Param("accountId") Long accountId);
 }

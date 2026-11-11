@@ -8,7 +8,7 @@
 # -----------------------------------------------------------------------------
 demo:
   name: Qualitest Demo          # 显示名称
-  version: 1.2.0                # 版本号
+  version: 1.2.1                # 版本号
   copyrightYear: 2026           # 版权年份
   profile: ${DEMO_PROFILE:D:/demo/uploadPath}     # 本地上传文件落盘根目录
   addressEnabled: false         # 登录日志是否解析 IP 所在地

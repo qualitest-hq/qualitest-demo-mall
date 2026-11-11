@@ -23,6 +23,11 @@ import java.io.Serializable;
 public class MallProductParams extends BaseEntity implements Serializable {
 
     /**
+     * 商家ID
+     */
+    private Long merchantId;
+
+    /**
      * 分类ID
      */
     private Long categoryId;

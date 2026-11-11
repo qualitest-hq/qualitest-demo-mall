@@ -159,28 +159,6 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 逻辑删除商城购物车信息
-     * 
-     * @param cartId 商城购物车主键
-     * @return 结果
-     */
-    @Override
-    public int logicDeleteMallCartById(Long cartId) {
-        return mallCartMapper.logicDeleteMallCartById(cartId);
-    }
-
-    /**
-     * 批量逻辑删除商城购物车信息
-     * 
-     * @param cartIdList 商城购物车主键集合
-     * @return 结果
-     */
-    @Override
-    public int logicDeleteMallCartByIdList(List<Long> cartIdList) {
-        return mallCartMapper.logicDeleteMallCartByIdList(cartIdList);
-    }
-
-    /**
      * 查询商城购物车数量
      *
      * @param params 商城购物车Params
@@ -203,7 +181,7 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 加入购物车：校验可售；已有同 SKU 则累加数量并勾选，否则新建一行并勾选
+     * 加入购物车：校验 SKU 可购（含店铺未停用）；已有同 SKU 则累加并勾选，否则新建一行
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -238,13 +216,12 @@ public class MallCartServiceImpl implements IMallCartService {
         cart.setSkuId(sku.getSkuId());
         cart.setQuantity(quantity);
         cart.setSelected(1);
-        cart.setDelFlag(0);
         cart.setCreateTime(DateUtils.getNowDate());
         mallCartMapper.insertMallCart(cart);
     }
 
     /**
-     * 修改购物车数量：为 0 则逻辑删除，否则校验可售后更新数量
+     * 修改购物车数量：为 0 则物理删除，否则校验可购后更新数量
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -257,7 +234,7 @@ public class MallCartServiceImpl implements IMallCartService {
         }
         MallCart cart = requireOwnedCart(accountId, params.getCartId());
         if (params.getQuantity() == 0) {
-            mallCartMapper.logicDeleteMallCartById(cart.getCartId());
+            mallCartMapper.deleteMallCartById(cart.getCartId());
             return;
         }
         if (params.getQuantity() < 0) {
@@ -297,7 +274,7 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 批量逻辑删除购物车行；逐行校验归属后一次更新
+     * 批量物理删除购物车行；逐行校验归属后一次删除
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -313,16 +290,16 @@ public class MallCartServiceImpl implements IMallCartService {
             requireOwnedCart(accountId, cartId);
             ownedIds.add(cartId);
         }
-        mallCartMapper.logicDeleteMallCartByIdList(ownedIds);
+        mallCartMapper.deleteMallCartByIdList(ownedIds);
     }
 
     /**
-     * 清空当前账号全部购物车项
+     * 物理清空当前账号全部购物车行
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void clearMallCartByAccountId(Long accountId) {
-        mallCartMapper.logicDeleteByAccountId(accountId);
+        mallCartMapper.deleteByAccountId(accountId);
     }
 
     /**

@@ -37,6 +37,12 @@ public class MallProduct extends BaseEntity {
     private Long productId;
 
     /**
+     * 商家ID
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long merchantId;
+
+    /**
      * 分类ID
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING)

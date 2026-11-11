@@ -95,22 +95,6 @@ public interface IMallCartService {
     public int deleteMallCartById(Long cartId);
 
     /**
-     * 修改商城购物车为逻辑删除
-     *
-     * @param cartId 商城购物车ID
-     * @return 结果
-     */
-    int logicDeleteMallCartById(Long cartId);
-
-    /**
-     * 批量修改商城购物车为逻辑删除
-     *
-     * @param cartIdList 商城购物车ID集合
-     * @return 结果
-     */
-    int logicDeleteMallCartByIdList(List<Long> cartIdList);
-
-    /**
      * 查询商城购物车数量
      *
      * @param params 商城购物车Params
@@ -127,12 +111,12 @@ public interface IMallCartService {
     MallCart selectMallCartOne(MallCartParams params);
 
     /**
-     * 加入购物车：校验可售；同账号同 SKU 累加数量并默认勾选
+     * 加入购物车：校验 SKU 可购（含店铺未停用）；同账号同 SKU 累加数量并默认勾选
      */
     void addMallCartItem(Long accountId, MallCartAddApiParams params);
 
     /**
-     * 修改购物车数量：数量为 0 时逻辑删除该行，否则校验可售后更新
+     * 修改购物车数量：数量为 0 时物理删除该行，否则校验可购后更新
      */
     void updateMallCartQuantity(Long accountId, MallCartQuantityApiParams params);
 
@@ -142,12 +126,12 @@ public interface IMallCartService {
     void updateMallCartSelected(Long accountId, MallCartSelectedApiParams params);
 
     /**
-     * 批量逻辑删除购物车行（逐行校验归属）
+     * 批量物理删除购物车行（逐行校验归属）
      */
     void deleteMallCartItems(Long accountId, List<Long> cartIds);
 
     /**
-     * 逻辑删除当前账号全部购物车行
+     * 物理清空当前账号全部购物车行
      */
     void clearMallCartByAccountId(Long accountId);
 }

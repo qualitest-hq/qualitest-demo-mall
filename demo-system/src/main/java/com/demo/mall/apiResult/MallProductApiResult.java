@@ -30,6 +30,17 @@ public class MallProductApiResult implements Serializable {
     private Long productId;
 
     /**
+     * 商家ID
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long merchantId;
+
+    /**
+     * 店铺名称
+     */
+    private String merchantName;
+
+    /**
      * 分类ID
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -86,7 +97,7 @@ public class MallProductApiResult implements Serializable {
     private String remark;
 
     /**
-     * SKU 列表（客户端详情）
+     * SKU 列表
      */
     private List<MallProductSkuApiResult> skus;
 

@@ -4,7 +4,7 @@
 
 demo:
   name: Qualitest Demo
-  version: 1.2.0
+  version: 1.2.1
   copyrightYear: 2026
   profile: ${DEMO_PROFILE:/home/demo/uploadPath}  # Linux 部署上传目录
   addressEnabled: false

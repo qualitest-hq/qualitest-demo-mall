@@ -125,4 +125,20 @@ public interface IMerchantService {
      * @return 商家
      */
     Merchant selectMerchantOne(MerchantParams params);
+
+    /**
+     * 校验商家存在、未删除且未停用；失败抛业务异常
+     *
+     * @param merchantId 商家ID
+     * @return 有效商家
+     */
+    Merchant requireActiveMerchant(Long merchantId);
+
+    /**
+     * 校验当前账号已开店且店铺未停用；失败抛业务异常
+     *
+     * @param accountId 账号ID
+     * @return 本店
+     */
+    Merchant requireOwnedActiveMerchant(Long accountId);
 }

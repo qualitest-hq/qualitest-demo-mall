@@ -99,6 +99,6 @@ public class MallCartController extends BaseController {
     @DeleteMapping("/{cartIds}")
     public R<Void> remove(@PathVariable Long[] cartIds) {
         List<Long> idList = Convert.toLongList(cartIds);
-        return toR(mallCartService.logicDeleteMallCartByIdList(idList));
+        return toR(mallCartService.deleteMallCartByIdList(idList));
     }
 }

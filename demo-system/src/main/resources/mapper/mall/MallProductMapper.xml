@@ -6,6 +6,7 @@
 
     <resultMap type="MallProduct" id="MallProductResult">
         <result property="productId" column="product_id"/>
+        <result property="merchantId" column="merchant_id"/>
         <result property="categoryId" column="category_id"/>
         <result property="productName" column="product_name"/>
         <result property="unitName" column="unit_name"/>
@@ -24,6 +25,7 @@
 
     <sql id="selectMallProductVo">
         select product_id,
+               merchant_id,
                category_id,
                product_name,
                unit_name,
@@ -43,6 +45,7 @@
 
     <sql id="selectMallProductAliasVo">
         select mp.product_id   as productId,
+               mp.merchant_id  as merchantId,
                mp.category_id  as categoryId,
                mp.product_name as productName,
                mp.unit_name    as unitName,
@@ -63,6 +66,9 @@
     <select id="selectMallProductList" parameterType="MallProduct" resultMap="MallProductResult">
         <include refid="selectMallProductVo"/>
         <where>
+            <if test="merchantId != null ">
+                and merchant_id = #{merchantId}
+            </if>
             <if test="categoryId != null ">
                 and category_id = #{categoryId}
             </if>
@@ -83,6 +89,8 @@
     <select id="selectMallProductResultList" parameterType="MallProductParams" resultType="MallProductResult">
         select
         mp.product_id as productId,
+        mp.merchant_id as merchantId,
+        m.merchant_name as merchantName,
         mp.category_id as categoryId,
         mc.category_name as categoryName,
         mp.product_name as productName,
@@ -100,7 +108,11 @@
         mp.remark as remark
         from mall_product mp
         left join mall_category mc on mp.category_id = mc.category_id and mc.del_flag = 0
+        left join merchant m on mp.merchant_id = m.merchant_id and m.del_flag = 0
         where mp.del_flag = 0
+        <if test="merchantId != null">
+            and mp.merchant_id = #{merchantId}
+        </if>
         <if test="categoryId != null">
             and mp.category_id = #{categoryId}
         </if>
@@ -118,7 +130,10 @@
 
     <select id="selectMallProductResult" parameterType="Long" resultType="MallProductResult">
         select mp.product_id   as productId,
+               mp.merchant_id  as merchantId,
+               m.merchant_name as merchantName,
                mp.category_id  as categoryId,
+               mc.category_name as categoryName,
                mp.product_name as productName,
                mp.unit_name    as unitName,
                mp.market_price as marketPrice,
@@ -133,14 +148,19 @@
                mp.update_time  as updateTime,
                mp.remark       as remark
         from mall_product mp
+        left join mall_category mc on mp.category_id = mc.category_id and mc.del_flag = 0
+        left join merchant m on mp.merchant_id = m.merchant_id and m.del_flag = 0
         where mp.del_flag = 0
           and mp.product_id = #{productId}
         limit 1
     </select>
 
+    <!-- 已上架且店铺未停用的商品列表 -->
     <select id="selectMallProductApiResultList" parameterType="MallProductApiParams" resultType="MallProductApiResult">
         select
         mp.product_id as productId,
+        mp.merchant_id as merchantId,
+        m.merchant_name as merchantName,
         mp.category_id as categoryId,
         mp.product_name as productName,
         mp.unit_name as unitName,
@@ -156,8 +176,14 @@
         mp.update_time as updateTime,
         mp.remark as remark
         from mall_product mp
+        inner join merchant m on mp.merchant_id = m.merchant_id
+            and m.del_flag = 0
+            and m.status = 0
         where mp.del_flag = 0
           and mp.shelf_status = 1
+        <if test="merchantId != null">
+            and mp.merchant_id = #{merchantId}
+        </if>
         <if test="categoryId != null">
             and mp.category_id = #{categoryId}
         </if>
@@ -167,8 +193,11 @@
         order by mp.product_id desc
     </select>
 
+    <!-- 已上架且店铺未停用的商品详情 -->
     <select id="selectMallProductApiResult" parameterType="Long" resultType="MallProductApiResult">
         select mp.product_id   as productId,
+               mp.merchant_id  as merchantId,
+               m.merchant_name as merchantName,
                mp.category_id  as categoryId,
                mp.product_name as productName,
                mp.unit_name    as unitName,
@@ -184,8 +213,74 @@
                mp.update_time  as updateTime,
                mp.remark       as remark
         from mall_product mp
+        inner join merchant m on mp.merchant_id = m.merchant_id
+            and m.del_flag = 0
+            and m.status = 0
         where mp.del_flag = 0
           and mp.product_id = #{productId}
+        limit 1
+    </select>
+
+    <!-- 本店商品列表（含下架） -->
+    <select id="selectMallProductMerchantApiResultList" parameterType="MallProductApiParams" resultType="MallProductApiResult">
+        select
+        mp.product_id as productId,
+        mp.merchant_id as merchantId,
+        m.merchant_name as merchantName,
+        mp.category_id as categoryId,
+        mp.product_name as productName,
+        mp.unit_name as unitName,
+        mp.market_price as marketPrice,
+        mp.sale_price as salePrice,
+        mp.freight_amount as freightAmount,
+        mp.stock_total as stockTotal,
+        mp.sales_count as salesCount,
+        mp.shelf_status as shelfStatus,
+        mp.sort_num as sortNum,
+        mp.del_flag as delFlag,
+        mp.create_time as createTime,
+        mp.update_time as updateTime,
+        mp.remark as remark
+        from mall_product mp
+        left join merchant m on mp.merchant_id = m.merchant_id and m.del_flag = 0
+        where mp.del_flag = 0
+          and mp.merchant_id = #{merchantId}
+        <if test="categoryId != null">
+            and mp.category_id = #{categoryId}
+        </if>
+        <if test="productName != null and productName != ''">
+            and mp.product_name like concat('%', #{productName}, '%')
+        </if>
+        <if test="shelfStatus != null">
+            and mp.shelf_status = #{shelfStatus}
+        </if>
+        order by mp.product_id desc
+    </select>
+
+    <!-- 本店商品详情（按商品ID+商家ID） -->
+    <select id="selectMallProductMerchantApiResult" resultType="MallProductApiResult">
+        select mp.product_id   as productId,
+               mp.merchant_id  as merchantId,
+               m.merchant_name as merchantName,
+               mp.category_id  as categoryId,
+               mp.product_name as productName,
+               mp.unit_name    as unitName,
+               mp.market_price as marketPrice,
+               mp.sale_price   as salePrice,
+               mp.freight_amount as freightAmount,
+               mp.stock_total  as stockTotal,
+               mp.sales_count  as salesCount,
+               mp.shelf_status as shelfStatus,
+               mp.sort_num     as sortNum,
+               mp.del_flag     as delFlag,
+               mp.create_time  as createTime,
+               mp.update_time  as updateTime,
+               mp.remark       as remark
+        from mall_product mp
+        left join merchant m on mp.merchant_id = m.merchant_id and m.del_flag = 0
+        where mp.del_flag = 0
+          and mp.product_id = #{productId}
+          and mp.merchant_id = #{merchantId}
         limit 1
     </select>
 
@@ -193,6 +288,9 @@
         select count(1)
         from mall_product mp
         where mp.del_flag = 0
+        <if test="merchantId != null ">
+            and mp.merchant_id = #{merchantId}
+        </if>
         <if test="categoryId != null ">
             and mp.category_id = #{categoryId}
         </if>
@@ -207,6 +305,7 @@
     <select id="selectMallProductOne" parameterType="MallProductParams" resultMap="MallProductResult">
         select
         mp.product_id,
+        mp.merchant_id,
         mp.category_id,
         mp.product_name,
         mp.unit_name,
@@ -223,6 +322,9 @@
         mp.remark
         from mall_product mp
         where mp.del_flag = 0
+        <if test="merchantId != null ">
+            and mp.merchant_id = #{merchantId}
+        </if>
         <if test="categoryId != null ">
             and mp.category_id = #{categoryId}
         </if>
@@ -241,6 +343,9 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="productId != null">
                 product_id,
+            </if>
+            <if test="merchantId != null">
+                merchant_id,
             </if>
             <if test="categoryId != null">
                 category_id,
@@ -288,6 +393,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="productId != null">
                 #{productId},
+            </if>
+            <if test="merchantId != null">
+                #{merchantId},
             </if>
             <if test="categoryId != null">
                 #{categoryId},
@@ -337,6 +445,9 @@
     <update id="updateMallProduct" parameterType="MallProduct">
         update mall_product
         <trim prefix="SET" suffixOverrides=",">
+            <if test="merchantId != null">
+                merchant_id = #{merchantId},
+            </if>
             <if test="categoryId != null">
                 category_id = #{categoryId},
             </if>

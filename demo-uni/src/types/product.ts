@@ -39,13 +39,14 @@ export interface MallProductSku {
   remark?: string;
 }
 
-/**
- * 商品（SPU）。
- * 列表接口通常不带规格；详情接口会带上 skus。
- */
+/** 商品（SPU） */
 export interface MallProduct {
-  /** 商品主键 */
+  /** 商品ID */
   productId: string;
+  /** 商家ID */
+  merchantId?: string;
+  /** 店铺名称 */
+  merchantName?: string;
   /** 所属分类主键 */
   categoryId?: string;
   /** 商品名称 */
@@ -84,4 +85,60 @@ export interface MallProductListQuery {
   pageNum?: number;
   /** 每页条数 */
   pageSize?: number;
+}
+
+/** 本店商品列表查询 */
+export interface MerchantProductListQuery {
+  /** 上架状态：0下架 1上架 */
+  shelfStatus?: number;
+  /** 分类ID */
+  categoryId?: string;
+  /** 商品名称 */
+  productName?: string;
+  /** 页码 */
+  pageNum?: number;
+  /** 每页条数 */
+  pageSize?: number;
+}
+
+/** 保存本店商品时的 SKU */
+export interface MerchantProductSkuSavePayload {
+  /** SKU ID，有则更新 */
+  skuId?: string;
+  /** SKU 名称 */
+  skuName: string;
+  /** 市场价 */
+  marketPrice?: number | string;
+  /** 销售价 */
+  salePrice: number | string;
+  /** 库存 */
+  stock: number;
+  /** 状态：0正常 1停用 */
+  status?: number;
+}
+
+/** 保存本店商品入参 */
+export interface MerchantProductSavePayload {
+  /** 商品ID，编辑时必传 */
+  productId?: string;
+  /** 分类ID */
+  categoryId: string;
+  /** 商品名称 */
+  productName: string;
+  /** 计量单位 */
+  unitName?: string;
+  /** 市场价 */
+  marketPrice?: number | string;
+  /** 销售价 */
+  salePrice?: number | string;
+  /** 固定运费 */
+  freightAmount?: number | string;
+  /** 上架状态：0下架 1上架 */
+  shelfStatus?: number;
+  /** 排序 */
+  sortNum?: number;
+  /** 备注 */
+  remark?: string;
+  /** SKU 列表 */
+  skus: MerchantProductSkuSavePayload[];
 }
