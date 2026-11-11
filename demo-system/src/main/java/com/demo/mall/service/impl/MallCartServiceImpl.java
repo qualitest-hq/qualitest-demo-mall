@@ -337,7 +337,7 @@ public class MallCartServiceImpl implements IMallCartService {
      */
     private MallCart requireOwnedCart(Long accountId, Long cartId) {
         MallCart cart = mallCartMapper.selectMallCartById(cartId);
-        if (cart == null || (cart.getDelFlag() != null && cart.getDelFlag() == 1)) {
+        if (cart == null) {
             throw new ServiceException("购物车项不存在");
         }
         if (!accountId.equals(cart.getAccountId())) {

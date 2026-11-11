@@ -463,7 +463,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
                 throw new ServiceException("购物车ID不能为空");
             }
             MallCart cart = mallCartMapper.selectMallCartById(cartId);
-            if (cart == null || (cart.getDelFlag() != null && cart.getDelFlag() == 1)) {
+            if (cart == null) {
                 throw new ServiceException("购物车项不存在");
             }
             if (!accountId.equals(cart.getAccountId())) {
