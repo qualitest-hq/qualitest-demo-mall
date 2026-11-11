@@ -6,11 +6,13 @@
 
 demo:
   name: Qualitest Demo
-  version: 1.0.0
+  version: 1.2.0
   copyrightYear: 2026
   profile: ${DEMO_PROFILE:/data/upload}
   addressEnabled: false
   captchaType: math
+  storage:
+    type: ${DEMO_STORAGE_TYPE:RUSTFS}
   rustfs:
     enabled: ${DEMO_RUSTFS_ENABLED:false}
     endpoint: ${DEMO_RUSTFS_ENDPOINT:http://rustfs:9000}
@@ -19,6 +21,14 @@ demo:
     bucket: ${DEMO_RUSTFS_BUCKET:qualitest-demo-mall}
     region: us-east-1
     public-base-url: ${DEMO_RUSTFS_PUBLIC_BASE_URL:http://127.0.0.1:9000/qualitest-demo-mall}
+  qiniu:
+    access-key: ${DEMO_QINIU_ACCESS_KEY:}
+    secret-key: ${DEMO_QINIU_SECRET_KEY:}
+    bucket: ${DEMO_QINIU_BUCKET:}
+    domain: ${DEMO_QINIU_DOMAIN:}
+    domain-protocol: ${DEMO_QINIU_DOMAIN_PROTOCOL:https://}
+    region: ${DEMO_QINIU_REGION:}
+    source: ${DEMO_QINIU_SOURCE:}
 
 server:
   port: ${SERVER_PORT:8801}

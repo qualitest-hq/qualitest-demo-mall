@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.merchant.mapper.MerchantMapper">
+    <resultMap type="Merchant" id="MerchantResult">
+        <result property="merchantId" column="merchant_id"/>
+        <result property="accountId" column="account_id"/>
+        <result property="merchantName" column="merchant_name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="logo" column="logo"/>
+        <result property="contactName" column="contact_name"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="licenseFiles" column="license_files"/>
+        <result property="openStatus" column="open_status"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectMerchantVo">
+        select merchant_id, account_id, merchant_name, category_id, logo, contact_name, contact_phone, license_files,
+        open_status, status, del_flag, create_time, update_time, remark from merchant
+    </sql>
+
+    <sql id="selectMerchantAliasVo">
+        select m.merchant_id as merchantId, m.account_id as accountId, m.merchant_name as merchantName, m.category_id as
+        categoryId, m.logo as logo, m.contact_name as contactName, m.contact_phone as contactPhone, m.license_files as
+        licenseFiles, m.open_status as openStatus, m.status as status, m.del_flag as delFlag, m.create_time as
+        createTime, m.update_time as updateTime, m.remark as remark from merchant m
+    </sql>
+
+    <select id="selectMerchantList" parameterType="Merchant" resultMap="MerchantResult">
+        <include refid="selectMerchantVo"/>
+        <where>
+            <if test="accountId != null ">
+                and account_id = #{accountId}
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                and merchant_name = #{merchantName}
+            </if>
+            <if test="categoryId != null ">
+                and category_id = #{categoryId}
+            </if>
+            <if test="contactName != null and contactName != ''">
+                and contact_name = #{contactName}
+            </if>
+            <if test="contactPhone != null and contactPhone != ''">
+                and contact_phone = #{contactPhone}
+            </if>
+            <if test="openStatus != null ">
+                and open_status = #{openStatus}
+            </if>
+            <if test="status != null ">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMerchantById" parameterType="Long" resultMap="MerchantResult">
+        <include refid="selectMerchantVo"/>
+        where merchant_id = #{merchantId}
+    </select>
+
+    <select id="selectMerchantResultList" parameterType="MerchantParams" resultType="MerchantResult">
+        select
+        m.merchant_id as merchantId,
+        m.account_id as accountId,
+        a.nick_name as accountNickName,
+        a.mobile as accountMobile,
+        m.merchant_name as merchantName,
+        m.category_id as categoryId,
+        mc.category_name as categoryName,
+        m.logo as logo,
+        m.contact_name as contactName,
+        m.contact_phone as contactPhone,
+        m.license_files as licenseFiles,
+        m.open_status as openStatus,
+        m.status as status,
+        m.del_flag as delFlag,
+        m.create_time as createTime,
+        m.update_time as updateTime,
+        m.remark as remark
+        from merchant m
+        left join account a on m.account_id = a.account_id and a.del_flag = 0
+        left join merchant_category mc on m.category_id = mc.category_id and mc.del_flag = 0
+        where m.del_flag = 0
+        <if test="accountId != null">
+            and m.account_id = #{accountId}
+        </if>
+        <if test="accountNickName != null and accountNickName != ''">
+            and a.nick_name like concat('%', #{accountNickName}, '%')
+        </if>
+        <if test="accountMobile != null and accountMobile != ''">
+            and a.mobile like concat('%', #{accountMobile}, '%')
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            and m.merchant_name like concat('%', #{merchantName}, '%')
+        </if>
+        <if test="categoryId != null">
+            and m.category_id = #{categoryId}
+        </if>
+        <if test="categoryName != null and categoryName != ''">
+            and mc.category_name like concat('%', #{categoryName}, '%')
+        </if>
+        <if test="contactName != null and contactName != ''">
+            and m.contact_name like concat('%', #{contactName}, '%')
+        </if>
+        <if test="contactPhone != null and contactPhone != ''">
+            and m.contact_phone like concat('%', #{contactPhone}, '%')
+        </if>
+        <if test="openStatus != null">
+            and m.open_status = #{openStatus}
+        </if>
+        <if test="status != null">
+            and m.status = #{status}
+        </if>
+        order by m.merchant_id desc
+    </select>
+
+    <select id="selectMerchantResult" parameterType="Long" resultType="MerchantResult">
+        select
+        m.merchant_id as merchantId,
+        m.account_id as accountId,
+        a.nick_name as accountNickName,
+        a.mobile as accountMobile,
+        m.merchant_name as merchantName,
+        m.category_id as categoryId,
+        mc.category_name as categoryName,
+        m.logo as logo,
+        m.contact_name as contactName,
+        m.contact_phone as contactPhone,
+        m.license_files as licenseFiles,
+        m.open_status as openStatus,
+        m.status as status,
+        m.del_flag as delFlag,
+        m.create_time as createTime,
+        m.update_time as updateTime,
+        m.remark as remark
+        from merchant m
+        left join account a on m.account_id = a.account_id and a.del_flag = 0
+        left join merchant_category mc on m.category_id = mc.category_id and mc.del_flag = 0
+        where
+        m.del_flag = 0 and
+        m.merchant_id = #{merchantId}
+        limit 1
+    </select>
+
+    <select id="selectMerchantApiResultList" parameterType="MerchantApiParams" resultType="MerchantApiResult">
+        select
+        m.merchant_id as merchantId,
+        m.account_id as accountId,
+        m.merchant_name as merchantName,
+        m.category_id as categoryId,
+        m.logo as logo,
+        m.contact_name as contactName,
+        m.contact_phone as contactPhone,
+        m.license_files as licenseFiles,
+        m.open_status as openStatus,
+        m.status as status,
+        m.del_flag as delFlag,
+        m.create_time as createTime,
+        m.update_time as updateTime,
+        m.remark as remark
+        from merchant m
+        where m.del_flag = 0
+        <if test="accountId != null">
+            and m.account_id = #{accountId}
+        </if>
+        <if test="merchantName != null and merchantName != ''">
+            and m.merchant_name like concat('%', #{merchantName}, '%')
+        </if>
+        <if test="categoryId != null">
+            and m.category_id = #{categoryId}
+        </if>
+        <if test="contactName != null and contactName != ''">
+            and m.contact_name like concat('%', #{contactName}, '%')
+        </if>
+        <if test="contactPhone != null and contactPhone != ''">
+            and m.contact_phone like concat('%', #{contactPhone}, '%')
+        </if>
+        <if test="openStatus != null">
+            and m.open_status = #{openStatus}
+        </if>
+        <if test="status != null">
+            and m.status = #{status}
+        </if>
+        order by m.merchant_id desc
+    </select>
+
+    <select id="selectMerchantApiResult" parameterType="Long" resultType="MerchantApiResult">
+        select
+        m.merchant_id as merchantId,
+        m.account_id as accountId,
+        m.merchant_name as merchantName,
+        m.category_id as categoryId,
+        m.logo as logo,
+        m.contact_name as contactName,
+        m.contact_phone as contactPhone,
+        m.license_files as licenseFiles,
+        m.open_status as openStatus,
+        m.status as status,
+        m.del_flag as delFlag,
+        m.create_time as createTime,
+        m.update_time as updateTime,
+        m.remark as remark
+        from merchant m
+        where
+        m.del_flag = 0 and
+        m.merchant_id = #{merchantId}
+        limit 1
+    </select>
+
+    <select id="selectMerchantCount" parameterType="MerchantParams" resultType="int">
+        select count(1)
+        from merchant m
+        where m.del_flag = 0
+        <if test="accountId != null ">
+            and m.account_id = #{accountId}
+        </if>
+        <if test="merchantName != null  and merchantName != ''">
+            and m.merchant_name like concat('%', #{merchantName}, '%')
+        </if>
+        <if test="categoryId != null ">
+            and m.category_id = #{categoryId}
+        </if>
+        <if test="contactName != null  and contactName != ''">
+            and m.contact_name like concat('%', #{contactName}, '%')
+        </if>
+        <if test="contactPhone != null  and contactPhone != ''">
+            and m.contact_phone like concat('%', #{contactPhone}, '%')
+        </if>
+        <if test="openStatus != null ">
+            and m.open_status = #{openStatus}
+        </if>
+        <if test="status != null ">
+            and m.status = #{status}
+        </if>
+    </select>
+
+    <select id="selectMerchantOne" parameterType="MerchantParams" resultMap="MerchantResult">
+        select
+        m.merchant_id,
+        m.account_id,
+        m.merchant_name,
+        m.category_id,
+        m.logo,
+        m.contact_name,
+        m.contact_phone,
+        m.license_files,
+        m.open_status,
+        m.status,
+        m.del_flag,
+        m.create_time,
+        m.update_time,
+        m.remark
+        from merchant m
+        where m.del_flag = 0
+        <if test="accountId != null ">
+            and m.account_id = #{accountId}
+        </if>
+        <if test="merchantName != null  and merchantName != ''">
+            and m.merchant_name like concat('%', #{merchantName}, '%')
+        </if>
+        <if test="categoryId != null ">
+            and m.category_id = #{categoryId}
+        </if>
+        <if test="contactName != null  and contactName != ''">
+            and m.contact_name like concat('%', #{contactName}, '%')
+        </if>
+        <if test="contactPhone != null  and contactPhone != ''">
+            and m.contact_phone like concat('%', #{contactPhone}, '%')
+        </if>
+        <if test="openStatus != null ">
+            and m.open_status = #{openStatus}
+        </if>
+        <if test="status != null ">
+            and m.status = #{status}
+        </if>
+        order by m.merchant_id desc
+        limit 1
+    </select>
+
+    <insert id="insertMerchant" parameterType="Merchant" useGeneratedKeys="true" keyProperty="merchantId">
+        insert into merchant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">
+                account_id,
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                merchant_name,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="logo != null">
+                logo,
+            </if>
+            <if test="contactName != null">
+                contact_name,
+            </if>
+            <if test="contactPhone != null">
+                contact_phone,
+            </if>
+            <if test="licenseFiles != null">
+                license_files,
+            </if>
+            <if test="openStatus != null">
+                open_status,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">
+                #{accountId},
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                #{merchantName},
+            </if>
+            <if test="categoryId != null">
+                #{categoryId},
+            </if>
+            <if test="logo != null">
+                #{logo},
+            </if>
+            <if test="contactName != null">
+                #{contactName},
+            </if>
+            <if test="contactPhone != null">
+                #{contactPhone},
+            </if>
+            <if test="licenseFiles != null">
+                #{licenseFiles},
+            </if>
+            <if test="openStatus != null">
+                #{openStatus},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateMerchant" parameterType="Merchant">
+        update merchant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountId != null">
+                account_id = #{accountId},
+            </if>
+            <if test="merchantName != null and merchantName != ''">
+                merchant_name = #{merchantName},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="logo != null">
+                logo = #{logo},
+            </if>
+            <if test="contactName != null">
+                contact_name = #{contactName},
+            </if>
+            <if test="contactPhone != null">
+                contact_phone = #{contactPhone},
+            </if>
+            <if test="licenseFiles != null">
+                license_files = #{licenseFiles},
+            </if>
+            <if test="openStatus != null">
+                open_status = #{openStatus},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </trim>
+        where merchant_id = #{merchantId}
+    </update>
+
+    <delete id="deleteMerchantById" parameterType="Long">
+        delete from merchant where merchant_id = #{merchantId}
+    </delete>
+
+    <delete id="deleteMerchantByIdList" parameterType="java.util.List">
+        delete from merchant where merchant_id in
+        <foreach item="merchantId" collection="list" open="(" separator="," close=")">
+            #{merchantId}
+        </foreach>
+    </delete>
+
+    <update id="logicDeleteMerchantById" parameterType="Long">
+        update merchant set del_flag = 1 where merchant_id = #{merchantId}
+    </update>
+
+    <update id="logicDeleteMerchantByIdList" parameterType="java.util.List">
+        update merchant set del_flag = 1 where merchant_id in
+        <foreach item="merchantId" collection="list" open="(" separator="," close=")">
+            #{merchantId}
+        </foreach>
+    </update>
+</mapper>

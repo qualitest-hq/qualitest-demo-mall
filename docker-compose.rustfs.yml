@@ -6,6 +6,7 @@
 services:
   app:
     environment:
+      DEMO_STORAGE_TYPE: RUSTFS
       DEMO_RUSTFS_ENABLED: "true"
       DEMO_RUSTFS_ENDPOINT: ${DEMO_RUSTFS_ENDPOINT:-http://rustfs:9000}
       DEMO_RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:-rustfsadmin}

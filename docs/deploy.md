@@ -191,9 +191,21 @@ docker compose --profile rustfs up -d rustfs
 
 并保持 `application-dev.yml` 中 `demo.rustfs.enabled=true`、`endpoint=http://127.0.0.1:9000`。
 
-## 可选：RustFS（文件上传 API）
+## 文件存储策略（yml）
 
-默认**不启动**。需要时二选一：
+`/common/upload` 与 `/api/file/*` 共用同一套存储：
+
+| `demo.storage.type` | 行为 |
+|---|---|
+| `RUSTFS`（默认） | 写 RustFS；未启用或不可达时**直接报错**（不静默换后端） |
+| `LOCAL` | 仅本机盘 `demo.profile` |
+| `QINIU` | 七牛；密钥用 `application-local.yml`（gitignore）或环境变量，**勿提交**；失败同样直接报错 |
+
+样例：`demo-admin/src/main/resources/application-local.yml.example` → 复制为 `application-local.yml`，`spring.profiles.active=dev,local`。
+
+## 可选：RustFS（对象存储）
+
+默认**不启动**容器。需要时二选一：
 
 ```bash
 # 推荐：全栈 + RustFS（同时打开 app 客户端）
@@ -215,14 +227,14 @@ docker compose -f docker-compose.yml -f docker-compose.rustfs.yml --profile rust
 
 说明：
 
-- 仅 `docker compose --profile rustfs up -d` **只会起 RustFS 容器**，不会把 `DEMO_RUSTFS_ENABLED` 设为 true；全栈联调请用上面的 `-f docker-compose.rustfs.yml` 或 `quick-start … rustfs`。
+- 仅 `docker compose --profile rustfs up -d` **只会起 RustFS 容器**，不会把 `DEMO_STORAGE_TYPE` / `DEMO_RUSTFS_ENABLED` 打开；全栈联调请用上面的 `-f docker-compose.rustfs.yml` 或 `quick-start … rustfs`。
 - 端口冲突时改 `.env` 的 `RUSTFS_API_PORT` / `RUSTFS_CONSOLE_PORT`。
+- 无 RustFS 时请显式改 `DEMO_STORAGE_TYPE=LOCAL`；勿依赖静默回落。
 
-验收接口（需客户端 Token）：
+验收接口：
 
-- `POST /api/file/upload`
-- `GET /api/file?key=`
-- `DELETE /api/file?key=`
+- 管理端：`POST /common/upload`
+- 客户端 Token：`POST /api/file/upload`、`GET /api/file?key=`、`DELETE /api/file?key=`
 
 样例附件（若仓库含）：`docs/fixtures/`。
 

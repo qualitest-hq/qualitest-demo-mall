@@ -6,13 +6,13 @@
 	
     <groupId>com.qualitest</groupId>
     <artifactId>demo</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 
     <name>qualitest-demo-mall</name>
     <description>质衡 Demo</description>
     
     <properties>
-        <demo.version>1.1.0</demo.version>
+        <demo.version>1.2.0</demo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
@@ -33,6 +33,7 @@
         <hutool.version>5.8.36</hutool.version>
         <lombok.version>1.18.30</lombok.version>
         <aws.sdk.version>2.31.78</aws.sdk.version>
+        <qiniu.sdk.version>7.15.1</qiniu.sdk.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -200,6 +201,13 @@
                 <version>${aws.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- 七牛 Java SDK（MIT） -->
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu.sdk.version}</version>
             </dependency>
 
         </dependencies>

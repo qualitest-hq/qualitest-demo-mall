@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 文件对象元信息（客户端）
+ * 客户端文件对象元信息响应。
  */
 @Getter
 @Setter
@@ -24,19 +24,27 @@ import java.util.Date;
 @Alias("FileObjectApiResult")
 public class FileObjectApiResult implements Serializable {
 
+    /** 对象键 */
     private String objectKey;
 
+    /** 长期可访问地址 */
     private String url;
 
-    /** 预签名下载 URL（RustFS）；本地兜底时可能为空 */
+    /**
+     * 临时下载地址。云存储可签发时返回；本地存储通常为空。
+     */
     private String presignedUrl;
 
+    /** 字节大小 */
     private Long size;
 
+    /** MIME 类型 */
     private String contentType;
 
+    /** 落盘后端：local / rustfs / qiniu */
     private String storage;
 
+    /** 最后修改时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastModified;
 }

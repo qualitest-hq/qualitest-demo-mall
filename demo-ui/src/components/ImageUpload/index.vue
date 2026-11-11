@@ -1,5 +1,5 @@
 <template>
-  <div class="component-upload-image">
+  <div class="component-upload-image" :class="{ 'named-upload': namedMode }">
     <el-upload
       multiple
       :disabled="disabled"
@@ -9,6 +9,7 @@
       :before-upload="handleBeforeUpload"
       :data="data"
       :limit="limit"
+      :accept="accept"
       :on-error="handleUploadError"
       :on-exceed="handleExceed"
       ref="imageUpload"
@@ -19,118 +20,166 @@
       :on-preview="handlePictureCardPreview"
       :class="{ hide: fileList.length >= limit }"
     >
-      <el-icon class="avatar-uploader-icon"><plus /></el-icon>
+      <div class="upload-card-trigger">
+        <el-icon class="upload-card-icon"><plus /></el-icon>
+        <div v-if="showTip" class="upload-card-limits">
+          <span v-if="limit">最多 <em>{{ limit }}</em> 张</span>
+          <span v-if="fileSize">≤ <em>{{ fileSize }} MB</em></span>
+          <span v-if="fileType && fileType.length" class="upload-card-formats">{{ fileType.join(" / ") }}</span>
+        </div>
+      </div>
+      <template #file="{ file }">
+        <div class="named-file">
+          <div class="named-file-thumb">
+            <img :src="previewSrc(file)" class="named-file-img" alt="" />
+            <span class="named-file-actions">
+              <span class="named-file-action" @click.stop="handlePictureCardPreview(file)">
+                <el-icon><zoom-in /></el-icon>
+              </span>
+              <span v-if="!disabled" class="named-file-action" @click.stop="removeFile(file)">
+                <el-icon><delete /></el-icon>
+              </span>
+            </span>
+          </div>
+          <el-input
+            v-if="namedMode"
+            :model-value="file.name"
+            :disabled="disabled"
+            maxlength="64"
+            placeholder="请输入名称"
+            @update:model-value="updateFileName(file, $event)"
+          />
+        </div>
+      </template>
     </el-upload>
-    <!-- 上传提示 -->
-    <div class="el-upload__tip" v-if="showTip && !disabled">
-      请上传
-      <template v-if="fileSize">
-        大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>
-      </template>
-      <template v-if="fileType">
-        格式为 <b style="color: #f56c6c">{{ fileType.join("/") }}</b>
-      </template>
-      的文件
-    </div>
 
-    <el-dialog
-      v-model="dialogVisible"
-      title="预览"
-      width="800px"
-      append-to-body
-    >
-      <img
-        :src="dialogImageUrl"
-        style="display: block; max-width: 100%; margin: 0 auto"
-      />
+    <el-dialog v-model="dialogVisible" title="预览" width="800px" append-to-body>
+      <img :src="dialogImageUrl" style="display: block; max-width: 100%; margin: 0 auto" />
     </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { getToken } from "@/utils/auth"
-import { isExternal } from "@/utils/validate"
-import Sortable from 'sortablejs'
+import Sortable from "sortablejs"
+import {
+  acceptFromFileTypes,
+  isSameModelValue,
+  mapUploadResponse,
+  parseFileList,
+  resolveResourceUrl,
+  resolveValueType,
+  serializeFileList,
+  stripExt,
+  toStoredPath
+} from "@/utils/file"
 
 const props = defineProps({
-  modelValue: [String, Object, Array],
-  // 上传接口地址
+  modelValue: {
+    type: [String, Object, Array],
+    default: ""
+  },
   action: {
     type: String,
     default: "/common/upload"
   },
-  // 上传携带的参数
   data: {
     type: Object
   },
-  // 图片数量限制
   limit: {
     type: Number,
     default: 5
   },
-  // 大小限制(MB)
   fileSize: {
     type: Number,
     default: 5
   },
-  // 文件类型, 例如['png', 'jpg', 'jpeg']
   fileType: {
     type: Array,
     default: () => ["png", "jpg", "jpeg"]
   },
-  // 是否显示提示
   isShowTip: {
     type: Boolean,
     default: true
   },
-  // 禁用组件（仅查看图片）
   disabled: {
     type: Boolean,
     default: false
   },
-  // 拖动排序
   drag: {
     type: Boolean,
     default: true
+  },
+  type: {
+    type: String,
+    default: "urlString"
+  },
+  json: {
+    type: Boolean,
+    default: false
   }
 })
 
 const { proxy } = getCurrentInstance()
-const emit = defineEmits()
+const emit = defineEmits(["update:modelValue"])
 const number = ref(0)
 const uploadList = ref([])
 const dialogImageUrl = ref("")
 const dialogVisible = ref(false)
-const baseUrl = import.meta.env.VITE_APP_BASE_API
-const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action) // 上传的图片服务器地址
-const headers = ref({ Authorization: "Bearer " + getToken() })
+const skipModelSync = ref(false)
+const uploadImgUrl = computed(() => import.meta.env.VITE_APP_BASE_API + props.action)
+const headers = computed(() => ({ Authorization: "Bearer " + getToken() }))
 const fileList = ref([])
-const showTip = computed(
-  () => props.isShowTip && (props.fileType || props.fileSize)
+const valueType = computed(() => resolveValueType(props.type, props.json, "urlString"))
+const namedMode = computed(() => valueType.value === "jsonArray" || valueType.value === "jsonString" || props.json)
+const accept = computed(() => acceptFromFileTypes(props.fileType))
+const showTip = computed(() => !props.disabled && props.isShowTip && !!(props.limit || props.fileSize || props.fileType?.length))
+
+function previewSrc(file) {
+  return resolveResourceUrl(file.url)
+}
+
+function toUploadFile(item) {
+  return {
+    ...item,
+    name: item.name,
+    url: resolveResourceUrl(item.url),
+    status: "success"
+  }
+}
+
+function syncFromModel(val) {
+  fileList.value = parseFileList(val).map(toUploadFile)
+}
+
+function syncModelValue() {
+  const stored = fileList.value.map((item) => ({
+    ...item,
+    url: toStoredPath(item.url),
+    name: stripExt(item.name)
+  }))
+  const next = serializeFileList(stored, valueType.value)
+  if (isSameModelValue(next, props.modelValue)) {
+    return
+  }
+  skipModelSync.value = true
+  emit("update:modelValue", next)
+  nextTick(() => {
+    skipModelSync.value = false
+  })
+}
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (skipModelSync.value || number.value > 0) {
+      return
+    }
+    syncFromModel(val)
+  },
+  { deep: true, immediate: true }
 )
 
-watch(() => props.modelValue, val => {
-  if (val) {
-    // 首先将值转为数组
-    const list = Array.isArray(val) ? val : props.modelValue.split(",")
-    // 然后将数组转为对象数组
-    fileList.value = list.map(item => {
-      if (typeof item === "string") {
-        if (item.indexOf(baseUrl) === -1 && !isExternal(item)) {
-          item = { name: baseUrl + item, url: baseUrl + item }
-        } else {
-          item = { name: item, url: item }
-        }
-      }
-      return item
-    })
-  } else {
-    fileList.value = []
-    return []
-  }
-},{ deep: true, immediate: true })
-
-// 上传前loading加载
 function handleBeforeUpload(file) {
   let isImg = false
   if (props.fileType.length) {
@@ -138,7 +187,7 @@ function handleBeforeUpload(file) {
     if (file.name.lastIndexOf(".") > -1) {
       fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1)
     }
-    isImg = props.fileType.some(type => {
+    isImg = props.fileType.some((type) => {
       if (file.type.indexOf(type) > -1) return true
       if (fileExtension && fileExtension.indexOf(type) > -1) return true
       return false
@@ -150,14 +199,14 @@ function handleBeforeUpload(file) {
     proxy.$modal.msgError(`文件格式不正确，请上传${props.fileType.join("/")}图片格式文件!`)
     return false
   }
-  if (file.name.includes(',')) {
-    proxy.$modal.msgError('文件名不正确，不能包含英文逗号!')
+  if (valueType.value === "urlString" && file.name.includes(",")) {
+    proxy.$modal.msgError("文件名不正确，不能包含英文逗号!")
     return false
   }
   if (props.fileSize) {
     const isLt = file.size / 1024 / 1024 < props.fileSize
     if (!isLt) {
-      proxy.$modal.msgError(`上传头像图片大小不能超过 ${props.fileSize} MB!`)
+      proxy.$modal.msgError(`上传图片大小不能超过 ${props.fileSize} MB!`)
       return false
     }
   }
@@ -165,15 +214,14 @@ function handleBeforeUpload(file) {
   number.value++
 }
 
-// 文件个数超出
 function handleExceed() {
   proxy.$modal.msgError(`上传文件数量不能超过 ${props.limit} 个!`)
 }
 
-// 上传成功回调
 function handleUploadSuccess(res, file) {
   if (res.code === 200) {
-    uploadList.value.push({ name: res.fileName, url: res.fileName })
+    const mapped = mapUploadResponse(res, file?.raw || file)
+    uploadList.value.push(toUploadFile(mapped))
     uploadedSuccessfully()
   } else {
     number.value--
@@ -184,61 +232,63 @@ function handleUploadSuccess(res, file) {
   }
 }
 
-// 删除图片
 function handleDelete(file) {
-  const findex = fileList.value.map(f => f.name).indexOf(file.name)
+  const findex = fileList.value.findIndex(
+    (f) => f.uid === file.uid || f.url === file.url || f.name === file.name
+  )
   if (findex > -1 && uploadList.value.length === number.value) {
     fileList.value.splice(findex, 1)
-    emit("update:modelValue", listToString(fileList.value))
+    syncModelValue()
     return false
   }
 }
 
-// 上传结束处理
+function removeFile(file) {
+  const findex = fileList.value.findIndex(
+    (f) => f.uid === file.uid || f.url === file.url || f.name === file.name
+  )
+  if (findex > -1) {
+    fileList.value.splice(findex, 1)
+    syncModelValue()
+  }
+}
+
+function updateFileName(file, name) {
+  file.name = stripExt(name)
+  syncModelValue()
+}
+
 function uploadedSuccessfully() {
   if (number.value > 0 && uploadList.value.length === number.value) {
-    fileList.value = fileList.value.filter(f => f.url !== undefined).concat(uploadList.value)
+    fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value)
     uploadList.value = []
     number.value = 0
-    emit("update:modelValue", listToString(fileList.value))
+    syncModelValue()
     proxy.$modal.closeLoading()
   }
 }
 
-// 上传失败
 function handleUploadError() {
+  number.value = Math.max(0, number.value - 1)
   proxy.$modal.msgError("上传图片失败")
   proxy.$modal.closeLoading()
 }
 
-// 预览
 function handlePictureCardPreview(file) {
-  dialogImageUrl.value = file.url
+  dialogImageUrl.value = resolveResourceUrl(file.url)
   dialogVisible.value = true
 }
 
-// 对象转成指定字符串分隔
-function listToString(list, separator) {
-  let strs = ""
-  separator = separator || ","
-  for (let i in list) {
-    if (undefined !== list[i].url && list[i].url.indexOf("blob:") !== 0) {
-      strs += list[i].url.replace(baseUrl, "") + separator
-    }
-  }
-  return strs != "" ? strs.substr(0, strs.length - 1) : ""
-}
-
-// 初始化拖拽排序
 onMounted(() => {
   if (props.drag && !props.disabled) {
     nextTick(() => {
-      const element = proxy.$refs.imageUpload?.$el?.querySelector('.el-upload-list')
+      const element = proxy.$refs.imageUpload?.$el?.querySelector(".el-upload-list")
+      if (!element) return
       Sortable.create(element, {
         onEnd: (evt) => {
           const movedItem = fileList.value.splice(evt.oldIndex, 1)[0]
           fileList.value.splice(evt.newIndex, 0, movedItem)
-          emit('update:modelValue', listToString(fileList.value))
+          syncModelValue()
         }
       })
     })
@@ -247,12 +297,116 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-// .el-upload--picture-card 控制加号部分
 :deep(.hide .el-upload--picture-card) {
-    display: none;
+  display: none;
 }
 
 :deep(.el-upload.el-upload--picture-card.is-disabled) {
   display: none !important;
-} 
+}
+
+:deep(.el-upload--picture-card) {
+  width: 160px;
+  height: 160px;
+}
+
+:deep(.el-upload-list--picture-card .el-upload-list__item) {
+  width: 160px;
+  height: 160px;
+}
+
+.upload-card-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px 8px;
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+.upload-card-icon {
+  font-size: 24px;
+  color: var(--el-text-color-secondary);
+}
+
+.upload-card-limits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--el-text-color-secondary);
+  word-break: break-all;
+  text-align: center;
+
+  em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--el-color-danger);
+  }
+}
+
+.upload-card-formats {
+  color: var(--el-color-primary);
+}
+
+.named-upload {
+  :deep(.el-upload-list--picture-card .el-upload-list__item) {
+    width: 160px;
+    height: auto;
+    overflow: visible;
+    border: none;
+    margin: 0 8px 8px 0;
+    background: transparent;
+  }
+}
+
+.named-file {
+  width: 100%;
+}
+
+.named-file-thumb {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid var(--el-border-color);
+}
+
+.named-file-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.named-file-actions {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #fff;
+}
+
+.named-file-thumb:hover .named-file-actions {
+  opacity: 1;
+}
+
+.named-file-action {
+  cursor: pointer;
+}
+
+.named-file :deep(.el-input) {
+  margin-top: 6px;
+}
 </style>

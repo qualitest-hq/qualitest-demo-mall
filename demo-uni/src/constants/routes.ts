@@ -22,7 +22,26 @@ export const ROUTES = {
   PAY: "/pages/pay/pay",
   /** 支付成功页 */
   PAY_RESULT: "/pages/pay-result/pay-result",
+  /** 商家中心入口（自动分流） */
+  MERCHANT_INDEX: "/pages/merchant/index",
+  /** 入驻申请 */
+  MERCHANT_APPLY: "/pages/merchant/apply",
+  /** 入驻待审 */
+  MERCHANT_PENDING: "/pages/merchant/pending",
+  /** 入驻驳回 */
+  MERCHANT_REJECTED: "/pages/merchant/rejected",
+  /** 商家工作台 */
+  MERCHANT_DASH: "/pages/merchant/dash",
+  /** 店铺资料变更 */
+  MERCHANT_PROFILE: "/pages/merchant/profile",
+  /** 商家商品（占位） */
+  MERCHANT_GOODS: "/pages/merchant/goods",
 } as const;
+
+/** 打开商家中心入口 */
+export function openMerchantIndex() {
+  uni.navigateTo({ url: ROUTES.MERCHANT_INDEX });
+}
 
 /**
  * 打开确认订单页。

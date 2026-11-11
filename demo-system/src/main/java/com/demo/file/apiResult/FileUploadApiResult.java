@@ -37,8 +37,6 @@ public class FileUploadApiResult implements Serializable {
     /** 原始文件名 */
     private String originalFilename;
 
-    /**
-     * 存储后端：{@code rustfs} 或 {@code local}
-     */
+    /** 存储后端：local / rustfs / qiniu */
     private String storage;
 }

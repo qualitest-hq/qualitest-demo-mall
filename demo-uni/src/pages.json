@@ -76,6 +76,48 @@
       "style": {
         "navigationBarTitleText": "支付成功"
       }
+    },
+    {
+      "path": "pages/merchant/index",
+      "style": {
+        "navigationBarTitleText": "商家中心"
+      }
+    },
+    {
+      "path": "pages/merchant/apply",
+      "style": {
+        "navigationBarTitleText": "商家入驻"
+      }
+    },
+    {
+      "path": "pages/merchant/pending",
+      "style": {
+        "navigationBarTitleText": "入驻审核中"
+      }
+    },
+    {
+      "path": "pages/merchant/rejected",
+      "style": {
+        "navigationBarTitleText": "入驻未通过"
+      }
+    },
+    {
+      "path": "pages/merchant/dash",
+      "style": {
+        "navigationBarTitleText": "商家工作台"
+      }
+    },
+    {
+      "path": "pages/merchant/profile",
+      "style": {
+        "navigationBarTitleText": "店铺资料"
+      }
+    },
+    {
+      "path": "pages/merchant/goods",
+      "style": {
+        "navigationBarTitleText": "商品管理"
+      }
     }
   ],
   // 全局默认导航栏与窗口背景

@@ -6,6 +6,8 @@ import { listMallProduct } from '@/api/mall/mallProduct'
 import { listMallProductSku } from '@/api/mall/mallProductSku'
 import { listMallOrder } from '@/api/mall/mallOrder'
 import { listMallOrderRefund } from '@/api/mall/mallOrderRefund'
+import { listMerchant } from '@/api/merchant/merchant'
+import { listMerchantCategory } from '@/api/merchant/merchantCategory'
 
 const PAGE_SIZE = 20
 
@@ -86,6 +88,22 @@ export function useCategoryRemoteSelect() {
     valueKey: 'categoryId',
     labelFn: (row) => row.categoryName || `分类${row.categoryId}`,
     buildQuery: (keyword) => (keyword ? { categoryName: keyword } : {}),
+  })
+}
+
+export function useMerchantCategoryRemoteSelect() {
+  return useRemoteSelect(listMerchantCategory, {
+    valueKey: 'categoryId',
+    labelFn: (row) => row.categoryName || `类目${row.categoryId}`,
+    buildQuery: (keyword) => (keyword ? { categoryName: keyword } : {}),
+  })
+}
+
+export function useMerchantRemoteSelect() {
+  return useRemoteSelect(listMerchant, {
+    valueKey: 'merchantId',
+    labelFn: (row) => row.merchantName || `商家${row.merchantId}`,
+    buildQuery: (keyword) => (keyword ? { merchantName: keyword } : {}),
   })
 }
 

@@ -19,5 +19,8 @@ TRUNCATE TABLE `mall_product_sku`;
 TRUNCATE TABLE `mall_product`;
 TRUNCATE TABLE `mall_category`;
 TRUNCATE TABLE `coupon`;
+TRUNCATE TABLE `merchant_apply`;
+TRUNCATE TABLE `merchant`;
+TRUNCATE TABLE `merchant_category`;
 
 SET FOREIGN_KEY_CHECKS = 1;

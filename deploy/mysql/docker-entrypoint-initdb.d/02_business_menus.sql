@@ -45,6 +45,17 @@ ON DUPLICATE KEY UPDATE
   menu_name = VALUES(menu_name), path = VALUES(path), component = VALUES(component),
   perms = VALUES(perms), icon = VALUES(icon), visible = VALUES(visible), status = VALUES(status);
 
+-- 商家管理
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, remark)
+VALUES
+(2215, '商家管理', 0, 4, 'merchantManages', NULL, NULL, '', 1, 0, 'M', '0', '0', '', 'peoples', 'admin', NOW(), ''),
+(2216, '经营类目', 2215, 1, 'merchantCategory', 'merchant/merchantCategory/index', '', '', 1, 0, 'C', '0', '0', 'merchant:merchantCategory:list', 'tree', 'admin', NOW(), ''),
+(2217, '商家店铺', 2215, 2, 'merchant', 'merchant/merchant/index', '', '', 1, 0, 'C', '0', '0', 'merchant:merchant:list', 'shopping', 'admin', NOW(), ''),
+(2218, '商家申请', 2215, 3, 'merchantApply', 'merchant/merchantApply/index', '', '', 1, 0, 'C', '0', '0', 'merchant:merchantApply:list', 'form', 'admin', NOW(), '')
+ON DUPLICATE KEY UPDATE
+  menu_name = VALUES(menu_name), path = VALUES(path), component = VALUES(component), parent_id = VALUES(parent_id),
+  perms = VALUES(perms), icon = VALUES(icon), visible = VALUES(visible), status = VALUES(status), order_num = VALUES(order_num);
+
 -- 按钮权限（list 页操作）；幂等
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, remark)
 VALUES
@@ -101,7 +112,22 @@ VALUES
 (2412, '用户券新增', 2022, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'coupon:accountCoupon:add', '#', 'admin', NOW(), ''),
 (2413, '用户券修改', 2022, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'coupon:accountCoupon:edit', '#', 'admin', NOW(), ''),
 (2414, '用户券删除', 2022, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'coupon:accountCoupon:remove', '#', 'admin', NOW(), ''),
-(2415, '用户券导出', 2022, 5, '', '', '', '', 1, 0, 'F', '0', '0', 'coupon:accountCoupon:export', '#', 'admin', NOW(), '')
+(2415, '用户券导出', 2022, 5, '', '', '', '', 1, 0, 'F', '0', '0', 'coupon:accountCoupon:export', '#', 'admin', NOW(), ''),
+(2501, '类目查询', 2216, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantCategory:query', '#', 'admin', NOW(), ''),
+(2502, '类目新增', 2216, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantCategory:add', '#', 'admin', NOW(), ''),
+(2503, '类目修改', 2216, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantCategory:edit', '#', 'admin', NOW(), ''),
+(2504, '类目删除', 2216, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantCategory:remove', '#', 'admin', NOW(), ''),
+(2505, '类目导出', 2216, 5, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantCategory:export', '#', 'admin', NOW(), ''),
+(2511, '商家查询', 2217, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchant:query', '#', 'admin', NOW(), ''),
+(2512, '商家新增', 2217, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchant:add', '#', 'admin', NOW(), ''),
+(2513, '商家修改', 2217, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchant:edit', '#', 'admin', NOW(), ''),
+(2514, '商家删除', 2217, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchant:remove', '#', 'admin', NOW(), ''),
+(2515, '商家导出', 2217, 5, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchant:export', '#', 'admin', NOW(), ''),
+(2521, '申请查询', 2218, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantApply:query', '#', 'admin', NOW(), ''),
+(2522, '申请新增', 2218, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantApply:add', '#', 'admin', NOW(), ''),
+(2523, '申请修改', 2218, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantApply:edit', '#', 'admin', NOW(), ''),
+(2524, '申请删除', 2218, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantApply:remove', '#', 'admin', NOW(), ''),
+(2525, '申请导出', 2218, 5, '', '', '', '', 1, 0, 'F', '0', '0', 'merchant:merchantApply:export', '#', 'admin', NOW(), '')
 ON DUPLICATE KEY UPDATE perms = VALUES(perms), parent_id = VALUES(parent_id);
 
 -- common 角色挂上业务菜单 + 场景（admin 不依赖 role_menu）
@@ -109,7 +135,7 @@ INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
 (2, 2000), (2, 2001), (2, 2002), (2, 2003),
 (2, 2004), (2, 2005), (2, 2006), (2, 2007), (2, 2008), (2, 2009), (2, 2010), (2, 2011),
 (2, 2020), (2, 2021), (2, 2022),
-(2, 2215), (2, 2216), (2, 2217), (2, 2218), (2, 2219), (2, 2220),
+(2, 2215), (2, 2216), (2, 2217), (2, 2218),
 (2, 2301), (2, 2302), (2, 2303), (2, 2304), (2, 2305),
 (2, 2311), (2, 2312), (2, 2313), (2, 2314), (2, 2315),
 (2, 2321), (2, 2322), (2, 2323), (2, 2324), (2, 2325),
@@ -121,4 +147,7 @@ INSERT IGNORE INTO sys_role_menu (role_id, menu_id) VALUES
 (2, 2381), (2, 2382), (2, 2383), (2, 2384), (2, 2385),
 (2, 2391), (2, 2392),
 (2, 2401), (2, 2402), (2, 2403), (2, 2404), (2, 2405),
-(2, 2411), (2, 2412), (2, 2413), (2, 2414), (2, 2415);
+(2, 2411), (2, 2412), (2, 2413), (2, 2414), (2, 2415),
+(2, 2501), (2, 2502), (2, 2503), (2, 2504), (2, 2505),
+(2, 2511), (2, 2512), (2, 2513), (2, 2514), (2, 2515),
+(2, 2521), (2, 2522), (2, 2523), (2, 2524), (2, 2525);

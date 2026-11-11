@@ -67,14 +67,12 @@ curl -s -X POST "$BASE/web/test/scenario/load/S01" -H "Authorization: Bearer $TO
 **进阶**：
 
 - 被测数据 snapshot/restore（供质衡 checkpoint 联调）见 **[test-support-starter 接入文档](test-support-starter/README.md)**（开启数据还原时，同一环境请串行跑）
-- **进阶 · 文件 / RustFS**（插件扫 `form-data` `file` + 对象落盘）：
-  1. 启动 RustFS：`scripts\quick-start.bat rustfs`（全栈+客户端）或本机仅 `docker compose --profile rustfs up -d rustfs`（默认 `http://127.0.0.1:9000`，`rustfsadmin` / `rustfsadmin`，bucket `qualitest-demo-mall`）
-  2. Compose 全栈 + rustfs 时由 `docker-compose.rustfs.yml` 注入 `DEMO_RUSTFS_ENABLED=true`；本机跑后端时确认 `application-dev.yml` 中 `demo.rustfs.enabled=true`
-  3. 客户端 Token 调用：
-     - `POST /api/file/upload`（multipart：`file` 必填 + `bizType` 可选）
-     - `GET /api/file?key=`（元信息 / 预签名 URL）
-     - `DELETE /api/file?key=`（清理）
-  4. 样例附件：[docs/fixtures/sample-avatar.png](docs/fixtures/sample-avatar.png)
+- **进阶 · 文件存储**（`/common/upload` 与 `/api/file` 同策略；yml：`demo.storage.type`）：
+  1. 默认 `RUSTFS`（三选一，不能同时开）。不可达直接报错，不静默换 `LOCAL`。无 RustFS 时显式设 `DEMO_STORAGE_TYPE=LOCAL`；个人本机可复制 `application-local.yml.example` 设 `type=QINIU`（密钥勿提交）
+  2. 启动 RustFS：`scripts\quick-start.bat rustfs` 或 `docker compose --profile rustfs up -d rustfs`（`http://127.0.0.1:9000`，`rustfsadmin` / `rustfsadmin`，bucket `qualitest-demo-mall`）
+  3. Compose 全栈 + rustfs 时由 `docker-compose.rustfs.yml` 注入 `DEMO_STORAGE_TYPE=RUSTFS` + `DEMO_RUSTFS_ENABLED=true`；本机自行设同样两项
+  4. 客户端 Token：`POST /api/file/upload`、`GET /api/file?key=`、`DELETE /api/file?key=`
+  5. 样例附件：[docs/fixtures/sample-avatar.png](docs/fixtures/sample-avatar.png)
 
 ## 认证说明
 

@@ -8,12 +8,15 @@
 # -----------------------------------------------------------------------------
 demo:
   name: Qualitest Demo          # 显示名称
-  version: 1.0.0                # 版本号
+  version: 1.2.0                # 版本号
   copyrightYear: 2026           # 版权年份
   profile: ${DEMO_PROFILE:D:/demo/uploadPath}     # 本地上传文件落盘根目录
   addressEnabled: false         # 登录日志是否解析 IP 所在地
   captchaType: math             # 登录验证码：math 算术 / char 字符
-  # RustFS（S3 兼容对象存储，进阶文件 API）
+  # 文件存储后端三选一（不能同时开）：LOCAL 本机盘 / RUSTFS S3 兼容 / QINIU 七牛；默认 RUSTFS，不可达时直接失败
+  storage:
+    type: ${DEMO_STORAGE_TYPE:RUSTFS}
+  # RustFS 连接参数；仅 type=RUSTFS 时生效，须 enabled=true 且 endpoint 可达
   rustfs:
     enabled: ${DEMO_RUSTFS_ENABLED:true}
     endpoint: ${DEMO_RUSTFS_ENDPOINT:http://127.0.0.1:9000}
@@ -22,6 +25,15 @@ demo:
     bucket: ${DEMO_RUSTFS_BUCKET:qualitest-demo-mall}
     region: us-east-1
     public-base-url: ${DEMO_RUSTFS_PUBLIC_BASE_URL:http://127.0.0.1:9000/qualitest-demo-mall}
+  # 七牛（密钥勿提交；本机用 application-local.yml 覆盖 type=QINIU）
+  qiniu:
+    access-key: ${DEMO_QINIU_ACCESS_KEY:}
+    secret-key: ${DEMO_QINIU_SECRET_KEY:}
+    bucket: ${DEMO_QINIU_BUCKET:}
+    domain: ${DEMO_QINIU_DOMAIN:}
+    domain-protocol: ${DEMO_QINIU_DOMAIN_PROTOCOL:https://}
+    region: ${DEMO_QINIU_REGION:}
+    source: ${DEMO_QINIU_SOURCE:}
 
 # -----------------------------------------------------------------------------
 # 内嵌 Tomcat

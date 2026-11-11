@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 进阶文件 API（RustFS 对象存储）
+ * 客户端文件接口。上传、查询、删除均走统一存储服务，实际后端由 demo.storage.type 决定。
  *
  * @api.group 客户端.进阶.文件
  *
@@ -31,10 +31,10 @@ public class FileApiController extends ApiController {
     private final IFileObjectService fileObjectService;
 
     /**
-     * 上传文件到 RustFS
+     * 上传文件。浏览器把文件交给本接口，服务端再写入当前配置的存储后端。
      *
      * @param file    上传文件
-     * @param bizType 业务分类，如 avatar / product
+     * @param bizType 业务分类，可选，如 avatar、product；影响对象键目录
      */
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public R<FileUploadApiResult> upload(
@@ -44,9 +44,9 @@ public class FileApiController extends ApiController {
     }
 
     /**
-     * 查询文件元信息 / 预签名下载 URL
+     * 按对象键查询元信息；云存储可用时可能附带临时下载地址。
      *
-     * @param key 对象 key（上传返回的 objectKey）
+     * @param key 上传返回的 objectKey
      */
     @GetMapping
     public R<FileObjectApiResult> meta(@RequestParam("key") String key) {
@@ -54,9 +54,9 @@ public class FileApiController extends ApiController {
     }
 
     /**
-     * 按 key 删除文件（清理用例）
+     * 按对象键删除文件。
      *
-     * @param key 对象 key
+     * @param key 对象键
      */
     @DeleteMapping
     public R<Void> delete(@RequestParam("key") String key) {
