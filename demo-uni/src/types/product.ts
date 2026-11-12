@@ -59,6 +59,12 @@ export interface MallProduct {
   salePrice?: number | string;
   /** 固定运费金额；为 0 表示无运费 */
   freightAmount?: number | string;
+  /** 主图路径；空串表示无图 */
+  mainImage?: string;
+  /** 图集路径列表；无图为空数组 */
+  galleryImages?: string[];
+  /** 商品简介（C 端详情正文） */
+  intro?: string;
   /** 商品总库存 */
   stockTotal?: number;
   /** 累计销量 */
@@ -67,7 +73,7 @@ export interface MallProduct {
   shelfStatus?: number;
   /** 排序字段 */
   sortNum?: number;
-  /** 备注或简介文本 */
+  /** 备注（后台备注，非 C 端简介） */
   remark?: string;
   /** 规格列表；仅详情有值 */
   skus?: MallProductSku[];
@@ -76,11 +82,16 @@ export interface MallProduct {
 /**
  * 商品列表查询条件。
  */
+/** 列表排序：default / priceAsc / priceDesc / salesDesc */
+export type ProductSortBy = "default" | "priceAsc" | "priceDesc" | "salesDesc";
+
 export interface MallProductListQuery {
   /** 按分类主键精确筛选；不传则查全部分类 */
   categoryId?: string;
-  /** 按商品名称模糊匹配；请求字段名为 productName */
-  productName?: string;
+  /** 关键词：匹配名称与简介 */
+  keyword?: string;
+  /** 排序方式 */
+  sortBy?: ProductSortBy;
   /** 页码，从 1 开始 */
   pageNum?: number;
   /** 每页条数 */
@@ -133,6 +144,12 @@ export interface MerchantProductSavePayload {
   salePrice?: number | string;
   /** 固定运费 */
   freightAmount?: number | string;
+  /** 主图路径 */
+  mainImage?: string;
+  /** 图集路径列表 */
+  galleryImages?: string[];
+  /** 商品简介 */
+  intro?: string;
   /** 上架状态：0下架 1上架 */
   shelfStatus?: number;
   /** 排序 */

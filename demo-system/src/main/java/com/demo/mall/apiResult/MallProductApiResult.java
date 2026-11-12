@@ -1,6 +1,7 @@
 package com.demo.mall.apiResult;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
@@ -70,6 +71,27 @@ public class MallProductApiResult implements Serializable {
      * 固定运费
      */
     private BigDecimal freightAmount;
+
+    /**
+     * 主图路径
+     */
+    private String mainImage;
+
+    /**
+     * 图集路径列表；无图时为空列表
+     */
+    private List<String> galleryImages;
+
+    /**
+     * 图集 JSON（Mapper 映射用，接口不透出）
+     */
+    @JsonIgnore
+    private String galleryImagesJson;
+
+    /**
+     * 商品简介
+     */
+    private String intro;
 
     /**
      * 总库存

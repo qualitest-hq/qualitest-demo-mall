@@ -50,6 +50,15 @@ public class MallProductMerchantSaveApiParams implements Serializable {
     /** 固定运费 */
     private BigDecimal freightAmount;
 
+    /** 主图路径 */
+    private String mainImage;
+
+    /** 图集路径列表 */
+    private List<String> galleryImages;
+
+    /** 商品简介 */
+    private String intro;
+
     /** 上架状态：0下架 1上架 */
     private Integer shelfStatus;
 

@@ -35,11 +35,17 @@ INSERT INTO `mall_category` (`category_id`, `category_name`, `order_num`, `statu
 -- 商品 SPU（3 条，固定 ID 2001-2003，全部挂演示店 5001）
 -- freight_amount: 2001=8.00, 2002=0.00, 2003=12.00
 -- stock_total = 各 SKU stock 之和（每 SPU 2 SKU × 100 = 200）
+-- main_image 可空；gallery_images 无图用 []；intro 供 keyword 检索
+-- 已建库升级（B2）：
+-- ALTER TABLE mall_product
+--   ADD COLUMN main_image varchar(512) DEFAULT '' COMMENT '主图路径' AFTER freight_amount,
+--   ADD COLUMN gallery_images varchar(2000) DEFAULT NULL COMMENT '图集JSON数组' AFTER main_image,
+--   ADD COLUMN intro varchar(500) DEFAULT '' COMMENT '商品简介' AFTER gallery_images;
 -- ---------------------------------------------------------------------------
-INSERT INTO `mall_product` (`product_id`, `merchant_id`, `category_id`, `product_name`, `unit_name`, `market_price`, `sale_price`, `freight_amount`, `stock_total`, `sales_count`, `shelf_status`, `sort_num`, `del_flag`, `create_time`, `update_time`, `remark`) VALUES
-(2001, 5001, 1001, 'iPhone 壳',   '件',  59.00,  49.00,  8.00, 200, 0, 1, 1, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
-(2002, 5001, 1002, 'T 恤',       '件', 129.00,  89.00,  0.00, 200, 0, 1, 2, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
-(2003, 5001, 1003, '坚果礼盒',   '盒', 258.00, 128.00, 12.00, 200, 0, 1, 3, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed');
+INSERT INTO `mall_product` (`product_id`, `merchant_id`, `category_id`, `product_name`, `unit_name`, `market_price`, `sale_price`, `freight_amount`, `main_image`, `gallery_images`, `intro`, `stock_total`, `sales_count`, `shelf_status`, `sort_num`, `del_flag`, `create_time`, `update_time`, `remark`) VALUES
+(2001, 5001, 1001, 'iPhone 壳',   '件',  59.00,  49.00,  8.00, '', '[]', '透明防摔手机壳，轻薄贴合', 200, 0, 1, 1, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
+(2002, 5001, 1002, 'T 恤',       '件', 129.00,  89.00,  0.00, '', '[]', '纯棉短袖，透气舒适', 200, 0, 1, 2, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
+(2003, 5001, 1003, '坚果礼盒',   '盒', 258.00, 128.00, 12.00, '', '[]', '精选坚果礼盒，节日送礼', 200, 0, 1, 3, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed');
 
 -- ---------------------------------------------------------------------------
 -- 商品 SKU（每 SPU 2 个 SKU，库存 100，固定 ID 2101-2122）

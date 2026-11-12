@@ -4,7 +4,12 @@
     <view v-else-if="!product" class="state">商品不存在或已下架</view>
     <template v-else>
       <view class="gallery">
-        <view class="gallery-cover">
+        <swiper v-if="galleryUrls.length" class="gallery-swiper" circular indicator-dots>
+          <swiper-item v-for="(url, idx) in galleryUrls" :key="idx">
+            <image class="gallery-img" :src="url" mode="aspectFill" />
+          </swiper-item>
+        </swiper>
+        <view v-else class="gallery-cover">
           <text class="gallery-text">{{ productInitial(product.productName) }}</text>
         </view>
         <view class="gallery-back" @click="navigateBackOrHome">返回</view>
@@ -35,10 +40,7 @@
 
       <view class="desc">
         <text class="desc-title">商品详情</text>
-        <text class="desc-body">{{ product.remark || "暂无图文详情" }}</text>
-        <view class="desc-placeholder">
-          <text>{{ productInitial(product.productName) }}</text>
-        </view>
+        <text class="desc-body">{{ product.intro || "暂无图文详情" }}</text>
       </view>
 
       <view class="buybar-space" />
@@ -63,6 +65,7 @@
     <SkuSheet
       v-model="skuVisible"
       :product-name="product?.productName"
+      :cover-image="productCoverUrl(product)"
       :skus="product?.skus || []"
       :sale-price="product?.salePrice"
       :market-price="product?.marketPrice"
@@ -87,7 +90,13 @@ import { getProductDetail } from "@/api/product";
 import { navigateBackOrHome, openCheckout, ROUTES } from "@/constants/routes";
 import { useUserStore } from "@/stores/user";
 import type { MallProduct, MallProductSku } from "@/types/product";
-import { formatMoney, pickDefaultSku, productInitial } from "@/utils/product";
+import {
+  formatMoney,
+  pickDefaultSku,
+  productCoverUrl,
+  productGalleryUrls,
+  productInitial,
+} from "@/utils/product";
 
 const user = useUserStore();
 
@@ -138,6 +147,9 @@ const freightText = computed(() => {
 
 /** 上架中才允许加购与购买 */
 const canBuy = computed(() => Number(product.value?.shelfStatus ?? 1) === 1);
+
+/** 详情图集展示地址 */
+const galleryUrls = computed(() => productGalleryUrls(product.value));
 
 /** 店铺、客服等未接入能力的占位提示 */
 function toastSoon(name: string) {
@@ -236,6 +248,12 @@ onLoad((query) => {
   position: relative;
   height: 720rpx;
   background: #e8f2ee;
+}
+
+.gallery-swiper,
+.gallery-img {
+  width: 100%;
+  height: 100%;
 }
 
 .gallery-cover {
@@ -345,20 +363,6 @@ onLoad((query) => {
   font-size: 26rpx;
   color: #666;
   line-height: 1.6;
-}
-
-.desc-placeholder {
-  margin-top: 24rpx;
-  height: 280rpx;
-  border-radius: $radius-base;
-  background: #f3f7f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-brand;
-  font-size: 72rpx;
-  font-weight: 700;
-  opacity: 0.35;
 }
 
 .buybar-space {

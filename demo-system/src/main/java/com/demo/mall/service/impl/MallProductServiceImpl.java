@@ -2,6 +2,7 @@ package com.demo.mall.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.demo.common.exception.ServiceException;
 import com.demo.common.utils.DateUtils;
 import com.demo.mall.apiParams.MallProductApiParams;
@@ -21,6 +22,7 @@ import com.demo.merchant.domain.Merchant;
 import com.demo.merchant.service.IMerchantService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -99,11 +101,13 @@ public class MallProductServiceImpl implements IMallProductService {
      */
     @Override
     public List<MallProductApiResult> selectMallProductApiResultList(MallProductApiParams params) {
-        return mallProductMapper.selectMallProductApiResultList(params);
+        List<MallProductApiResult> list = mallProductMapper.selectMallProductApiResultList(params);
+        fillGalleryImages(list);
+        return list;
     }
 
     /**
-     * 查询已上架且所属店铺有效的商品详情，并填充 SKU
+     * 查询已上架且所属店铺/分类有效的商品详情，并填充可售 SKU
      *
      * @param productId 商品ID
      * @return 商品详情
@@ -114,8 +118,10 @@ public class MallProductServiceImpl implements IMallProductService {
         if (product == null || product.getShelfStatus() == null || product.getShelfStatus() != 1) {
             throw new ServiceException("商品不存在或已下架");
         }
+        fillGalleryImages(product);
         MallProductSkuApiParams params = new MallProductSkuApiParams();
         params.setProductId(productId);
+        params.setStatus(0);
         List<MallProductSkuApiResult> skus = mallProductSkuService.selectMallProductSkuApiResultList(params);
         product.setSkus(skus);
         return product;
@@ -282,7 +288,9 @@ public class MallProductServiceImpl implements IMallProductService {
         Merchant merchant = merchantService.requireOwnedActiveMerchant(accountId);
         MallProductApiParams query = params == null ? new MallProductApiParams() : params;
         query.setMerchantId(merchant.getMerchantId());
-        return mallProductMapper.selectMallProductMerchantApiResultList(query);
+        List<MallProductApiResult> list = mallProductMapper.selectMallProductMerchantApiResultList(query);
+        fillGalleryImages(list);
+        return list;
     }
 
     /**
@@ -299,6 +307,7 @@ public class MallProductServiceImpl implements IMallProductService {
         if (product == null) {
             throw new ServiceException("商品不存在或无权操作");
         }
+        fillGalleryImages(product);
         MallProductSkuApiParams skuParams = new MallProductSkuApiParams();
         skuParams.setProductId(productId);
         product.setSkus(mallProductSkuService.selectMallProductSkuApiResultList(skuParams));
@@ -329,6 +338,9 @@ public class MallProductServiceImpl implements IMallProductService {
                 .marketPrice(marketPrice)
                 .salePrice(salePrice)
                 .freightAmount(params.getFreightAmount() == null ? BigDecimal.ZERO : params.getFreightAmount())
+                .mainImage(StrUtil.blankToDefault(params.getMainImage(), ""))
+                .galleryImages(toGalleryJson(params.getGalleryImages()))
+                .intro(StrUtil.blankToDefault(params.getIntro(), ""))
                 .stockTotal(stockTotal)
                 .salesCount(0)
                 .shelfStatus(params.getShelfStatus() == null ? 0 : params.getShelfStatus())
@@ -369,6 +381,9 @@ public class MallProductServiceImpl implements IMallProductService {
                 .marketPrice(marketPrice)
                 .salePrice(salePrice)
                 .freightAmount(params.getFreightAmount() == null ? BigDecimal.ZERO : params.getFreightAmount())
+                .mainImage(params.getMainImage() == null ? existing.getMainImage() : StrUtil.blankToDefault(params.getMainImage(), ""))
+                .galleryImages(params.getGalleryImages() == null ? existing.getGalleryImages() : toGalleryJson(params.getGalleryImages()))
+                .intro(params.getIntro() == null ? existing.getIntro() : StrUtil.nullToDefault(params.getIntro(), ""))
                 .stockTotal(stockTotal)
                 .shelfStatus(shelfStatus)
                 .sortNum(params.getSortNum() == null ? existing.getSortNum() : params.getSortNum())
@@ -575,5 +590,59 @@ public class MallProductServiceImpl implements IMallProductService {
             throw new ServiceException("无权操作他店商品");
         }
         return product;
+    }
+
+    /**
+     * 图集列表转 JSON 字符串入库；空列表存 []
+     */
+    private String toGalleryJson(List<String> galleryImages) {
+        if (galleryImages == null || galleryImages.isEmpty()) {
+            return "[]";
+        }
+        List<String> cleaned = new ArrayList<>();
+        for (String path : galleryImages) {
+            if (StrUtil.isNotBlank(path)) {
+                cleaned.add(path.trim());
+            }
+        }
+        return JSONUtil.toJsonStr(cleaned);
+    }
+
+    /**
+     * 将 Mapper 映射的 galleryImagesJson 解析为 galleryImages 列表
+     */
+    private void fillGalleryImages(List<MallProductApiResult> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        for (MallProductApiResult item : list) {
+            fillGalleryImages(item);
+        }
+    }
+
+    /**
+     * 单条商品图集反序列化；无图时为空列表，主图空串归一
+     */
+    private void fillGalleryImages(MallProductApiResult product) {
+        if (product == null) {
+            return;
+        }
+        if (product.getMainImage() == null) {
+            product.setMainImage("");
+        }
+        if (product.getIntro() == null) {
+            product.setIntro("");
+        }
+        String json = product.getGalleryImagesJson();
+        if (StrUtil.isBlank(json)) {
+            product.setGalleryImages(Collections.emptyList());
+            return;
+        }
+        try {
+            List<String> images = JSONUtil.toList(json, String.class);
+            product.setGalleryImages(images == null ? Collections.emptyList() : images);
+        } catch (Exception ex) {
+            product.setGalleryImages(Collections.emptyList());
+        }
     }
 }

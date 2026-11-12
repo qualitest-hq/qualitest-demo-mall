@@ -31,9 +31,19 @@ public class MallProductApiParams implements Serializable {
     private Long categoryId;
 
     /**
-     * 商品名称
+     * 商品名称（兼容旧入参；与 keyword 同义）
      */
     private String productName;
+
+    /**
+     * 关键词：匹配商品名称与简介
+     */
+    private String keyword;
+
+    /**
+     * 排序：default / priceAsc / priceDesc / salesDesc
+     */
+    private String sortBy;
 
     /**
      * 上架状态（0下架 1上架）

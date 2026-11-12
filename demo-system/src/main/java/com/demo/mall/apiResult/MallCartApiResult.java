@@ -69,4 +69,8 @@ public class MallCartApiResult implements Serializable {
     @JsonIgnore
     private Integer skuStatus;
 
+    /** 分类状态（0正常 1停用），仅服务端填可用标记用 */
+    @JsonIgnore
+    private Integer categoryStatus;
+
 }

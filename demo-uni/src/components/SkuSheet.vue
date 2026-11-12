@@ -12,7 +12,8 @@
     <view class="sheet">
       <view class="head">
         <view class="thumb">
-          <text class="thumb-text">{{ initial }}</text>
+          <image v-if="coverSrc" class="thumb-img" :src="coverSrc" mode="aspectFill" />
+          <text v-else class="thumb-text">{{ initial }}</text>
         </view>
         <view class="head-info">
           <AppPrice :value="displayPrice" />
@@ -62,6 +63,7 @@ import { computed, ref, watch } from "vue";
 import AppPrice from "@/components/AppPrice.vue";
 import type { MallProductSku } from "@/types/product";
 import { formatMoney, isSkuUsable, pickDefaultSku, productInitial } from "@/utils/product";
+import { resolveResourceUrl } from "@/utils/resource";
 
 /**
  * 打开弹层时的业务意图。
@@ -76,6 +78,8 @@ const props = withDefaults(
     modelValue: boolean;
     /** 商品名称，用于无图时的首字占位 */
     productName?: string;
+    /** 封面图路径 */
+    coverImage?: string | null;
     /** 可选规格列表 */
     skus?: MallProductSku[];
     /** 未选中规格时的销售价兜底 */
@@ -89,6 +93,7 @@ const props = withDefaults(
   }>(),
   {
     productName: "",
+    coverImage: "",
     skus: () => [],
     salePrice: 0,
     marketPrice: null,
@@ -96,6 +101,9 @@ const props = withDefaults(
     skuId: "",
   },
 );
+
+/** 封面可展示地址 */
+const coverSrc = computed(() => resolveResourceUrl(props.coverImage));
 
 const emit = defineEmits<{
   /** 同步显示状态（支持 v-model） */
@@ -237,6 +245,12 @@ function onConfirm() {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.thumb-img {
+  width: 100%;
+  height: 100%;
 }
 
 .thumb-text {

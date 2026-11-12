@@ -17,6 +17,15 @@
 
     <view v-for="item in list" :key="item.productId" class="card">
       <view class="row" @click="goEdit(item.productId)">
+        <view class="thumb">
+          <image
+            v-if="productCoverUrl(item)"
+            class="thumb-img"
+            :src="productCoverUrl(item)"
+            mode="aspectFill"
+          />
+          <text v-else>{{ productInitial(item.productName) }}</text>
+        </view>
         <view class="main">
           <text class="name">{{ item.productName }}</text>
           <text class="meta">
@@ -53,6 +62,7 @@ import { changeMyProductShelfStatus, listMyProducts } from "@/api/merchantProduc
 import { requireOpenMerchant } from "@/composables/useMerchantGate";
 import { openMerchantGoodsEdit } from "@/constants/routes";
 import type { MallProduct } from "@/types/product";
+import { productCoverUrl, productInitial } from "@/utils/product";
 
 const tabs = [
   { label: "全部", value: undefined as number | undefined },
@@ -151,6 +161,25 @@ onShow(() => {
 .row {
   display: flex;
   align-items: center;
+  gap: 20rpx;
+}
+.thumb {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 12rpx;
+  background: linear-gradient(145deg, #d8ebe4 0%, #b7d4c9 100%);
+  color: $color-brand;
+  font-size: 36rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.thumb-img {
+  width: 100%;
+  height: 100%;
 }
 .main {
   flex: 1;

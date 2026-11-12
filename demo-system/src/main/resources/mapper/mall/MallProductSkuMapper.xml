@@ -143,6 +143,9 @@
         <if test="skuName != null and skuName != ''">
             and mps.sku_name like concat('%', #{skuName}, '%')
         </if>
+        <if test="status != null">
+            and mps.status = #{status}
+        </if>
         order by mps.sku_id desc
     </select>
 

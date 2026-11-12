@@ -23,20 +23,17 @@ import com.demo.mall.domain.MallOrder;
 import com.demo.mall.domain.MallOrderItem;
 import com.demo.mall.domain.MallOrderRefund;
 import com.demo.mall.domain.MallOrderRefundItem;
-import com.demo.mall.domain.MallProduct;
-import com.demo.mall.domain.MallProductSku;
 import com.demo.mall.mapper.MallOrderItemMapper;
 import com.demo.mall.mapper.MallOrderMapper;
 import com.demo.mall.mapper.MallOrderRefundItemMapper;
 import com.demo.mall.mapper.MallOrderRefundMapper;
-import com.demo.mall.mapper.MallProductMapper;
-import com.demo.mall.mapper.MallProductSkuMapper;
 import com.demo.mall.params.MallOrderRefundItemParams;
 import com.demo.mall.params.MallOrderRefundParams;
 import com.demo.mall.result.MallOrderRefundItemResult;
 import com.demo.mall.result.MallOrderRefundResult;
 import com.demo.mall.service.IMallOrderRefundItemService;
 import com.demo.mall.service.IMallOrderRefundService;
+import com.demo.mall.service.MallOrderSupportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,13 +75,10 @@ public class MallOrderRefundServiceImpl implements IMallOrderRefundService {
     private MallOrderItemMapper mallOrderItemMapper;
 
     @Autowired
-    private MallProductSkuMapper mallProductSkuMapper;
-
-    @Autowired
-    private MallProductMapper mallProductMapper;
-
-    @Autowired
     private IAccountBalanceRecordService accountBalanceRecordService;
+
+    @Autowired
+    private MallOrderSupportService mallOrderSupportService;
 
     @Autowired
     private AccountCouponMapper accountCouponMapper;
@@ -731,7 +725,7 @@ public class MallOrderRefundServiceImpl implements IMallOrderRefundService {
     }
 
     /**
-     * 退货退款完成时回滚 SKU 库存
+     * 退货退款完成时回滚库存并扣减销量
      */
     private void rollbackStockForRefund(List<MallOrderRefundItemResult> refundItems) {
         for (MallOrderRefundItemResult refundItem : refundItems) {
@@ -740,29 +734,7 @@ public class MallOrderRefundServiceImpl implements IMallOrderRefundService {
                 continue;
             }
             int qty = refundItem.getRefundQuantity() != null ? refundItem.getRefundQuantity() : 0;
-            if (qty <= 0) {
-                continue;
-            }
-            if (orderItem.getSkuId() != null) {
-                MallProductSku sku = mallProductSkuMapper.selectMallProductSkuById(orderItem.getSkuId());
-                if (sku != null) {
-                    MallProductSku skuUpdate = new MallProductSku();
-                    skuUpdate.setSkuId(sku.getSkuId());
-                    skuUpdate.setStock((sku.getStock() != null ? sku.getStock() : 0) + qty);
-                    int sales = sku.getSalesCount() != null ? sku.getSalesCount() : 0;
-                    skuUpdate.setSalesCount(Math.max(0, sales - qty));
-                    mallProductSkuMapper.updateMallProductSku(skuUpdate);
-                }
-            }
-            if (orderItem.getProductId() != null) {
-                MallProduct product = mallProductMapper.selectMallProductById(orderItem.getProductId());
-                if (product != null) {
-                    MallProduct productUpdate = new MallProduct();
-                    productUpdate.setProductId(product.getProductId());
-                    productUpdate.setStockTotal((product.getStockTotal() != null ? product.getStockTotal() : 0) + qty);
-                    mallProductMapper.updateMallProduct(productUpdate);
-                }
-            }
+            mallOrderSupportService.restoreStockAndSales(orderItem.getSkuId(), orderItem.getProductId(), qty);
         }
     }
 

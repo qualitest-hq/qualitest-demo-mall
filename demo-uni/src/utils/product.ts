@@ -1,12 +1,55 @@
 import type { MallProduct, MallProductSku } from "@/types/product";
+import { resolveResourceUrl } from "@/utils/resource";
 
 /**
  * 取商品名称第一个可见字符。
- * 接口暂无主图时，用该字符做色块占位文案。
+ * 无主图时用该字符做色块占位文案。
  */
 export function productInitial(name?: string | null): string {
   const text = (name || "").trim();
   return text ? text.slice(0, 1) : "品";
+}
+
+/**
+ * 主图优先、其后图集，去重后的入库路径列表；无图返回空数组。
+ */
+export function productImagePaths(
+  product?: Pick<MallProduct, "mainImage" | "galleryImages"> | null,
+): string[] {
+  if (!product) {
+    return [];
+  }
+  const paths: string[] = [];
+  const main = (product.mainImage || "").trim();
+  if (main) {
+    paths.push(main);
+  }
+  for (const g of product.galleryImages || []) {
+    const t = (g || "").trim();
+    if (t && !paths.includes(t)) {
+      paths.push(t);
+    }
+  }
+  return paths;
+}
+
+/**
+ * 解析商品封面展示地址：优先主图，其次图集首张；无图返回空串。
+ */
+export function productCoverUrl(product?: Pick<MallProduct, "mainImage" | "galleryImages"> | null): string {
+  const first = productImagePaths(product)[0];
+  return first ? resolveResourceUrl(first) : "";
+}
+
+/**
+ * 详情轮播用：主图+图集去重后解析为可展示 URL。
+ */
+export function productGalleryUrls(
+  product?: Pick<MallProduct, "mainImage" | "galleryImages"> | null,
+): string[] {
+  return productImagePaths(product)
+    .map((path) => resolveResourceUrl(path))
+    .filter(Boolean);
 }
 
 /**

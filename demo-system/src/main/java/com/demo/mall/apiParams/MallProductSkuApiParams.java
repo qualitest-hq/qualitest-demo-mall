@@ -30,4 +30,9 @@ public class MallProductSkuApiParams implements Serializable {
      */
     private String skuName;
 
+    /**
+     * 状态（0正常 1停用）
+     */
+    private Integer status;
+
 }

@@ -12,6 +12,40 @@
         </picker>
       </view>
       <view class="field">
+        <text class="label">主图</text>
+        <view class="upload-row">
+          <image
+            v-if="mainImageUrl"
+            class="thumb"
+            :src="mainImageUrl"
+            mode="aspectFill"
+            @click="onPickMain"
+          />
+          <view v-else class="upload-slot" @click="onPickMain">
+            <text class="plus">+</text>
+            <text class="hint">上传</text>
+          </view>
+          <text v-if="form.mainImage" class="link" @click="form.mainImage = ''">清除</text>
+        </view>
+      </view>
+      <view class="field">
+        <text class="label">图集</text>
+        <view class="upload-row wrap">
+          <view v-for="(path, index) in form.galleryImages" :key="path + index" class="thumb-wrap">
+            <image class="thumb" :src="resolveResourceUrl(path)" mode="aspectFill" />
+            <text class="remove" @click="removeGallery(index)">×</text>
+          </view>
+          <view v-if="form.galleryImages.length < 6" class="upload-slot" @click="onPickGallery">
+            <text class="plus">+</text>
+            <text class="hint">最多6张</text>
+          </view>
+        </view>
+      </view>
+      <view class="field">
+        <text class="label">简介</text>
+        <wd-input v-model="form.intro" clearable placeholder="C 端详情展示的简介" />
+      </view>
+      <view class="field">
         <text class="label">计量单位</text>
         <wd-input v-model="form.unitName" clearable placeholder="件" />
       </view>
@@ -28,7 +62,7 @@
       </view>
       <view class="field">
         <text class="label">备注</text>
-        <wd-input v-model="form.remark" clearable placeholder="选填" />
+        <wd-input v-model="form.remark" clearable placeholder="后台备注，选填" />
       </view>
     </view>
 
@@ -58,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-/** 本店商品新建/编辑：SPU 与 SKU 一并提交 */
+/** 本店商品新建/编辑：SPU 与 SKU 一并提交，含主图/图集/简介 */
 import { computed, reactive, ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import { listEnabledCategories } from "@/api/product";
@@ -66,6 +100,8 @@ import { createMyProduct, getMyProductDetail, updateMyProduct } from "@/api/merc
 import { requireOpenMerchant } from "@/composables/useMerchantGate";
 import { ROUTES } from "@/constants/routes";
 import type { MallCategory, MerchantProductSkuSavePayload } from "@/types/product";
+import { resolveResourceUrl } from "@/utils/resource";
+import { chooseAndUploadImage } from "@/utils/upload";
 
 /** 有值表示编辑 */
 const productId = ref<string>("");
@@ -78,6 +114,9 @@ const form = reactive({
   unitName: "件",
   freightAmount: "0",
   shelfStatus: 0 as number,
+  mainImage: "",
+  galleryImages: [] as string[],
+  intro: "",
   remark: "",
   skus: [
     { skuName: "默认", salePrice: "", marketPrice: "", stock: "100" },
@@ -92,10 +131,43 @@ const form = reactive({
 
 const categoryNames = computed(() => categories.value.map((c) => c.categoryName));
 const categoryLabel = computed(() => categoryNames.value[categoryIndex.value] || "请选择分类");
+const mainImageUrl = computed(() => resolveResourceUrl(form.mainImage));
 
 /** 选择分类 */
 function onCategoryChange(e: { detail: { value: string } }) {
   categoryIndex.value = Number(e.detail.value) || 0;
+}
+
+/** 上传主图 */
+async function onPickMain() {
+  try {
+    const uploaded = await chooseAndUploadImage({ count: 1, sizeLimitMb: 5 });
+    if (uploaded) {
+      form.mainImage = uploaded.path;
+    }
+  } catch {
+    /* toast 已处理 */
+  }
+}
+
+/** 上传图集 */
+async function onPickGallery() {
+  if (form.galleryImages.length >= 6) {
+    return;
+  }
+  try {
+    const uploaded = await chooseAndUploadImage({ count: 1, sizeLimitMb: 5 });
+    if (uploaded) {
+      form.galleryImages.push(uploaded.path);
+    }
+  } catch {
+    /* toast 已处理 */
+  }
+}
+
+/** 删除图集一张 */
+function removeGallery(index: number) {
+  form.galleryImages.splice(index, 1);
 }
 
 /** 追加 SKU 行 */
@@ -126,6 +198,9 @@ async function loadDetail(id: string) {
   form.unitName = detail.unitName || "件";
   form.freightAmount = String(detail.freightAmount ?? 0);
   form.shelfStatus = Number(detail.shelfStatus) === 1 ? 1 : 0;
+  form.mainImage = detail.mainImage || "";
+  form.galleryImages = [...(detail.galleryImages || [])];
+  form.intro = detail.intro || "";
   form.remark = detail.remark || "";
   const idx = categories.value.findIndex((c) => String(c.categoryId) === String(detail.categoryId));
   categoryIndex.value = idx >= 0 ? idx : 0;
@@ -176,6 +251,9 @@ function buildPayload() {
     productName: form.productName.trim(),
     unitName: form.unitName.trim() || "件",
     freightAmount: Number(form.freightAmount || 0),
+    mainImage: form.mainImage || "",
+    galleryImages: form.galleryImages,
+    intro: form.intro || "",
     shelfStatus: form.shelfStatus,
     remark: form.remark || undefined,
     skus,
@@ -259,6 +337,54 @@ onLoad(async (query) => {
   padding: 16rpx 0;
   font-size: 28rpx;
   color: $color-ink;
+}
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex-wrap: nowrap;
+}
+.upload-row.wrap {
+  flex-wrap: wrap;
+}
+.upload-slot,
+.thumb {
+  width: 144rpx;
+  height: 144rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+}
+.upload-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  color: #999;
+}
+.plus {
+  font-size: 40rpx;
+  line-height: 1;
+}
+.hint {
+  font-size: 20rpx;
+  margin-top: 4rpx;
+}
+.thumb-wrap {
+  position: relative;
+}
+.remove {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 24rpx;
+  text-align: center;
+  line-height: 36rpx;
 }
 .radios {
   display: flex;

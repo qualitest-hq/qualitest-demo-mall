@@ -303,12 +303,17 @@ public class MallCartServiceImpl implements IMallCartService {
     }
 
     /**
-     * 按上架、SKU 状态、库存填写 available 与 unavailableReason
+     * 按上架、分类、SKU 状态、库存填写 available 与 unavailableReason
      */
     private void fillAvailability(MallCartApiResult row) {
         if (row.getShelfStatus() == null || row.getShelfStatus() != 1) {
             row.setAvailable(false);
             row.setUnavailableReason("商品已下架");
+            return;
+        }
+        if (row.getCategoryStatus() == null || row.getCategoryStatus() != 0) {
+            row.setAvailable(false);
+            row.setUnavailableReason("商品分类已停用");
             return;
         }
         if (row.getSkuStatus() != null && row.getSkuStatus() != 0) {

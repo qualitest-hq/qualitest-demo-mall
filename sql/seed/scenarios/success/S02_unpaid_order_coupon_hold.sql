@@ -13,8 +13,8 @@
 SET NAMES utf8mb4;
 
 -- 扣减库存（与 create 对称）
-UPDATE `mall_product_sku` SET `stock` = 99, `sales_count` = 1, `update_time` = '2026-06-21 10:05:00' WHERE `sku_id` IN (2122, 2112);
-UPDATE `mall_product` SET `stock_total` = 199, `sales_count` = 1, `update_time` = '2026-06-21 10:05:00' WHERE `product_id` IN (2002, 2003);
+UPDATE `mall_product_sku` SET `stock` = 99, `sales_count` = 0, `update_time` = '2026-06-21 10:05:00' WHERE `sku_id` IN (2122, 2112);
+UPDATE `mall_product` SET `stock_total` = 199, `sales_count` = 0, `update_time` = '2026-06-21 10:05:00' WHERE `product_id` IN (2002, 2003);
 
 -- 占券（不核销 used_count）
 UPDATE `account_coupon` SET `order_id` = 7001, `update_time` = '2026-06-21 10:05:00' WHERE `account_coupon_id` = 6001;

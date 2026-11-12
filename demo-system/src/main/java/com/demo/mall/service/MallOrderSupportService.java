@@ -40,75 +40,50 @@ public class MallOrderSupportService {
     private CouponMapper couponMapper;
 
     /**
-     * 按订单明细扣减 SKU/SPU 库存并增加销量
+     * 按下单明细扣减 SKU/SPU 库存（不计销量；销量在支付成功后累加）
      */
     public void deductStockForOrderItems(List<MallOrderItem> items) {
-        for (MallOrderItem item : items) {
-            if (item.getSkuId() == null || item.getQuantity() == null || item.getQuantity() <= 0) {
-                continue;
-            }
-            int qty = item.getQuantity();
-            MallProductSku sku = mallProductSkuMapper.selectMallProductSkuById(item.getSkuId());
-            if (sku == null) {
-                throw new ServiceException("SKU不存在");
-            }
-            int stock = sku.getStock() != null ? sku.getStock() : 0;
-            if (stock < qty) {
-                throw new ServiceException("库存不足");
-            }
-            MallProductSku skuUpdate = new MallProductSku();
-            skuUpdate.setSkuId(sku.getSkuId());
-            skuUpdate.setStock(stock - qty);
-            skuUpdate.setSalesCount((sku.getSalesCount() != null ? sku.getSalesCount() : 0) + qty);
-            mallProductSkuMapper.updateMallProductSku(skuUpdate);
-            if (item.getProductId() != null) {
-                MallProduct product = mallProductMapper.selectMallProductById(item.getProductId());
-                if (product != null) {
-                    MallProduct productUpdate = new MallProduct();
-                    productUpdate.setProductId(product.getProductId());
-                    int stockTotal = product.getStockTotal() != null ? product.getStockTotal() : 0;
-                    productUpdate.setStockTotal(Math.max(0, stockTotal - qty));
-                    int sales = product.getSalesCount() != null ? product.getSalesCount() : 0;
-                    productUpdate.setSalesCount(sales + qty);
-                    mallProductMapper.updateMallProduct(productUpdate);
-                }
-            }
-        }
+        forEachValidLine(items, (skuId, productId, qty) -> {
+            changeSkuStock(skuId, -qty, true);
+            changeProductStock(productId, -qty);
+        });
     }
 
     /**
-     * 按订单明细回滚 SKU/SPU 库存并扣减销量
+     * 支付成功后按订单明细累加 SKU/SPU 销量
+     */
+    public void increaseSalesForOrder(Long orderId) {
+        forEachValidLine(listOrderItems(orderId), (skuId, productId, qty) -> {
+            changeSkuSales(skuId, qty);
+            changeProductSales(productId, qty);
+        });
+    }
+
+    /**
+     * 按订单明细回滚 SKU/SPU 库存（待付款取消/关单；不回滚销量，因未支付未计销量）
      */
     public void rollbackStockForOrder(Long orderId) {
-        MallOrderItem query = new MallOrderItem();
-        query.setOrderId(orderId);
-        List<MallOrderItem> items = mallOrderItemMapper.selectMallOrderItemList(query);
-        for (MallOrderItem item : items) {
-            if (item.getSkuId() == null || item.getQuantity() == null || item.getQuantity() <= 0) {
-                continue;
-            }
-            int qty = item.getQuantity();
-            MallProductSku sku = mallProductSkuMapper.selectMallProductSkuById(item.getSkuId());
-            if (sku != null) {
-                MallProductSku skuUpdate = new MallProductSku();
-                skuUpdate.setSkuId(sku.getSkuId());
-                skuUpdate.setStock((sku.getStock() != null ? sku.getStock() : 0) + qty);
-                int sales = sku.getSalesCount() != null ? sku.getSalesCount() : 0;
-                skuUpdate.setSalesCount(Math.max(0, sales - qty));
-                mallProductSkuMapper.updateMallProductSku(skuUpdate);
-            }
-            if (item.getProductId() != null) {
-                MallProduct product = mallProductMapper.selectMallProductById(item.getProductId());
-                if (product != null) {
-                    MallProduct productUpdate = new MallProduct();
-                    productUpdate.setProductId(product.getProductId());
-                    productUpdate.setStockTotal((product.getStockTotal() != null ? product.getStockTotal() : 0) + qty);
-                    int sales = product.getSalesCount() != null ? product.getSalesCount() : 0;
-                    productUpdate.setSalesCount(Math.max(0, sales - qty));
-                    mallProductMapper.updateMallProduct(productUpdate);
-                }
-            }
+        forEachValidLine(listOrderItems(orderId), (skuId, productId, qty) -> {
+            changeSkuStock(skuId, qty, false);
+            changeProductStock(productId, qty);
+        });
+    }
+
+    /**
+     * 退货退款完成：回滚库存并扣减销量
+     *
+     * @param skuId     SKU 主键，可空
+     * @param productId 商品主键，可空
+     * @param qty       回滚数量，须大于 0
+     */
+    public void restoreStockAndSales(Long skuId, Long productId, int qty) {
+        if (qty <= 0) {
+            return;
         }
+        changeSkuStock(skuId, qty, false);
+        changeProductStock(productId, qty);
+        changeSkuSales(skuId, -qty);
+        changeProductSales(productId, -qty);
     }
 
     /**
@@ -170,5 +145,97 @@ public class MallOrderSupportService {
         if (order.getCouponId() != null && order.getCouponId() > 0) {
             couponMapper.incrementUsedCount(order.getCouponId());
         }
+    }
+
+    private List<MallOrderItem> listOrderItems(Long orderId) {
+        MallOrderItem query = new MallOrderItem();
+        query.setOrderId(orderId);
+        return mallOrderItemMapper.selectMallOrderItemList(query);
+    }
+
+    private void forEachValidLine(List<MallOrderItem> items, LineConsumer consumer) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        for (MallOrderItem item : items) {
+            if (item.getSkuId() == null || item.getQuantity() == null || item.getQuantity() <= 0) {
+                continue;
+            }
+            consumer.accept(item.getSkuId(), item.getProductId(), item.getQuantity());
+        }
+    }
+
+    /**
+     * 调整 SKU 库存；delta 为负表示扣减。checkEnough 为真时：SKU 必须存在且库存充足。
+     */
+    private void changeSkuStock(Long skuId, int delta, boolean checkEnough) {
+        if (skuId == null || delta == 0) {
+            return;
+        }
+        MallProductSku sku = mallProductSkuMapper.selectMallProductSkuById(skuId);
+        if (sku == null) {
+            if (checkEnough) {
+                throw new ServiceException("SKU不存在");
+            }
+            return;
+        }
+        int stock = sku.getStock() != null ? sku.getStock() : 0;
+        if (checkEnough && delta < 0 && stock < -delta) {
+            throw new ServiceException("库存不足");
+        }
+        MallProductSku skuUpdate = new MallProductSku();
+        skuUpdate.setSkuId(skuId);
+        skuUpdate.setStock(Math.max(0, stock + delta));
+        mallProductSkuMapper.updateMallProductSku(skuUpdate);
+    }
+
+    private void changeProductStock(Long productId, int delta) {
+        if (productId == null || delta == 0) {
+            return;
+        }
+        MallProduct product = mallProductMapper.selectMallProductById(productId);
+        if (product == null) {
+            return;
+        }
+        int stockTotal = product.getStockTotal() != null ? product.getStockTotal() : 0;
+        MallProduct productUpdate = new MallProduct();
+        productUpdate.setProductId(productId);
+        productUpdate.setStockTotal(Math.max(0, stockTotal + delta));
+        mallProductMapper.updateMallProduct(productUpdate);
+    }
+
+    private void changeSkuSales(Long skuId, int delta) {
+        if (skuId == null || delta == 0) {
+            return;
+        }
+        MallProductSku sku = mallProductSkuMapper.selectMallProductSkuById(skuId);
+        if (sku == null) {
+            return;
+        }
+        int sales = sku.getSalesCount() != null ? sku.getSalesCount() : 0;
+        MallProductSku skuUpdate = new MallProductSku();
+        skuUpdate.setSkuId(skuId);
+        skuUpdate.setSalesCount(Math.max(0, sales + delta));
+        mallProductSkuMapper.updateMallProductSku(skuUpdate);
+    }
+
+    private void changeProductSales(Long productId, int delta) {
+        if (productId == null || delta == 0) {
+            return;
+        }
+        MallProduct product = mallProductMapper.selectMallProductById(productId);
+        if (product == null) {
+            return;
+        }
+        int sales = product.getSalesCount() != null ? product.getSalesCount() : 0;
+        MallProduct productUpdate = new MallProduct();
+        productUpdate.setProductId(productId);
+        productUpdate.setSalesCount(Math.max(0, sales + delta));
+        mallProductMapper.updateMallProduct(productUpdate);
+    }
+
+    @FunctionalInterface
+    private interface LineConsumer {
+        void accept(Long skuId, Long productId, int qty);
     }
 }

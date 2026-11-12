@@ -277,6 +277,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
         update.setTransactionNo(generateTransactionNo());
         update.setUpdateTime(now);
         mallOrderMapper.updateMallOrder(update);
+        mallOrderSupportService.increaseSalesForOrder(orderId);
         mallOrderSupportService.consumeCouponOnPay(order);
     }
 

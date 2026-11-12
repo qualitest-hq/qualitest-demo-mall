@@ -74,6 +74,21 @@ public class MallProduct extends BaseEntity {
     private BigDecimal freightAmount;
 
     /**
+     * 主图路径
+     */
+    private String mainImage;
+
+    /**
+     * 图集 JSON 数组字符串
+     */
+    private String galleryImages;
+
+    /**
+     * 商品简介
+     */
+    private String intro;
+
+    /**
      * 总库存
      */
     private Integer stockTotal;

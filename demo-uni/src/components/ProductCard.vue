@@ -1,8 +1,9 @@
 <template>
-  <!-- 双列商品卡：封面占位、标题、销售价、销量；点击把商品回传给父级 -->
+  <!-- 双列商品卡：封面、标题、销售价、销量；点击把商品回传给父级 -->
   <view class="card" @click="onClick">
     <view class="cover">
-      <text class="cover-text">{{ initial }}</text>
+      <image v-if="coverUrl" class="cover-img" :src="coverUrl" mode="aspectFill" />
+      <text v-else class="cover-text">{{ initial }}</text>
     </view>
     <view class="body">
       <text class="title">{{ product.productName }}</text>
@@ -22,7 +23,7 @@
 import { computed } from "vue";
 import AppPrice from "@/components/AppPrice.vue";
 import type { MallProduct } from "@/types/product";
-import { productInitial } from "@/utils/product";
+import { productCoverUrl, productInitial } from "@/utils/product";
 
 const props = defineProps<{
   /** 要展示的商品 */
@@ -36,6 +37,9 @@ const emit = defineEmits<{
 
 /** 无主图时封面显示的首字 */
 const initial = computed(() => productInitial(props.product.productName));
+
+/** 封面图地址 */
+const coverUrl = computed(() => productCoverUrl(props.product));
 
 /** 销量文案；销量为 0 时不展示 */
 const salesText = computed(() => {
@@ -62,6 +66,12 @@ function onClick() {
   align-items: center;
   justify-content: center;
   background: linear-gradient(145deg, #d8ebe4 0%, #b7d4c9 100%);
+  overflow: hidden;
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
 }
 
 .cover-text {

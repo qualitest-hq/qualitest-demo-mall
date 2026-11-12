@@ -1,8 +1,10 @@
 package com.demo.mall.service;
 
 import com.demo.common.exception.ServiceException;
+import com.demo.mall.domain.MallCategory;
 import com.demo.mall.domain.MallProduct;
 import com.demo.mall.domain.MallProductSku;
+import com.demo.mall.mapper.MallCategoryMapper;
 import com.demo.mall.mapper.MallProductMapper;
 import com.demo.mall.mapper.MallProductSkuMapper;
 import com.demo.merchant.service.IMerchantService;
@@ -10,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * SKU 可购校验：数量上限、SKU 状态、库存、商品上架、所属店铺未停用。
+ * SKU 可购校验：数量上限、SKU 状态、库存、商品上架、分类启用、所属店铺未停用。
  * 加购与下单共用。
  */
 @Service
@@ -24,6 +26,9 @@ public class MallSkuSaleSupport {
 
     @Autowired
     private MallProductMapper mallProductMapper;
+
+    @Autowired
+    private MallCategoryMapper mallCategoryMapper;
 
     @Autowired
     private IMerchantService merchantService;
@@ -59,8 +64,25 @@ public class MallSkuSaleSupport {
         if (product.getMerchantId() == null) {
             throw new ServiceException("商品未归属店铺");
         }
+        requireEnabledCategory(product.getCategoryId());
         merchantService.requireActiveMerchant(product.getMerchantId());
         return new Saleable(sku, product);
+    }
+
+    /**
+     * 分类须存在且启用（status=0）
+     */
+    private void requireEnabledCategory(Long categoryId) {
+        if (categoryId == null) {
+            throw new ServiceException("商品分类无效");
+        }
+        MallCategory category = mallCategoryMapper.selectMallCategoryById(categoryId);
+        if (category == null || (category.getDelFlag() != null && category.getDelFlag() == 1)) {
+            throw new ServiceException("商品分类不存在");
+        }
+        if (category.getStatus() == null || category.getStatus() != 0) {
+            throw new ServiceException("商品分类已停用");
+        }
     }
 
     /** 可购买的 SKU 及其所属商品 */

@@ -1,7 +1,10 @@
 <template>
-  <!-- 横向商品行：缩略占位、标题、价格、销量；分类页与搜索页共用 -->
+  <!-- 横向商品行：缩略图、标题、价格、销量；分类页与搜索页共用 -->
   <view class="row" @click="onClick">
-    <view class="thumb">{{ initial }}</view>
+    <view class="thumb">
+      <image v-if="coverUrl" class="thumb-img" :src="coverUrl" mode="aspectFill" />
+      <text v-else>{{ initial }}</text>
+    </view>
     <view class="info">
       <text class="name">{{ product.productName }}</text>
       <view class="price-row">
@@ -20,7 +23,7 @@
 import { computed } from "vue";
 import AppPrice from "@/components/AppPrice.vue";
 import type { MallProduct } from "@/types/product";
-import { productInitial } from "@/utils/product";
+import { productCoverUrl, productInitial } from "@/utils/product";
 
 const props = defineProps<{
   /** 要展示的商品 */
@@ -34,6 +37,9 @@ const emit = defineEmits<{
 
 /** 无主图时缩略区显示的首字 */
 const initial = computed(() => productInitial(props.product.productName));
+
+/** 封面图地址 */
+const coverUrl = computed(() => productCoverUrl(props.product));
 
 /** 把当前商品交给父组件 */
 function onClick() {
@@ -61,6 +67,13 @@ function onClick() {
   justify-content: center;
   opacity: 0.7;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.thumb-img {
+  width: 100%;
+  height: 100%;
+  opacity: 1;
 }
 
 .info {

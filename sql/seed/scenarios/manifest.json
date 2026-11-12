@@ -368,6 +368,34 @@
       },
       "expect": "对本店外商品上下架失败「无权操作他店商品」",
       "orderHint": "product 2099 / merchant 5002"
+    },
+    {
+      "id": "S11",
+      "name": "商品关键词与排序",
+      "type": "success",
+      "file": "scenarios/success/S11_product_keyword_sort.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "keyword=防摔命中 iPhone 壳；sortBy=salesDesc 时 T 恤优先；详情 intro/图集约定可断言",
+      "orderHint": "2002 sales=10 最高；2001 intro 含防摔"
+    },
+    {
+      "id": "F17",
+      "name": "停用分类商品不可见",
+      "type": "fail",
+      "file": "scenarios/fail/F17_disabled_category_hidden.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "C 端列表不含 iPhone 壳；加购透明款失败「商品分类已停用」",
+      "orderHint": "category 1001 status=1"
     }
   ]
 }

@@ -13,6 +13,9 @@
         <result property="marketPrice" column="market_price"/>
         <result property="salePrice" column="sale_price"/>
         <result property="freightAmount" column="freight_amount"/>
+        <result property="mainImage" column="main_image"/>
+        <result property="galleryImages" column="gallery_images"/>
+        <result property="intro" column="intro"/>
         <result property="stockTotal" column="stock_total"/>
         <result property="salesCount" column="sales_count"/>
         <result property="shelfStatus" column="shelf_status"/>
@@ -32,6 +35,9 @@
                market_price,
                sale_price,
                freight_amount,
+               main_image,
+               gallery_images,
+               intro,
                stock_total,
                sales_count,
                shelf_status,
@@ -52,6 +58,9 @@
                mp.market_price as marketPrice,
                mp.sale_price   as salePrice,
                mp.freight_amount as freightAmount,
+               mp.main_image   as mainImage,
+               mp.gallery_images as galleryImages,
+               mp.intro        as intro,
                mp.stock_total  as stockTotal,
                mp.sales_count  as salesCount,
                mp.shelf_status as shelfStatus,
@@ -98,6 +107,9 @@
         mp.market_price as marketPrice,
         mp.sale_price as salePrice,
         mp.freight_amount as freightAmount,
+        mp.main_image as mainImage,
+        mp.gallery_images as galleryImages,
+        mp.intro as intro,
         mp.stock_total as stockTotal,
         mp.sales_count as salesCount,
         mp.shelf_status as shelfStatus,
@@ -139,6 +151,9 @@
                mp.market_price as marketPrice,
                mp.sale_price   as salePrice,
                mp.freight_amount as freightAmount,
+               mp.main_image   as mainImage,
+               mp.gallery_images as galleryImages,
+               mp.intro        as intro,
                mp.stock_total  as stockTotal,
                mp.sales_count  as salesCount,
                mp.shelf_status as shelfStatus,
@@ -155,7 +170,7 @@
         limit 1
     </select>
 
-    <!-- 已上架且店铺未停用的商品列表 -->
+    <!-- 已上架、店铺未停用、分类启用的商品列表 -->
     <select id="selectMallProductApiResultList" parameterType="MallProductApiParams" resultType="MallProductApiResult">
         select
         mp.product_id as productId,
@@ -167,6 +182,9 @@
         mp.market_price as marketPrice,
         mp.sale_price as salePrice,
         mp.freight_amount as freightAmount,
+        mp.main_image as mainImage,
+        mp.gallery_images as galleryImagesJson,
+        mp.intro as intro,
         mp.stock_total as stockTotal,
         mp.sales_count as salesCount,
         mp.shelf_status as shelfStatus,
@@ -179,6 +197,9 @@
         inner join merchant m on mp.merchant_id = m.merchant_id
             and m.del_flag = 0
             and m.status = 0
+        inner join mall_category mc on mp.category_id = mc.category_id
+            and mc.del_flag = 0
+            and mc.status = 0
         where mp.del_flag = 0
           and mp.shelf_status = 1
         <if test="merchantId != null">
@@ -187,13 +208,31 @@
         <if test="categoryId != null">
             and mp.category_id = #{categoryId}
         </if>
-        <if test="productName != null and productName != ''">
-            and mp.product_name like concat('%', #{productName}, '%')
+        <if test="keyword != null and keyword != ''">
+            and (mp.product_name like concat('%', #{keyword}, '%')
+                or ifnull(mp.intro, '') like concat('%', #{keyword}, '%'))
         </if>
-        order by mp.product_id desc
+        <if test="(keyword == null or keyword == '') and productName != null and productName != ''">
+            and (mp.product_name like concat('%', #{productName}, '%')
+                or ifnull(mp.intro, '') like concat('%', #{productName}, '%'))
+        </if>
+        <choose>
+            <when test="sortBy != null and sortBy == 'priceAsc'">
+                order by mp.sale_price asc, mp.product_id desc
+            </when>
+            <when test="sortBy != null and sortBy == 'priceDesc'">
+                order by mp.sale_price desc, mp.product_id desc
+            </when>
+            <when test="sortBy != null and sortBy == 'salesDesc'">
+                order by mp.sales_count desc, mp.product_id desc
+            </when>
+            <otherwise>
+                order by mp.product_id desc
+            </otherwise>
+        </choose>
     </select>
 
-    <!-- 已上架且店铺未停用的商品详情 -->
+    <!-- 已上架且店铺未停用、分类启用的商品详情 -->
     <select id="selectMallProductApiResult" parameterType="Long" resultType="MallProductApiResult">
         select mp.product_id   as productId,
                mp.merchant_id  as merchantId,
@@ -204,6 +243,9 @@
                mp.market_price as marketPrice,
                mp.sale_price   as salePrice,
                mp.freight_amount as freightAmount,
+               mp.main_image   as mainImage,
+               mp.gallery_images as galleryImagesJson,
+               mp.intro        as intro,
                mp.stock_total  as stockTotal,
                mp.sales_count  as salesCount,
                mp.shelf_status as shelfStatus,
@@ -216,6 +258,9 @@
         inner join merchant m on mp.merchant_id = m.merchant_id
             and m.del_flag = 0
             and m.status = 0
+        inner join mall_category mc on mp.category_id = mc.category_id
+            and mc.del_flag = 0
+            and mc.status = 0
         where mp.del_flag = 0
           and mp.product_id = #{productId}
         limit 1
@@ -233,6 +278,9 @@
         mp.market_price as marketPrice,
         mp.sale_price as salePrice,
         mp.freight_amount as freightAmount,
+        mp.main_image as mainImage,
+        mp.gallery_images as galleryImagesJson,
+        mp.intro as intro,
         mp.stock_total as stockTotal,
         mp.sales_count as salesCount,
         mp.shelf_status as shelfStatus,
@@ -248,7 +296,11 @@
         <if test="categoryId != null">
             and mp.category_id = #{categoryId}
         </if>
-        <if test="productName != null and productName != ''">
+        <if test="keyword != null and keyword != ''">
+            and (mp.product_name like concat('%', #{keyword}, '%')
+                or ifnull(mp.intro, '') like concat('%', #{keyword}, '%'))
+        </if>
+        <if test="(keyword == null or keyword == '') and productName != null and productName != ''">
             and mp.product_name like concat('%', #{productName}, '%')
         </if>
         <if test="shelfStatus != null">
@@ -268,6 +320,9 @@
                mp.market_price as marketPrice,
                mp.sale_price   as salePrice,
                mp.freight_amount as freightAmount,
+               mp.main_image   as mainImage,
+               mp.gallery_images as galleryImagesJson,
+               mp.intro        as intro,
                mp.stock_total  as stockTotal,
                mp.sales_count  as salesCount,
                mp.shelf_status as shelfStatus,
@@ -312,6 +367,9 @@
         mp.market_price,
         mp.sale_price,
         mp.freight_amount,
+        mp.main_image,
+        mp.gallery_images,
+        mp.intro,
         mp.stock_total,
         mp.sales_count,
         mp.shelf_status,
@@ -365,6 +423,15 @@
             <if test="freightAmount != null">
                 freight_amount,
             </if>
+            <if test="mainImage != null">
+                main_image,
+            </if>
+            <if test="galleryImages != null">
+                gallery_images,
+            </if>
+            <if test="intro != null">
+                intro,
+            </if>
             <if test="stockTotal != null">
                 stock_total,
             </if>
@@ -414,6 +481,15 @@
             </if>
             <if test="freightAmount != null">
                 #{freightAmount},
+            </if>
+            <if test="mainImage != null">
+                #{mainImage},
+            </if>
+            <if test="galleryImages != null">
+                #{galleryImages},
+            </if>
+            <if test="intro != null">
+                #{intro},
             </if>
             <if test="stockTotal != null">
                 #{stockTotal},
@@ -465,6 +541,15 @@
             </if>
             <if test="freightAmount != null">
                 freight_amount = #{freightAmount},
+            </if>
+            <if test="mainImage != null">
+                main_image = #{mainImage},
+            </if>
+            <if test="galleryImages != null">
+                gallery_images = #{galleryImages},
+            </if>
+            <if test="intro != null">
+                intro = #{intro},
             </if>
             <if test="stockTotal != null">
                 stock_total = #{stockTotal},

@@ -130,10 +130,12 @@
                mps.stock       as stock,
                mp.shelf_status as shelfStatus,
                mps.status      as skuStatus,
+               mcate.status    as categoryStatus,
                (mps.sale_price * mc.quantity) as subtotal
         from mall_cart mc
                  inner join mall_product mp on mc.product_id = mp.product_id and mp.del_flag = 0
                  inner join mall_product_sku mps on mc.sku_id = mps.sku_id and mps.del_flag = 0
+                 left join mall_category mcate on mp.category_id = mcate.category_id and mcate.del_flag = 0
         where mc.account_id = #{accountId}
         order by mc.cart_id desc
     </select>
