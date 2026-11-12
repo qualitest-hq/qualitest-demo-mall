@@ -6,6 +6,8 @@
 !gradle/wrapper/gradle-wrapper.jar
 
 target/
+# IDE/JDT 未解析 Maven 变量时误生成的输出目录（字面量文件夹名）
+**/${project.build.directory}/
 !.mvn/wrapper/maven-wrapper.jar
 
 ######################################################################
