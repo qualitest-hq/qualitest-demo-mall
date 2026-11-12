@@ -4,6 +4,7 @@ import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 商城订单明细 ApiParams 对象（客户端）
@@ -24,6 +25,11 @@ public class MallOrderItemApiParams implements Serializable {
      * 订单ID
      */
     private Long orderId;
+
+    /**
+     * 订单ID列表（批量挂明细）
+     */
+    private List<Long> orderIdList;
 
     /**
      * 商品ID

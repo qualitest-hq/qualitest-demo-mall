@@ -22,6 +22,16 @@ export const ROUTES = {
   PAY: "/pages/pay/pay",
   /** 支付成功页 */
   PAY_RESULT: "/pages/pay-result/pay-result",
+  /** 我的订单列表 */
+  ORDER_LIST: "/pages/order/list",
+  /** 订单详情 */
+  ORDER_DETAIL: "/pages/order/detail",
+  /** 物流占位 */
+  LOGISTICS: "/pages/logistics/logistics",
+  /** 申请退款 */
+  REFUND_APPLY: "/pages/refund/apply",
+  /** 我的退款 */
+  REFUND_LIST: "/pages/refund/list",
   /** 商家中心入口（自动分流） */
   MERCHANT_INDEX: "/pages/merchant/index",
   /** 入驻申请 */
@@ -81,6 +91,44 @@ export function openPayResult(orderId: string, payAmount: string | number, order
   uni.redirectTo({
     url: `${ROUTES.PAY_RESULT}?orderId=${encodeURIComponent(orderId)}&payAmount=${amount}${no}`,
   });
+}
+
+/**
+ * 打开我的订单列表。
+ * @param orderStatus Tab 对应状态；不传为全部
+ */
+export function openOrders(orderStatus?: number | null) {
+  const q =
+    orderStatus === undefined || orderStatus === null
+      ? ""
+      : `?orderStatus=${encodeURIComponent(String(orderStatus))}`;
+  uni.navigateTo({ url: `${ROUTES.ORDER_LIST}${q}` });
+}
+
+/** 打开订单详情 */
+export function openOrderDetail(orderId: string) {
+  uni.navigateTo({
+    url: `${ROUTES.ORDER_DETAIL}?orderId=${encodeURIComponent(orderId)}`,
+  });
+}
+
+/** 打开物流占位页 */
+export function openLogistics(orderId: string) {
+  uni.navigateTo({
+    url: `${ROUTES.LOGISTICS}?orderId=${encodeURIComponent(orderId)}`,
+  });
+}
+
+/** 打开申请退款 */
+export function openRefundApply(orderId: string) {
+  uni.navigateTo({
+    url: `${ROUTES.REFUND_APPLY}?orderId=${encodeURIComponent(orderId)}`,
+  });
+}
+
+/** 打开我的退款列表 */
+export function openRefundList() {
+  uni.navigateTo({ url: ROUTES.REFUND_LIST });
 }
 
 /**

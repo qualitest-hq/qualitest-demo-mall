@@ -7,6 +7,7 @@ import com.demo.mall.apiParams.MallOrderApiParams;
 import com.demo.mall.apiParams.MallOrderCancelApiParams;
 import com.demo.mall.apiParams.MallOrderPayApiParams;
 import com.demo.mall.apiParams.MallOrderSubmitApiParams;
+import com.demo.mall.apiParams.MallOrderUpdateReceiverApiParams;
 import com.demo.mall.result.MallOrderResult;
 import com.demo.mall.apiResult.MallOrderApiResult;
 import com.demo.mall.apiResult.MallOrderPreviewApiResult;
@@ -86,6 +87,11 @@ public interface IMallOrderService {
      * 取消待付款订单
      */
     void cancelMallOrder(Long accountId, Long orderId, MallOrderCancelApiParams params);
+
+    /**
+     * 待付款订单修改收货信息或买家留言
+     */
+    void updateReceiverMallOrder(Long accountId, Long orderId, MallOrderUpdateReceiverApiParams params);
 
     /**
      * 确认收货（待收货 → 已完成）

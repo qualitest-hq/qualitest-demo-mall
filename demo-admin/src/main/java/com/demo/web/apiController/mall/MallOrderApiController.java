@@ -7,6 +7,7 @@ import com.demo.mall.apiParams.MallOrderApiParams;
 import com.demo.mall.apiParams.MallOrderCancelApiParams;
 import com.demo.mall.apiParams.MallOrderPayApiParams;
 import com.demo.mall.apiParams.MallOrderSubmitApiParams;
+import com.demo.mall.apiParams.MallOrderUpdateReceiverApiParams;
 import com.demo.mall.apiResult.MallOrderApiResult;
 import com.demo.mall.apiResult.MallOrderPreviewApiResult;
 import com.demo.mall.service.IMallOrderService;
@@ -91,9 +92,20 @@ public class MallOrderApiController extends ApiController {
      * 取消待付款订单
      */
     @PostMapping("/my/{orderId}/cancel")
-    public R<Void> myCancel(@PathVariable("orderId") Long orderId, @RequestBody(required = false) MallOrderCancelApiParams params) {
+    public R<Void> myCancel(@PathVariable("orderId") Long orderId, @RequestBody MallOrderCancelApiParams params) {
         Long accountId = getAccountId();
         mallOrderService.cancelMallOrder(accountId, orderId, params);
+        return ok();
+    }
+
+    /**
+     * 待付款订单修改收货信息或留言
+     */
+    @PostMapping("/my/{orderId}/updateReceiver")
+    public R<Void> myUpdateReceiver(@PathVariable("orderId") Long orderId,
+                                    @RequestBody MallOrderUpdateReceiverApiParams params) {
+        Long accountId = getAccountId();
+        mallOrderService.updateReceiverMallOrder(accountId, orderId, params);
         return ok();
     }
 

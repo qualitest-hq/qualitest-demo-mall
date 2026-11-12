@@ -1,10 +1,12 @@
 package com.demo.mall.apiParams;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 商城订单 ApiParams 对象（客户端）
@@ -71,5 +73,17 @@ public class MallOrderApiParams implements Serializable {
      * 退款状态（0无退款 1部分退款 2全额退款 3退款处理中）
      */
     private Integer refundStatus;
+
+    /**
+     * 下单时间起（含），格式 yyyy-MM-dd HH:mm:ss
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
+
+    /**
+     * 下单时间止（含），格式 yyyy-MM-dd HH:mm:ss
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
 
 }

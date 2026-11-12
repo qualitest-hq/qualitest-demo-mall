@@ -396,6 +396,76 @@
       },
       "expect": "C 端列表不含 iPhone 壳；加购透明款失败「商品分类已停用」",
       "orderHint": "category 1001 status=1"
+    },
+    {
+      "id": "S12",
+      "name": "待收货可确认收货",
+      "type": "success",
+      "file": "scenarios/success/S12_shipped_confirm_ready.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "confirmReceive → 已完成；再次确认失败",
+      "orderHint": "订单 7024 / MO2026062112400001"
+    },
+    {
+      "id": "F18",
+      "name": "已取消订单再支付",
+      "type": "fail",
+      "file": "scenarios/fail/F18_cancelled_order_pay.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "pay 失败「仅待付款订单可支付」",
+      "orderHint": "订单 7020 / MO2026062112200001"
+    },
+    {
+      "id": "F19",
+      "name": "非待收货确认收货",
+      "type": "fail",
+      "file": "scenarios/fail/F19_confirm_receive_not_shipped.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "confirmReceive 失败「仅待收货订单可确认收货」",
+      "orderHint": "订单 7021 / MO2026062112250001"
+    },
+    {
+      "id": "F20",
+      "name": "取消原因为空",
+      "type": "fail",
+      "file": "scenarios/fail/F20_cancel_reason_invalid.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "cancel 空原因失败「取消原因不能为空」",
+      "orderHint": "订单 7022 / MO2026062112300001"
+    },
+    {
+      "id": "F21",
+      "name": "已支付改收货拒绝",
+      "type": "fail",
+      "file": "scenarios/fail/F21_paid_update_receiver.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "updateReceiver 失败「仅待付款订单可修改收货信息」",
+      "orderHint": "订单 7023 / MO2026062112350001"
     }
   ]
 }

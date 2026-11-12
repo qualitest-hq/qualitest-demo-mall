@@ -25,12 +25,13 @@
 /**
  * 支付成功结果页。
  * 展示成功标识、订单号（优先编号）、实付金额与发货提示；
- * 「返回首页」切 Tab；「查看订单」在订单列表未接入前仅提示。
+ * 「返回首页」切 Tab；「查看订单」进列表（待发货 Tab）。
  */
 import { ref } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import AppPrice from "@/components/AppPrice.vue";
-import { ROUTES } from "@/constants/routes";
+import { ORDER_STATUS } from "@/constants/orderStatus";
+import { openOrders, ROUTES } from "@/constants/routes";
 
 /** 订单主键；无编号时用于展示 */
 const orderId = ref("");
@@ -44,9 +45,9 @@ function goHome() {
   uni.switchTab({ url: ROUTES.HOME });
 }
 
-/** 订单列表页尚未接入 */
+/** 进入我的订单（待发货） */
 function goOrders() {
-  uni.showToast({ title: "订单页即将开放", icon: "none" });
+  openOrders(ORDER_STATUS.PENDING_SHIP);
 }
 
 /** 从收银台跳转参数读取展示信息 */

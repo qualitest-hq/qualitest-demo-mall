@@ -159,13 +159,21 @@
         moi.total_amount as totalAmount,
         moi.refunded_quantity as refundedQuantity,
         moi.refunded_amount as refundedAmount,
+        ifnull(mp.main_image, '') as productImage,
         moi.del_flag as delFlag,
         moi.create_time as createTime,
         moi.update_time as updateTime
         from mall_order_item moi
+        left join mall_product mp on mp.product_id = moi.product_id
         where moi.del_flag = 0
         <if test="orderId != null">
             and moi.order_id = #{orderId}
+        </if>
+        <if test="orderIdList != null and orderIdList.size() &gt; 0">
+            and moi.order_id in
+            <foreach collection="orderIdList" item="oid" open="(" separator="," close=")">
+                #{oid}
+            </foreach>
         </if>
         <if test="productId != null">
             and moi.product_id = #{productId}
@@ -194,10 +202,12 @@
                moi.total_amount      as totalAmount,
                moi.refunded_quantity as refundedQuantity,
                moi.refunded_amount   as refundedAmount,
+               ifnull(mp.main_image, '') as productImage,
                moi.del_flag          as delFlag,
                moi.create_time       as createTime,
                moi.update_time       as updateTime
         from mall_order_item moi
+        left join mall_product mp on mp.product_id = moi.product_id
         where moi.del_flag = 0
           and moi.order_item_id = #{orderItemId}
         limit 1

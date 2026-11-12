@@ -64,3 +64,69 @@ export interface MallOrderPayParams {
   /** 支付方式编码 */
   payType: number;
 }
+
+/** 取消订单；cancelReason 必填 1–64 字 */
+export interface MallOrderCancelParams {
+  cancelReason: string;
+}
+
+/** 待付款改收货 / 留言 */
+export interface MallOrderUpdateReceiverParams {
+  addressId?: string | number;
+  buyerRemark?: string;
+}
+
+/** 我的订单列表查询 */
+export interface MallOrderListQuery {
+  orderStatus?: number | null;
+  orderNo?: string;
+  beginTime?: string;
+  endTime?: string;
+  pageNum?: number;
+  pageSize?: number;
+}
+
+/** 订单明细行 */
+export interface MallOrderItem {
+  orderItemId?: string;
+  orderId?: string;
+  productId?: string;
+  skuId?: string;
+  productName?: string;
+  skuName?: string;
+  salePrice?: number | string;
+  quantity?: number;
+  totalAmount?: number | string;
+  refundedQuantity?: number;
+  refundedAmount?: number | string;
+  /** 关联商品主图；无图为空串 */
+  productImage?: string;
+}
+
+/** 我的订单列表/详情 */
+export interface MallOrder {
+  orderId?: string;
+  orderNo?: string;
+  orderStatus?: number | string;
+  totalAmount?: number | string;
+  discountAmount?: number | string;
+  couponName?: string;
+  couponAmount?: number | string;
+  freightAmount?: number | string;
+  payAmount?: number | string;
+  receiverName?: string;
+  receiverPhone?: string;
+  receiverAddress?: string;
+  buyerRemark?: string;
+  cancelReason?: string;
+  deliveryTime?: string;
+  receiveTime?: string;
+  finishTime?: string;
+  payType?: number;
+  payStatus?: number;
+  payTime?: string;
+  refundAmount?: number | string;
+  refundStatus?: number;
+  createTime?: string;
+  items?: MallOrderItem[];
+}

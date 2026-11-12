@@ -78,6 +78,37 @@
       }
     },
     {
+      "path": "pages/order/list",
+      "style": {
+        "navigationBarTitleText": "我的订单",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/order/detail",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    },
+    {
+      "path": "pages/logistics/logistics",
+      "style": {
+        "navigationBarTitleText": "物流详情"
+      }
+    },
+    {
+      "path": "pages/refund/apply",
+      "style": {
+        "navigationBarTitleText": "申请退款"
+      }
+    },
+    {
+      "path": "pages/refund/list",
+      "style": {
+        "navigationBarTitleText": "我的退款"
+      }
+    },
+    {
       "path": "pages/merchant/index",
       "style": {
         "navigationBarTitleText": "商家中心"

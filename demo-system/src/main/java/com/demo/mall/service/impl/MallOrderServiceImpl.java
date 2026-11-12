@@ -9,6 +9,7 @@ import com.demo.common.enums.AccountBalanceRecordType;
 import com.demo.common.constant.HttpStatus;
 import com.demo.common.exception.ServiceException;
 import com.demo.common.utils.DateUtils;
+import com.demo.common.utils.PageUtils;
 import com.demo.common.utils.StringUtils;
 import com.demo.coupon.domain.AccountCoupon;
 import com.demo.coupon.mapper.AccountCouponMapper;
@@ -18,6 +19,7 @@ import com.demo.mall.apiParams.MallOrderItemApiParams;
 import com.demo.mall.apiParams.MallOrderPayApiParams;
 import com.demo.mall.apiParams.MallOrderSubmitApiParams;
 import com.demo.mall.apiParams.MallOrderSubmitItemApiParams;
+import com.demo.mall.apiParams.MallOrderUpdateReceiverApiParams;
 import com.demo.mall.apiResult.MallOrderAddressSnapshotApiResult;
 import com.demo.mall.apiResult.MallOrderApiResult;
 import com.demo.mall.apiResult.MallOrderItemApiResult;
@@ -45,11 +47,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 商城订单Service业务层处理
@@ -120,11 +124,13 @@ public class MallOrderServiceImpl implements IMallOrderService {
     }
 
     /**
-     * 查询订单 ApiResult 列表（客户端）
+     * 查询订单 ApiResult 列表（客户端）；附带明细
      */
     @Override
     public List<MallOrderApiResult> selectMallOrderApiResultList(MallOrderApiParams params) {
-        return mallOrderMapper.selectMallOrderApiResultList(params);
+        List<MallOrderApiResult> list = mallOrderMapper.selectMallOrderApiResultList(params);
+        fillOrderItems(list);
+        return list;
     }
 
     /**
@@ -137,10 +143,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
         if (result == null) {
             throw new ServiceException("订单不存在");
         }
-        MallOrderItemApiParams itemParams = new MallOrderItemApiParams();
-        itemParams.setOrderId(orderId);
-        List<MallOrderItemApiResult> items = mallOrderItemService.selectMallOrderItemApiResultList(itemParams);
-        result.setItems(items);
+        fillOrderItems(Collections.singletonList(result));
         return result;
     }
 
@@ -194,9 +197,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
             order.setCouponId(0L);
         }
         if (ctx.addressSnapshot != null) {
-            order.setReceiverName(ctx.addressSnapshot.getReceiverName());
-            order.setReceiverPhone(ctx.addressSnapshot.getReceiverPhone());
-            order.setReceiverAddress(ctx.addressSnapshot.getReceiverAddress());
+            applyReceiverSnapshot(order, ctx.addressSnapshot);
         }
 
         List<MallOrderItem> orderItems = new ArrayList<>();
@@ -288,20 +289,45 @@ public class MallOrderServiceImpl implements IMallOrderService {
     @Override
     public void cancelMallOrder(Long accountId, Long orderId, MallOrderCancelApiParams params) {
         MallOrder order = requireOwnedOrder(accountId, orderId);
-        if (order.getOrderStatus() == null || order.getOrderStatus() != 0) {
-            throw new ServiceException("仅待付款订单可取消");
+        assertOrderUnpaid(order, "仅待付款订单可取消", "仅未支付订单可取消");
+        String cancelReason = params != null ? StringUtils.trim(params.getCancelReason()) : null;
+        if (StringUtils.isEmpty(cancelReason)) {
+            throw new ServiceException("取消原因不能为空");
         }
-        if (order.getPayStatus() == null || order.getPayStatus() != 0) {
-            throw new ServiceException("仅未支付订单可取消");
+        if (cancelReason.length() > 64) {
+            throw new ServiceException("取消原因长度不能超过64");
         }
-        mallOrderSupportService.rollbackStockForOrder(orderId);
-        mallOrderSupportService.releaseOccupiedCoupon(order);
+        closeUnpaidOrderCore(order, cancelReason);
+    }
+
+    /**
+     * 待付款订单修改收货信息或买家留言
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateReceiverMallOrder(Long accountId, Long orderId, MallOrderUpdateReceiverApiParams params) {
+        MallOrder order = requireOwnedOrder(accountId, orderId);
+        assertOrderUnpaid(order, "仅待付款订单可修改收货信息", "仅待付款订单可修改收货信息");
+        if (params == null) {
+            throw new ServiceException("参数不能为空");
+        }
+        boolean hasAddress = params.getAddressId() != null;
+        boolean hasRemark = params.getBuyerRemark() != null;
+        if (!hasAddress && !hasRemark) {
+            throw new ServiceException("请至少修改收货地址或留言");
+        }
         MallOrder update = new MallOrder();
         update.setOrderId(orderId);
-        update.setOrderStatus(4);
-        update.setPayStatus(2);
-        update.setCancelReason(params != null && StringUtils.isNotEmpty(params.getCancelReason())
-                ? params.getCancelReason() : "用户取消");
+        if (hasAddress) {
+            applyReceiverSnapshot(update, toReceiverSnapshot(requireOwnedAddress(accountId, params.getAddressId())));
+        }
+        if (hasRemark) {
+            String remark = StringUtils.trim(params.getBuyerRemark());
+            if (remark.length() > 60) {
+                throw new ServiceException("买家留言长度不能超过60");
+            }
+            update.setBuyerRemark(remark);
+        }
         update.setUpdateTime(DateUtils.getNowDate());
         mallOrderMapper.updateMallOrder(update);
     }
@@ -353,23 +379,11 @@ public class MallOrderServiceImpl implements IMallOrderService {
     @Override
     public void closeMallOrder(Long orderId, String cancelReason) {
         MallOrder order = mallOrderMapper.selectMallOrderById(orderId);
-        if (order == null) {
+        if (order == null || (order.getDelFlag() != null && order.getDelFlag() == 1)) {
             throw new ServiceException("订单不存在");
         }
-        if (order.getOrderStatus() == null || order.getOrderStatus() != 0) {
-            throw new ServiceException("仅待付款订单可关闭");
-        }
-        if (order.getPayStatus() == null || order.getPayStatus() != 0) {
-            throw new ServiceException("仅未支付订单可关闭");
-        }
-        mallOrderSupportService.rollbackStockForOrder(orderId);
-        mallOrderSupportService.releaseOccupiedCoupon(order);
-        MallOrder update = new MallOrder();
-        update.setOrderId(orderId);
-        update.setOrderStatus(4);
-        update.setPayStatus(2);
-        update.setCancelReason(cancelReason != null ? cancelReason : "管理员关闭");
-        mallOrderMapper.updateMallOrder(update);
+        assertOrderUnpaid(order, "仅待付款订单可关闭", "仅未支付订单可关闭");
+        closeUnpaidOrderCore(order, cancelReason != null ? cancelReason : "管理员关闭");
     }
 
     /**
@@ -571,6 +585,13 @@ public class MallOrderServiceImpl implements IMallOrderService {
         if (addressId == null) {
             return;
         }
+        ctx.addressSnapshot = toReceiverSnapshot(requireOwnedAddress(accountId, addressId));
+    }
+
+    /**
+     * 校验归属且未删除的收货地址
+     */
+    private AccountAddress requireOwnedAddress(Long accountId, Long addressId) {
         AccountAddress address = accountAddressMapper.selectAccountAddressById(addressId);
         if (address == null || (address.getDelFlag() != null && address.getDelFlag() == 1)) {
             throw new ServiceException("地址不存在");
@@ -578,11 +599,21 @@ public class MallOrderServiceImpl implements IMallOrderService {
         if (!accountId.equals(address.getAccountId())) {
             throw new ServiceException("无权使用该地址", HttpStatus.FORBIDDEN);
         }
+        return address;
+    }
+
+    private MallOrderAddressSnapshotApiResult toReceiverSnapshot(AccountAddress address) {
         MallOrderAddressSnapshotApiResult snapshot = new MallOrderAddressSnapshotApiResult();
         snapshot.setReceiverName(address.getReceiverName());
         snapshot.setReceiverPhone(address.getReceiverPhone());
         snapshot.setReceiverAddress(buildFullAddress(address));
-        ctx.addressSnapshot = snapshot;
+        return snapshot;
+    }
+
+    private void applyReceiverSnapshot(MallOrder target, MallOrderAddressSnapshotApiResult snapshot) {
+        target.setReceiverName(snapshot.getReceiverName());
+        target.setReceiverPhone(snapshot.getReceiverPhone());
+        target.setReceiverAddress(snapshot.getReceiverAddress());
     }
 
     private String buildFullAddress(AccountAddress address) {
@@ -600,6 +631,33 @@ public class MallOrderServiceImpl implements IMallOrderService {
             sb.append(address.getDetailAddress());
         }
         return sb.toString();
+    }
+
+    /**
+     * 待付款且未支付门禁（取消 / 关单 / 改址共用）
+     */
+    private void assertOrderUnpaid(MallOrder order, String badStatusMsg, String badPayMsg) {
+        if (order.getOrderStatus() == null || order.getOrderStatus() != 0) {
+            throw new ServiceException(badStatusMsg);
+        }
+        if (order.getPayStatus() == null || order.getPayStatus() != 0) {
+            throw new ServiceException(badPayMsg);
+        }
+    }
+
+    /**
+     * 关闭待付款订单内核：释库存、释券、状态改为已取消
+     */
+    private void closeUnpaidOrderCore(MallOrder order, String cancelReason) {
+        mallOrderSupportService.rollbackStockForOrder(order.getOrderId());
+        mallOrderSupportService.releaseOccupiedCoupon(order);
+        MallOrder update = new MallOrder();
+        update.setOrderId(order.getOrderId());
+        update.setOrderStatus(4);
+        update.setPayStatus(2);
+        update.setCancelReason(cancelReason);
+        update.setUpdateTime(DateUtils.getNowDate());
+        mallOrderMapper.updateMallOrder(update);
     }
 
     private MallOrderPreviewApiResult toPreviewResult(OrderBuildContext ctx, Long orderId, String orderNo) {
@@ -625,6 +683,43 @@ public class MallOrderServiceImpl implements IMallOrderService {
                 .items(items)
                 .address(ctx.addressSnapshot)
                 .build();
+    }
+
+    /**
+     * 批量挂载订单明细（含商品主图）。
+     * 先 clearPage，避免列表分页上下文污染明细查询。
+     */
+    private void fillOrderItems(List<MallOrderApiResult> orders) {
+        if (orders == null || orders.isEmpty()) {
+            return;
+        }
+        PageUtils.clearPage();
+        List<Long> orderIds = orders.stream()
+                .map(MallOrderApiResult::getOrderId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (orderIds.isEmpty()) {
+            for (MallOrderApiResult order : orders) {
+                order.setItems(Collections.emptyList());
+            }
+            return;
+        }
+        MallOrderItemApiParams itemParams = new MallOrderItemApiParams();
+        itemParams.setOrderIdList(orderIds);
+        List<MallOrderItemApiResult> allItems = mallOrderItemService.selectMallOrderItemApiResultList(itemParams);
+        Map<Long, List<MallOrderItemApiResult>> byOrderId = new LinkedHashMap<>();
+        if (allItems != null) {
+            for (MallOrderItemApiResult item : allItems) {
+                if (item.getOrderId() == null) {
+                    continue;
+                }
+                byOrderId.computeIfAbsent(item.getOrderId(), k -> new ArrayList<>()).add(item);
+            }
+        }
+        for (MallOrderApiResult order : orders) {
+            List<MallOrderItemApiResult> items = byOrderId.getOrDefault(order.getOrderId(), Collections.emptyList());
+            order.setItems(items);
+        }
     }
 
     /**

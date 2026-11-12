@@ -189,6 +189,12 @@ public class MallOrderApiResult implements Serializable {
     private String remark;
 
     /**
+     * 下单时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    /**
      * 订单明细列表
      */
     private List<MallOrderItemApiResult> items;

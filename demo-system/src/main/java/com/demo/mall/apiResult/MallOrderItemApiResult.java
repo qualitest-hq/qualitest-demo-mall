@@ -81,5 +81,9 @@ public class MallOrderItemApiResult implements Serializable {
      */
     private BigDecimal refundedAmount;
 
+    /**
+     * 商品主图（查询时关联商品表；无图为空串）
+     */
+    private String productImage;
 
 }
