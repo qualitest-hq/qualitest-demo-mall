@@ -109,6 +109,12 @@ public class CouponServiceImpl implements ICouponService {
         if (Objects.isNull(coupon.getCouponId())) {
             coupon.setCouponId(IdUtil.getSnowflakeNextId());
         }
+        if (coupon.getScopeType() == null) {
+            coupon.setScopeType(0);
+        }
+        if (coupon.getScopeIds() == null) {
+            coupon.setScopeIds("");
+        }
         coupon.setCreateTime(DateUtils.getNowDate());
         return couponMapper.insertCoupon(coupon);
     }
@@ -193,7 +199,7 @@ public class CouponServiceImpl implements ICouponService {
     }
 
     /**
-     * 客户端领取优惠券；校验库存、有效期与重复领取
+     * 领取优惠券：校验模板可用与是否已领，条件自增领取数后写入用户券（含适用范围快照）
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -215,11 +221,6 @@ public class CouponServiceImpl implements ICouponService {
         if (coupon.getValidEndTime() != null && now.after(coupon.getValidEndTime())) {
             throw new ServiceException("优惠券已过期");
         }
-        int totalCount = coupon.getTotalCount() != null ? coupon.getTotalCount() : 0;
-        int receiveCount = coupon.getReceiveCount() != null ? coupon.getReceiveCount() : 0;
-        if (totalCount > 0 && receiveCount >= totalCount) {
-            throw new ServiceException("优惠券已领完");
-        }
         AccountCouponParams query = AccountCouponParams.builder()
                 .accountId(accountId)
                 .couponId(couponId)
@@ -228,6 +229,11 @@ public class CouponServiceImpl implements ICouponService {
         if (existing != null && (existing.getDelFlag() == null || existing.getDelFlag() == 0)) {
             throw new ServiceException("不可重复领取");
         }
+        // 条件自增领取数，并发下超发会更新失败
+        int incremented = couponMapper.incrementReceiveCount(couponId);
+        if (incremented <= 0) {
+            throw new ServiceException("优惠券已领完");
+        }
         AccountCoupon accountCoupon = new AccountCoupon();
         accountCoupon.setAccountCouponId(IdUtil.getSnowflakeNextId());
         accountCoupon.setCouponId(couponId);
@@ -235,16 +241,18 @@ public class CouponServiceImpl implements ICouponService {
         accountCoupon.setCouponName(coupon.getCouponName());
         accountCoupon.setThresholdAmount(coupon.getThresholdAmount());
         accountCoupon.setDiscountAmount(coupon.getDiscountAmount());
+        // 从模板快照适用范围，后续改模板不影响已领券
+        accountCoupon.setScopeType(coupon.getScopeType() != null ? coupon.getScopeType() : 0);
+        accountCoupon.setScopeIds(coupon.getScopeIds() != null ? coupon.getScopeIds() : "");
         accountCoupon.setValidStartTime(coupon.getValidStartTime());
         accountCoupon.setValidEndTime(coupon.getValidEndTime());
-        accountCoupon.setCouponStatus(0);
+        accountCoupon.setUseStatus(0);
         accountCoupon.setReceiveTime(now);
         accountCoupon.setOrderId(0L);
         accountCoupon.setDelFlag(0);
         accountCoupon.setCreateTime(now);
         accountCoupon.setUpdateTime(now);
         accountCouponMapper.insertAccountCoupon(accountCoupon);
-        couponMapper.incrementReceiveCount(couponId);
         return accountCouponMapper.selectAccountCouponApiResult(accountCoupon.getAccountCouponId());
     }
 }

@@ -10,10 +10,7 @@ import org.apache.ibatis.type.Alias;
 import java.io.Serializable;
 
 /**
- * 账号优惠券 ApiResult 对象（客户端）
- *
- * @author demo
- * @since 2026-06-20
+ * 我的优惠券出参
  */
 @Getter
 @Setter
@@ -24,54 +21,48 @@ import java.io.Serializable;
 @Alias("AccountCouponApiResult")
 public class AccountCouponApiResult implements Serializable {
 
-    /**
-     * 账号优惠券ID
-     */
+    /** 用户券 ID */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long accountCouponId;
 
-    /**
-     * 优惠券ID
-     */
+    /** 券模板 ID */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long couponId;
 
-    /**
-     * 账号ID
-     */
+    /** 账号 ID */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long accountId;
 
-    /**
-     * 券名称
-     */
+    /** 券名称 */
     private String couponName;
 
-    /**
-     * 满减门槛
-     */
+    /** 满减门槛 */
     private BigDecimal thresholdAmount;
 
-    /**
-     * 满减金额
-     */
+    /** 满减金额 */
     private BigDecimal discountAmount;
 
-    /**
-     * 有效开始
-     */
+    /** 适用范围：0 全场，1 指定分类，2 指定商品 */
+    private Integer scopeType;
+
+    /** 适用范围目标 ID，逗号分隔 */
+    private String scopeIds;
+
+    /** 有效开始时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date validStartTime;
 
-    /**
-     * 有效结束
-     */
+    /** 有效结束时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date validEndTime;
 
-    /**
-     * 状态（0未使用 1已使用 2已过期）
-     */
+    /** 使用状态：0 未使用，1 已使用 */
+    private Integer useStatus;
+
+    /** 是否已过期（按有效结束时间计算） */
+    private Boolean expired;
+
+    /** 展示状态：0 未使用，1 已使用，2 已过期 */
     private Integer couponStatus;
 
     /**

@@ -31,7 +31,7 @@ public class AccountCouponApiController extends ApiController {
     private final IAccountCouponService accountCouponService;
 
     /**
-     * 我的优惠券
+     * 分页查询我的优惠券，可按使用状态或是否过期筛选
      */
     @GetMapping("/my")
     public R<TableData<AccountCouponApiResult>> myList(AccountCouponApiParams params) {
@@ -46,14 +46,19 @@ public class AccountCouponApiController extends ApiController {
     }
 
     /**
-     * 当前订单可用券
+     * 查询当前订单可用券；可按商品、分类进一步过滤适用范围
      */
     @GetMapping("/my/available")
-    public R<List<AccountCouponApiResult>> myAvailable(@RequestParam("orderAmount") BigDecimal orderAmount) {
+    public R<List<AccountCouponApiResult>> myAvailable(
+            @RequestParam("orderAmount") BigDecimal orderAmount,
+            @RequestParam(value = "productIds", required = false) List<Long> productIds,
+            @RequestParam(value = "categoryIds", required = false) List<Long> categoryIds) {
         Long accountId = getAccountId();
         AccountCouponApiParams params = new AccountCouponApiParams();
         params.setAccountId(accountId);
         params.setOrderAmount(orderAmount != null ? orderAmount : BigDecimal.ZERO);
+        params.setProductIds(productIds);
+        params.setCategoryIds(categoryIds);
         return ok(accountCouponService.selectAccountCouponApiResultList(params));
     }
 }

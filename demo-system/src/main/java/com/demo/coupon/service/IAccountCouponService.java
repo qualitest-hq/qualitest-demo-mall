@@ -47,10 +47,7 @@ public interface IAccountCouponService {
     AccountCouponResult selectAccountCouponResult(Long accountCouponId);
 
     /**
-     * 查询账号优惠券ApiResult列表（客户端）
-     *
-     * @param params 账号优惠券ApiParams
-     * @return 账号优惠券ApiResult集合
+     * 查询我的优惠券列表；传入订单金额时可再按商品/分类过滤适用范围
      */
     List<AccountCouponApiResult> selectAccountCouponApiResultList(AccountCouponApiParams params);
 

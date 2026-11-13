@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.demo.account.mapper.AccountAddressMapper;
 import com.demo.account.domain.AccountAddress;
 import com.demo.account.params.AccountAddressParams;
-import com.demo.account.apiParams.AccountAddressApiParams;
 import com.demo.account.result.AccountAddressResult;
 import com.demo.account.apiResult.AccountAddressApiResult;
 import com.demo.account.service.IAccountAddressService;
@@ -28,6 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class AccountAddressServiceImpl implements IAccountAddressService {
+
+    /** 单账号收货地址上限 */
+    private static final int ADDRESS_LIMIT = 20;
+
     @Autowired
     private AccountAddressMapper accountAddressMapper;
 
@@ -93,12 +96,17 @@ public class AccountAddressServiceImpl implements IAccountAddressService {
     }
 
     /**
-     * 新增收货地址（客户端）；首条地址自动设为默认
+     * 新增收货地址；超上限拒绝，首条自动设为默认
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public AccountAddressApiResult saveAccountAddressForAccount(Long accountId, AccountAddressMySaveApiParams params) {
         validateSaveParams(params, false);
+        AccountAddressApiParams countQuery = new AccountAddressApiParams();
+        countQuery.setAccountId(accountId);
+        if (accountAddressMapper.selectAccountAddressApiResultList(countQuery).size() >= ADDRESS_LIMIT) {
+            throw new ServiceException("收货地址最多" + ADDRESS_LIMIT + "条");
+        }
         AccountAddress address = buildAddress(accountId, params);
         address.setAddressId(IdUtil.getSnowflakeNextId());
         address.setDelFlag(0);
@@ -194,6 +202,11 @@ public class AccountAddressServiceImpl implements IAccountAddressService {
         }
         if (StringUtils.isEmpty(params.getReceiverPhone())) {
             throw new ServiceException("收货人手机不能为空");
+        }
+        if (StringUtils.isEmpty(params.getProvince())
+                || StringUtils.isEmpty(params.getCity())
+                || StringUtils.isEmpty(params.getDistrict())) {
+            throw new ServiceException("省市区不能为空");
         }
         if (StringUtils.isEmpty(params.getDetailAddress())) {
             throw new ServiceException("详细地址不能为空");

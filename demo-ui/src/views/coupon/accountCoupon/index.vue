@@ -15,9 +15,9 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="券状态" prop="couponStatus">
-        <el-select v-model="queryParams.couponStatus" placeholder="全部" clearable style="width: 120px">
-          <el-option v-for="item in COUPON_STATUS_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
+      <el-form-item label="使用状态" prop="useStatus">
+        <el-select v-model="queryParams.useStatus" placeholder="全部" clearable style="width: 120px">
+          <el-option v-for="item in COUPON_USE_STATUS_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="订单编号" prop="orderNo">
@@ -90,7 +90,7 @@
           <span>{{ parseTime(scope.row.validEndTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" key="couponStatus" prop="couponStatus" width="90" v-if="columnVisible['couponStatus']">
+      <el-table-column label="展示状态" align="center" key="couponStatus" prop="couponStatus" width="90" v-if="columnVisible['couponStatus']">
         <template #default="scope">
           <dict-tag :options="COUPON_STATUS_OPTIONS" :value="scope.row.couponStatus" />
         </template>
@@ -211,7 +211,7 @@
 
 <script setup name="AccountCoupon">
 import { listAccountCoupon, getAccountCoupon, delAccountCoupon, addAccountCoupon, updateAccountCoupon } from "@/api/coupon/accountCoupon"
-import { COUPON_STATUS_OPTIONS } from "@/utils/mallEnums"
+import { COUPON_STATUS_OPTIONS, COUPON_USE_STATUS_OPTIONS } from "@/utils/mallEnums"
 import RemoteSelect from "@/components/RemoteSelect/index.vue"
 import { useAccountRemoteSelect, useCouponRemoteSelect } from "@/utils/useRemoteSelect"
 
@@ -239,7 +239,7 @@ const columns = ref([
   { key: 'discountAmount', label: '满减金额', visible: true },
   { key: 'validStartTime', label: '有效开始', visible: true },
   { key: 'validEndTime', label: '有效结束', visible: true },
-  { key: 'couponStatus', label: '状态', visible: true },
+  { key: 'couponStatus', label: '展示状态', visible: true },
   { key: 'receiveTime', label: '领取时间', visible: true },
   { key: 'useTime', label: '使用时间', visible: true },
   { key: 'orderId', label: '使用订单ID', visible: false },
@@ -262,7 +262,7 @@ const data = reactive({
     couponId: undefined,
     accountId: undefined,
     couponName: undefined,
-    couponStatus: undefined,
+    useStatus: undefined,
     orderNo: undefined,
   },
   rules: {
@@ -298,7 +298,7 @@ function reset() {
     discountAmount: null,
     validStartTime: null,
     validEndTime: null,
-    couponStatus: null,
+    useStatus: null,
     receiveTime: null,
     useTime: null,
     orderId: null,

@@ -48,6 +48,22 @@ export const ROUTES = {
   MERCHANT_GOODS: "/pages/merchant/goods",
   /** 商家商品新建/编辑 */
   MERCHANT_GOODS_EDIT: "/pages/merchant/goods-edit",
+  /** 个人资料 */
+  PROFILE: "/pages/profile/profile",
+  /** 修改密码 */
+  PASSWORD: "/pages/account/password",
+  /** 收货地址列表 */
+  ADDRESS_LIST: "/pages/address/list",
+  /** 编辑收货地址 */
+  ADDRESS_EDIT: "/pages/address/edit",
+  /** 优惠券 */
+  COUPON_LIST: "/pages/coupon/list",
+  /** 我的余额 */
+  BALANCE: "/pages/balance/index",
+  /** 用户协议 */
+  LEGAL_USER: "/pages/legal/user-agreement",
+  /** 隐私政策 */
+  LEGAL_PRIVACY: "/pages/legal/privacy",
 } as const;
 
 /** 打开本店商品编辑页，不传 ID 为新建 */
@@ -161,4 +177,64 @@ export function navigateBackOrHome() {
       uni.switchTab({ url: ROUTES.HOME });
     },
   });
+}
+
+/** 个人资料 */
+export function openProfile() {
+  uni.navigateTo({ url: ROUTES.PROFILE });
+}
+
+/** 修改密码 */
+export function openPassword() {
+  uni.navigateTo({ url: ROUTES.PASSWORD });
+}
+
+/**
+ * 收货地址列表。
+ * @param pick 为 true 时进入选择模式（确认订单）
+ */
+export function openAddressList(options?: { pick?: boolean }) {
+  const q = options?.pick ? "?pick=1" : "";
+  uni.navigateTo({ url: `${ROUTES.ADDRESS_LIST}${q}` });
+}
+
+/**
+ * 新建或编辑收货地址。
+ * @param id 地址主键，不传为新建
+ */
+export function openAddressEdit(options?: { id?: string }) {
+  const q = options?.id ? `?addressId=${encodeURIComponent(options.id)}` : "";
+  uni.navigateTo({ url: `${ROUTES.ADDRESS_EDIT}${q}` });
+}
+
+/**
+ * 优惠券列表。
+ * @param pick 确认订单选券
+ * @param orderAmount 选券时传入订单金额
+ */
+export function openCouponList(options?: { pick?: boolean; orderAmount?: number | string }) {
+  const parts: string[] = [];
+  if (options?.pick) {
+    parts.push("pick=1");
+  }
+  if (options?.orderAmount !== undefined && options?.orderAmount !== "") {
+    parts.push(`orderAmount=${encodeURIComponent(String(options.orderAmount))}`);
+  }
+  const q = parts.length ? `?${parts.join("&")}` : "";
+  uni.navigateTo({ url: `${ROUTES.COUPON_LIST}${q}` });
+}
+
+/** 我的余额 */
+export function openBalance() {
+  uni.navigateTo({ url: ROUTES.BALANCE });
+}
+
+/** 用户协议 */
+export function openLegalUserAgreement() {
+  uni.navigateTo({ url: ROUTES.LEGAL_USER });
+}
+
+/** 隐私政策 */
+export function openLegalPrivacy() {
+  uni.navigateTo({ url: ROUTES.LEGAL_PRIVACY });
 }

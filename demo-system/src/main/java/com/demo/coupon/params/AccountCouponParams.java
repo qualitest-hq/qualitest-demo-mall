@@ -55,8 +55,8 @@ public class AccountCouponParams extends BaseEntity implements Serializable {
     private String orderNo;
 
     /**
-     * 状态（0未使用 1已使用 2已过期）
+     * 使用状态：0 未使用，1 已使用
      */
-    private Integer couponStatus;
+    private Integer useStatus;
 
 }

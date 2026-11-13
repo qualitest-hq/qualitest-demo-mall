@@ -15,7 +15,7 @@ export interface MallOrderSubmitParams {
   items?: MallOrderSubmitItem[];
   /** 收货地址主键 */
   addressId?: string;
-  /** 选用的优惠券主键（可选） */
+  /** 用户券 ID；不使用可不传或传 0 */
   accountCouponId?: string | number;
   /** 买家留言 */
   buyerRemark?: string;

@@ -13,4 +13,8 @@ export const STORAGE_KEYS = {
    * 底部 Tab 切换不能携带查询参数，用该短生命周期键传递意图。
    */
   PENDING_CATEGORY_ID: "hengwu_pending_category_id",
+  /** 确认订单页选择地址后回写 */
+  CHECKOUT_PICK_ADDRESS: "checkout_pick_address",
+  /** 确认订单页选择优惠券后回写（0 表示不使用） */
+  CHECKOUT_PICK_COUPON: "checkout_pick_coupon",
 } as const;

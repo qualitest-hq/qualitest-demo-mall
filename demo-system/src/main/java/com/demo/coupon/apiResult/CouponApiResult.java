@@ -60,6 +60,12 @@ public class CouponApiResult implements Serializable {
      */
     private Integer usedCount;
 
+    /** 适用范围：0 全场，1 指定分类，2 指定商品 */
+    private Integer scopeType;
+
+    /** 适用范围目标 ID，逗号分隔 */
+    private String scopeIds;
+
     /**
      * 有效开始时间
      */

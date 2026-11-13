@@ -112,6 +112,7 @@ public class AccountLoginService {
         return new AccountLoginUser(account.getAccountId(), account.getMobile(), account.getNickName(), account.getStatus());
     }
 
+    /** 校验手机号与密码非空 */
     private void validateMobileAndPassword(String mobile, String password) {
         if (StringUtils.isEmpty(mobile) || StringUtils.isEmpty(password)) {
             throw new ServiceException("手机号和密码不能为空");

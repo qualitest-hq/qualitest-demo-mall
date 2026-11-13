@@ -6,12 +6,10 @@ import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
- * 账号优惠券 ApiParams 对象（客户端）
- *
- * @author demo
- * @since 2026-06-20
+ * 我的优惠券查询入参
  */
 @Getter
 @Setter
@@ -22,30 +20,29 @@ import java.math.BigDecimal;
 @Alias("AccountCouponApiParams")
 public class AccountCouponApiParams implements Serializable {
 
-    /**
-     * 优惠券ID
-     */
+    /** 优惠券模板 ID */
     private Long couponId;
 
-    /**
-     * 账号ID
-     */
+    /** 当前登录账号 ID */
     @JsonIgnore
     private Long accountId;
 
-    /**
-     * 券名称
-     */
+    /** 券名称 */
     private String couponName;
 
-    /**
-     * 状态（0未使用 1已使用 2已过期）
-     */
-    private Integer couponStatus;
+    /** 使用状态：0 未使用，1 已使用；未使用不含已过期 */
+    private Integer useStatus;
 
-    /**
-     * 订单金额（筛选可用券）
-     */
+    /** 为 true 时查已过期且未使用的券 */
+    private Boolean expired;
+
+    /** 订单商品金额，传入后只返回当前可用的券 */
     private BigDecimal orderAmount;
+
+    /** 订单商品 ID，用于按券适用范围过滤 */
+    private List<Long> productIds;
+
+    /** 订单分类 ID，用于按券适用范围过滤 */
+    private List<Long> categoryIds;
 
 }

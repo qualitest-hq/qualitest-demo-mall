@@ -135,7 +135,7 @@ public interface CouponMapper {
     int incrementUsedCount(@Param("couponId") Long couponId);
 
     /**
-     * 领取时增加已领取数量
+     * 条件自增已领取数量；库存未满才更新成功，返回影响行数
      */
     int incrementReceiveCount(@Param("couponId") Long couponId);
 }

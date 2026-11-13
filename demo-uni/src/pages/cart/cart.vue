@@ -15,8 +15,8 @@
         <text class="top-link" @click="toggleManage">{{ managing ? "完成" : "管理" }}</text>
       </view>
 
-      <view v-if="!managing" class="coupon-tip" @click="toastComingSoon('优惠券')">
-        有可用优惠券，确认订单时在「优惠」中选择 ›
+      <view v-if="!managing" class="coupon-tip" @click="goCoupons">
+        有可用优惠券，点此查看或确认订单时选择 ›
       </view>
 
       <view v-if="availableItems.length" class="store-card">
@@ -136,10 +136,9 @@ import {
   updateCartSelected,
 } from "@/api/cart";
 import { appConfig } from "@/config/app";
-import { openCheckout, openProduct, ROUTES } from "@/constants/routes";
+import { openCheckout, openCouponList, openProduct, ROUTES } from "@/constants/routes";
 import { useUserStore } from "@/stores/user";
 import type { MallCartItem } from "@/types/cart";
-import { toastComingSoon } from "@/utils/toast";
 
 const user = useUserStore();
 /** 列表请求中 */
@@ -190,6 +189,11 @@ watch(
 /** 去登录页 */
 function goLogin() {
   uni.navigateTo({ url: ROUTES.LOGIN });
+}
+
+/** 优惠券中心 */
+function goCoupons() {
+  openCouponList();
 }
 
 /** 空车时切到首页逛逛 */

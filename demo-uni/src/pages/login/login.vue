@@ -29,8 +29,8 @@
       <view class="check" :class="{ on: agreed }" />
       <text class="agree-text">
         我已阅读并同意
-        <text class="link" @click.stop="toastLegal('用户协议')">《用户协议》</text>
-        <text class="link" @click.stop="toastLegal('隐私政策')">《隐私政策》</text>
+        <text class="link" @click.stop="openLegalUserAgreement">《用户协议》</text>
+        <text class="link" @click.stop="openLegalPrivacy">《隐私政策》</text>
         与
         <text class="link" @click.stop="toastLegal('第三方信息共享清单')">《共享清单》</text>
       </text>
@@ -59,7 +59,7 @@ import { ref } from "vue";
 import { loginByPassword } from "@/api/auth";
 import { appConfig } from "@/config/app";
 import { DEMO_ACCOUNT } from "@/constants/demo";
-import { ROUTES } from "@/constants/routes";
+import { openLegalPrivacy, openLegalUserAgreement, ROUTES } from "@/constants/routes";
 import { useUserStore } from "@/stores/user";
 
 /** 登录方式：密码或短信验证码 */

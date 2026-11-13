@@ -59,9 +59,23 @@ INSERT INTO `mall_product_sku` (`sku_id`, `product_id`, `sku_name`, `market_pric
 (2122, 2003, '大盒装',  228.00, 198.00, 100, 0, 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed');
 
 -- ---------------------------------------------------------------------------
--- 优惠券模板（2 条，固定 ID 3001-3002）
--- 3001 receive_count=1：账号1 已在 02_account_seed 预领
+-- 优惠券模板（4 条，固定 ID 3001-3004）
+-- 3001 receive_count=1：账号1 已在 02_account_seed 预领（全场）
+-- 3003：指定分类 1001（数码电器）；3004：总量已发完（F22）
+-- 已建库升级（B4）：
+-- ALTER TABLE coupon
+--   ADD COLUMN scope_type tinyint DEFAULT 0 COMMENT '适用范围（0全场 1指定分类 2指定商品）' AFTER used_count,
+--   ADD COLUMN scope_ids varchar(500) DEFAULT '' COMMENT '适用范围ID，逗号分隔' AFTER scope_type;
+-- ALTER TABLE account_coupon
+--   ADD COLUMN scope_type tinyint DEFAULT 0 COMMENT '适用范围（0全场 1指定分类 2指定商品）' AFTER discount_amount,
+--   ADD COLUMN scope_ids varchar(500) DEFAULT '' COMMENT '适用范围ID，逗号分隔' AFTER scope_type;
+-- 使用态收口（去掉落库「已过期」）：
+-- UPDATE account_coupon SET coupon_status = 0 WHERE coupon_status = 2;
+-- ALTER TABLE account_coupon CHANGE COLUMN coupon_status use_status tinyint DEFAULT 0
+--   COMMENT '使用状态（0未使用 1已使用；过期按 valid_end_time 即时判断）';
 -- ---------------------------------------------------------------------------
-INSERT INTO `coupon` (`coupon_id`, `coupon_name`, `threshold_amount`, `discount_amount`, `total_count`, `receive_count`, `used_count`, `valid_start_time`, `valid_end_time`, `status`, `del_flag`, `create_time`, `update_time`, `remark`) VALUES
-(3001, '满100减10', 100.00, 10.00, 1000, 1, 0, '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
-(3002, '满200减30', 200.00, 30.00,  500, 0, 0, '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed');
+INSERT INTO `coupon` (`coupon_id`, `coupon_name`, `threshold_amount`, `discount_amount`, `total_count`, `receive_count`, `used_count`, `scope_type`, `scope_ids`, `valid_start_time`, `valid_end_time`, `status`, `del_flag`, `create_time`, `update_time`, `remark`) VALUES
+(3001, '满100减10',     100.00, 10.00, 1000, 1, 0, 0, '',     '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
+(3002, '满200减30',     200.00, 30.00,  500, 0, 0, 0, '',     '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
+(3003, '数码专享满50减5', 50.00,  5.00,  200, 0, 0, 1, '1001', '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed-scope-category'),
+(3004, '已领完体验券',     10.00,  1.00,    1, 1, 0, 0, '',     '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed-sold-out');

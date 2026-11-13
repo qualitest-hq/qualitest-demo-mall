@@ -466,6 +466,48 @@
       },
       "expect": "updateReceiver 失败「仅待付款订单可修改收货信息」",
       "orderHint": "订单 7023 / MO2026062112350001"
+    },
+    {
+      "id": "F22",
+      "name": "优惠券已领完",
+      "type": "fail",
+      "file": "scenarios/fail/F22_coupon_sold_out.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "receive 3004 失败「优惠券已领完」",
+      "orderHint": "基线券模板 3004"
+    },
+    {
+      "id": "F23",
+      "name": "优惠券适用范围不匹配",
+      "type": "fail",
+      "file": "scenarios/fail/F23_coupon_scope_mismatch.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "T 恤结算用数码券失败「优惠券不适用于当前商品」",
+      "orderHint": "account_coupon 6010；cart 5030"
+    },
+    {
+      "id": "F25",
+      "name": "地址校验失败",
+      "type": "fail",
+      "file": "scenarios/fail/F25_address_invalid.sql",
+      "acceptanceCases": [],
+      "account": {
+        "phone": "13800000001",
+        "password": "Test@123456",
+        "remark": "主测试账号"
+      },
+      "expect": "非法手机号或空省市区新增失败",
+      "orderHint": "无需额外行；上限 20"
     }
   ]
 }

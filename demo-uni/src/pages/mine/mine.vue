@@ -1,13 +1,13 @@
 <template>
   <!-- 我的 Tab：登录状态、订单入口、商家中心 -->
   <view class="page">
-    <view class="card">
+    <view class="card user-card" @click="onUserTap">
       <text class="title">{{ appConfig.name }}</text>
       <text class="sub">{{ loginHint }}</text>
-      <wd-button v-if="!user.isLoggedIn" type="primary" size="medium" @click="goLogin">
+      <text v-if="user.isLoggedIn" class="edit-hint">点击编辑资料 ›</text>
+      <wd-button v-if="!user.isLoggedIn" type="primary" size="medium" @click.stop="goLogin">
         去登录
       </wd-button>
-      <wd-button v-else type="info" size="medium" plain @click="onLogout">退出</wd-button>
     </view>
 
     <view class="card orders-card">
@@ -29,10 +29,59 @@
     </view>
 
     <view class="card menu">
+      <view class="item" @click="goProfile">
+        <view>
+          <text class="item-title">个人资料</text>
+          <text class="item-desc">昵称与性别</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <view class="item" @click="goPassword">
+        <view>
+          <text class="item-title">修改密码</text>
+          <text class="item-desc">原密码验证后修改</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <view class="item" @click="goCoupons">
+        <view>
+          <text class="item-title">优惠券</text>
+          <text class="item-desc">领取与使用记录</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <view class="item" @click="goBalance">
+        <view>
+          <text class="item-title">我的余额</text>
+          <text class="item-desc">充值与流水</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <view class="item" @click="onWithdraw">
+        <view>
+          <text class="item-title">提现账户</text>
+          <text class="item-desc">绑定收款方式</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <view class="item" @click="goAddress">
+        <view>
+          <text class="item-title">收货地址</text>
+          <text class="item-desc">管理收货信息</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
       <view class="item" @click="goRefunds">
         <view>
           <text class="item-title">我的退款</text>
           <text class="item-desc">申请进度与撤销</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <view class="item" @click="onNotify">
+        <view>
+          <text class="item-title">消息通知</text>
+          <text class="item-desc">订单与活动提醒</text>
         </view>
         <text class="arrow">›</text>
       </view>
@@ -44,22 +93,47 @@
         <text class="arrow">›</text>
       </view>
     </view>
+
+    <wd-button
+      v-if="user.isLoggedIn"
+      type="info"
+      size="medium"
+      plain
+      block
+      custom-style="margin-top:8rpx;"
+      :loading="loggingOut"
+      @click="onLogout"
+    >
+      退出登录
+    </wd-button>
   </view>
 </template>
 
 <script setup lang="ts">
 /**
  * 我的页。
- * 订单五宫格、退款入口、商家中心；未登录点订单会先跳登录。
+ * 订单五宫格、资产菜单、商家中心；未登录点需登录项会先跳登录。
  */
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import { logout as logoutApi } from "@/api/account";
 import { openMerchantCenter } from "@/composables/useMerchantGate";
 import { appConfig } from "@/config/app";
 import { MINE_ORDER_ENTRIES } from "@/constants/orderStatus";
-import { openOrders, openRefundList, ROUTES } from "@/constants/routes";
+import {
+  openAddressList,
+  openBalance,
+  openCouponList,
+  openOrders,
+  openPassword,
+  openProfile,
+  openRefundList,
+  ROUTES,
+} from "@/constants/routes";
 import { useUserStore } from "@/stores/user";
+import { toastComingSoon } from "@/utils/toast";
 
 const user = useUserStore();
+const loggingOut = ref(false);
 
 /** 登录状态说明文案 */
 const loginHint = computed(() =>
@@ -68,26 +142,64 @@ const loginHint = computed(() =>
     : "未登录 · 可先逛购",
 );
 
+function requireLogin(): boolean {
+  if (user.isLoggedIn) return true;
+  goLogin();
+  return false;
+}
+
 /** 打开登录页 */
 function goLogin() {
   uni.navigateTo({ url: ROUTES.LOGIN });
 }
 
+function onUserTap() {
+  if (!requireLogin()) return;
+  openProfile();
+}
+
+function goProfile() {
+  if (!requireLogin()) return;
+  openProfile();
+}
+
+function goPassword() {
+  if (!requireLogin()) return;
+  openPassword();
+}
+
+function goCoupons() {
+  if (!requireLogin()) return;
+  openCouponList();
+}
+
+function goBalance() {
+  if (!requireLogin()) return;
+  openBalance();
+}
+
+function goAddress() {
+  if (!requireLogin()) return;
+  openAddressList();
+}
+
+function onWithdraw() {
+  toastComingSoon("提现账户");
+}
+
+function onNotify() {
+  toastComingSoon("消息通知");
+}
+
 /** 进入订单列表；未登录先登录 */
 function goOrders(orderStatus?: number) {
-  if (!user.isLoggedIn) {
-    goLogin();
-    return;
-  }
+  if (!requireLogin()) return;
   openOrders(orderStatus);
 }
 
 /** 我的退款 */
 function goRefunds() {
-  if (!user.isLoggedIn) {
-    goLogin();
-    return;
-  }
+  if (!requireLogin()) return;
   openRefundList();
 }
 
@@ -96,9 +208,19 @@ function goMerchant() {
   openMerchantCenter();
 }
 
-/** 只清本地登录态，不请求服务端 */
-function onLogout() {
-  user.logout();
+/** 请求服务端退出并清本地登录态 */
+async function onLogout() {
+  if (loggingOut.value) return;
+  loggingOut.value = true;
+  try {
+    await logoutApi();
+  } catch {
+    /* 仍清本地 */
+  } finally {
+    user.logout();
+    loggingOut.value = false;
+    uni.showToast({ title: "已退出", icon: "none" });
+  }
 }
 </script>
 
@@ -117,6 +239,10 @@ function onLogout() {
   margin-bottom: 24rpx;
 }
 
+.user-card {
+  position: relative;
+}
+
 .title {
   display: block;
   font-size: 36rpx;
@@ -126,9 +252,16 @@ function onLogout() {
 
 .sub {
   display: block;
-  margin: 16rpx 0 32rpx;
+  margin: 16rpx 0 12rpx;
   font-size: 26rpx;
   color: #666;
+}
+
+.edit-hint {
+  display: block;
+  margin-bottom: 24rpx;
+  font-size: 24rpx;
+  color: #999;
 }
 
 .orders-card {

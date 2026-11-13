@@ -128,7 +128,7 @@ public interface ICouponService {
     Coupon selectCouponOne(CouponParams params);
 
     /**
-     * 领取优惠券
+     * 领取优惠券：校验模板与是否已领，条件自增领取数后写入用户券
      */
     AccountCouponApiResult receiveCoupon(Long accountId, Long couponId);
 }

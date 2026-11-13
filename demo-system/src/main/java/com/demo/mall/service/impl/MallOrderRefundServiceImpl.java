@@ -751,7 +751,7 @@ public class MallOrderRefundServiceImpl implements IMallOrderRefundService {
         }
         AccountCoupon acUpdate = new AccountCoupon();
         acUpdate.setAccountCouponId(accountCoupon.getAccountCouponId());
-        acUpdate.setCouponStatus(0);
+        acUpdate.setUseStatus(0);
         acUpdate.setOrderId(0L);
         acUpdate.setUseTime(null);
         accountCouponMapper.updateAccountCoupon(acUpdate);

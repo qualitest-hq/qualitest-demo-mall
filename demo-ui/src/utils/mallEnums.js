@@ -55,6 +55,13 @@ export const NORMAL_DISABLE_OPTIONS = [
   { label: '停用', value: 1, elTagType: 'danger' }
 ]
 
+/** 用户券使用状态：0 未使用，1 已使用 */
+export const COUPON_USE_STATUS_OPTIONS = [
+  { label: '未使用', value: 0, elTagType: 'primary' },
+  { label: '已使用', value: 1, elTagType: 'success' }
+]
+
+/** 用户券展示状态：0 未使用，1 已使用，2 已过期 */
 export const COUPON_STATUS_OPTIONS = [
   { label: '未使用', value: 0, elTagType: 'primary' },
   { label: '已使用', value: 1, elTagType: 'success' },

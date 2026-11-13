@@ -6,7 +6,7 @@
       <text class="link" @click="goCart">去购物车</text>
     </view>
     <template v-else>
-      <view class="panel addr-card" @click="pickAddressHint">
+      <view class="panel addr-card" @click="pickAddress">
         <view class="addr-body">
           <template v-if="address">
             <view class="addr-name">
@@ -40,9 +40,9 @@
           <text class="lab">运费</text>
           <text class="val">{{ freightText }}</text>
         </view>
-        <view class="cell-row" @click="toastComingSoon('优惠券')">
+        <view class="cell-row" @click="pickCoupon">
           <text class="lab">优惠</text>
-          <text class="val muted">暂无优惠券 ›</text>
+          <text class="val muted">{{ couponLabel }} ›</text>
         </view>
         <view class="cell-row remark-row">
           <text class="lab">留言</text>
@@ -83,17 +83,19 @@
  * 支持购物车勾选结算（cartIds）与详情立即购买（buySkuId/buyQty）；
  * 展示收货地址、商品明细、金额拆分与留言，提交后创建订单并进入收银台。
  */
-import { computed, ref } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { computed, ref, watch } from "vue";
+import { onLoad, onShow } from "@dcloudio/uni-app";
 import AppPrice from "@/components/AppPrice.vue";
 import ProductThumb from "@/components/ProductThumb.vue";
 import { listMyAddresses } from "@/api/account";
 import { createOrder, previewOrder } from "@/api/order";
-import { openPay, ROUTES } from "@/constants/routes";
+import { STORAGE_KEYS } from "@/constants/storage";
+import { openAddressList, openCouponList, openPay, ROUTES } from "@/constants/routes";
 import { useUserStore } from "@/stores/user";
 import type { AccountAddress } from "@/types/account";
+import type { AccountCoupon } from "@/types/coupon";
 import type { MallOrderPreview, MallOrderSubmitParams } from "@/types/order";
-import { toastComingSoon } from "@/utils/toast";
+import { getStorage, removeStorage } from "@/utils/storage";
 
 const user = useUserStore();
 /** 首屏地址与算价加载中 */
@@ -106,6 +108,10 @@ const preview = ref<MallOrderPreview | null>(null);
 const address = ref<AccountAddress | null>(null);
 /** 买家留言 */
 const remark = ref("");
+/** 选用的用户优惠券主键；空为未选，0 为明确不使用 */
+const accountCouponId = ref<string | null>(null);
+/** 选券展示用快照 */
+const selectedCoupon = ref<AccountCoupon | null>(null);
 /** 从购物车带来的行主键 */
 const cartIds = ref<string[]>([]);
 /** 立即购买带来的 SKU 与数量 */
@@ -129,6 +135,21 @@ const freightText = computed(() => {
   return `¥${n.toFixed(2)}`;
 });
 
+/** 优惠行展示文案 */
+const couponLabel = computed(() => {
+  if (accountCouponId.value === "0") {
+    return "不使用优惠券";
+  }
+  if (selectedCoupon.value?.couponName) {
+    return selectedCoupon.value.couponName;
+  }
+  const amt = Number(preview.value?.couponAmount ?? 0);
+  if (amt > 0) {
+    return `已优惠 ¥${amt.toFixed(2)}`;
+  }
+  return "选择优惠券";
+});
+
 /** 已选地址且算价成功才允许提交 */
 const canSubmit = computed(() => Boolean(address.value?.addressId && preview.value));
 
@@ -137,9 +158,39 @@ function goCart() {
   uni.switchTab({ url: ROUTES.CART });
 }
 
-/** 地址列表页尚未接入，点击仅提示 */
-function pickAddressHint() {
-  toastComingSoon("地址管理");
+/** 打开地址列表（选择模式） */
+function pickAddress() {
+  openAddressList({ pick: true });
+}
+
+/** 打开优惠券选择 */
+function pickCoupon() {
+  const amount = preview.value?.totalAmount ?? 0;
+  openCouponList({ pick: true, orderAmount: amount });
+}
+
+/** 从本地存储读取地址 / 优惠券选择结果 */
+function consumePickResults() {
+  const pickedAddr = getStorage<AccountAddress>(STORAGE_KEYS.CHECKOUT_PICK_ADDRESS, null);
+  if (pickedAddr?.addressId) {
+    address.value = pickedAddr;
+    removeStorage(STORAGE_KEYS.CHECKOUT_PICK_ADDRESS);
+  }
+  const pickedCoupon = getStorage<AccountCoupon | { accountCouponId?: string }>(
+    STORAGE_KEYS.CHECKOUT_PICK_COUPON,
+    null,
+  );
+  if (pickedCoupon) {
+    removeStorage(STORAGE_KEYS.CHECKOUT_PICK_COUPON);
+    const id = String(pickedCoupon.accountCouponId ?? "");
+    if (id === "0") {
+      accountCouponId.value = "0";
+      selectedCoupon.value = null;
+    } else if (id) {
+      accountCouponId.value = id;
+      selectedCoupon.value = pickedCoupon as AccountCoupon;
+    }
+  }
 }
 
 /**
@@ -157,6 +208,9 @@ function buildParams(withAddress: boolean): MallOrderSubmitParams {
     params.cartIds = cartIds.value;
   } else {
     params.items = buyItems.value;
+  }
+  if (accountCouponId.value && accountCouponId.value !== "0") {
+    params.accountCouponId = accountCouponId.value;
   }
   return params;
 }
@@ -231,8 +285,23 @@ async function onSubmit() {
   }
 }
 
+watch(
+  () => [address.value?.addressId, accountCouponId.value],
+  () => {
+    if (!loading.value && (cartIds.value.length || buyItems.value.length)) {
+      runPreview().catch(() => {
+        /* toast from request */
+      });
+    }
+  },
+);
+
 onLoad((q) => {
   bootstrap((q || {}) as Record<string, string | undefined>);
+});
+
+onShow(() => {
+  consumePickResults();
 });
 </script>
 

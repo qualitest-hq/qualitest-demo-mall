@@ -73,6 +73,18 @@ public class AccountCouponResult implements Serializable {
     private BigDecimal discountAmount;
 
     /**
+     * 适用范围：0 全场，1 指定分类，2 指定商品
+     */
+    @Excel(name = "适用范围", readConverterExp = "0=全场,1=指定分类,2=指定商品")
+    private Integer scopeType;
+
+    /**
+     * 适用范围目标 ID，逗号分隔
+     */
+    @Excel(name = "适用范围ID")
+    private String scopeIds;
+
+    /**
      * 有效开始
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -87,9 +99,15 @@ public class AccountCouponResult implements Serializable {
     private Date validEndTime;
 
     /**
-     * 状态（0未使用 1已使用 2已过期）
+     * 使用状态：0 未使用，1 已使用
      */
-    @Excel(name = "状态", readConverterExp = "0=未使用,1=已使用,2=已过期")
+    @Excel(name = "使用状态", readConverterExp = "0=未使用,1=已使用")
+    private Integer useStatus;
+
+    /**
+     * 展示状态：0 未使用，1 已使用，2 已过期（按有效结束时间即时计算）
+     */
+    @Excel(name = "展示状态", readConverterExp = "0=未使用,1=已使用,2=已过期")
     private Integer couponStatus;
 
     /**

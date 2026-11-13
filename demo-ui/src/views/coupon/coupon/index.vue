@@ -79,6 +79,12 @@
           <el-tag type="success">{{ scope.row.usedCount }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="适用范围" align="center" key="scopeType" prop="scopeType" width="100" v-if="columnVisible['scopeType']">
+        <template #default="scope">
+          <span>{{ scopeTypeLabel(scope.row.scopeType) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="范围ID" align="center" key="scopeIds" prop="scopeIds" min-width="100" v-if="columnVisible['scopeIds']" show-overflow-tooltip />
       <el-table-column label="有效开始时间" align="center" key="validStartTime" prop="validStartTime" width="180" v-if="columnVisible['validStartTime']">
         <template #default="scope">
           <span>{{ parseTime(scope.row.validStartTime, '{y}-{m}-{d}') }}</span>
@@ -153,6 +159,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
+            <el-form-item label="适用范围" prop="scopeType">
+              <el-select v-model="form.scopeType" placeholder="请选择" style="width: 100%">
+                <el-option :value="0" label="全场" />
+                <el-option :value="1" label="指定分类" />
+                <el-option :value="2" label="指定商品" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="范围ID" prop="scopeIds">
+              <el-input v-model="form.scopeIds" placeholder="分类或商品ID，逗号分隔；全场可空" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
             <el-form-item label="有效开始时间" prop="validStartTime">
               <el-date-picker clearable
                 v-model="form.validStartTime"
@@ -213,6 +233,8 @@ const columns = ref([
   { key: 'totalCount', label: '发放总量', visible: true },
   { key: 'receiveCount', label: '已领取', visible: true },
   { key: 'usedCount', label: '已使用', visible: true },
+  { key: 'scopeType', label: '适用范围', visible: true },
+  { key: 'scopeIds', label: '范围ID', visible: false },
   { key: 'validStartTime', label: '有效开始时间', visible: true },
   { key: 'validEndTime', label: '有效结束时间', visible: true },
   { key: 'status', label: '状态', visible: true },
@@ -267,6 +289,8 @@ function reset() {
     totalCount: null,
     receiveCount: null,
     usedCount: null,
+    scopeType: 0,
+    scopeIds: '',
     validStartTime: null,
     validEndTime: null,
     status: 0,
@@ -276,6 +300,13 @@ function reset() {
     remark: null
   }
   proxy.resetForm("couponRef")
+}
+
+/** 适用范围文案 */
+function scopeTypeLabel(type) {
+  if (type === 1) return '指定分类'
+  if (type === 2) return '指定商品'
+  return '全场'
 }
 
 /** 搜索按钮操作 */

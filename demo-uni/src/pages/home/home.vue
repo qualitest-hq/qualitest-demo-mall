@@ -65,7 +65,8 @@ import AppPrice from "@/components/AppPrice.vue";
 import ProductCard from "@/components/ProductCard.vue";
 import { listEnabledCategories, listProducts } from "@/api/product";
 import { appConfig } from "@/config/app";
-import { ROUTES, openProduct, openSearch } from "@/constants/routes";
+import { ROUTES, openCouponList, openProduct, openSearch } from "@/constants/routes";
+import { useUserStore } from "@/stores/user";
 import { STORAGE_KEYS } from "@/constants/storage";
 import type { MallCategory, MallProduct } from "@/types/product";
 import { filterInStockProducts, productInitial } from "@/utils/product";
@@ -84,6 +85,8 @@ interface CategoryTile {
   /** 特殊动作，如领券占位 */
   action?: "coupon";
 }
+
+const user = useUserStore();
 
 /** 接口返回的分类列表 */
 const categories = ref<MallCategory[]>([]);
@@ -144,7 +147,11 @@ function onMsg() {
  */
 function onCategoryTile(item: CategoryTile) {
   if (item.action === "coupon") {
-    uni.showToast({ title: "优惠券暂未开放", icon: "none" });
+    if (!user.isLoggedIn) {
+      uni.navigateTo({ url: ROUTES.LOGIN });
+      return;
+    }
+    openCouponList();
     return;
   }
   if (item.categoryId) {

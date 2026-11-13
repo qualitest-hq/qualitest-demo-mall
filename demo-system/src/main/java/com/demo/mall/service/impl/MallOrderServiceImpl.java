@@ -13,6 +13,7 @@ import com.demo.common.utils.PageUtils;
 import com.demo.common.utils.StringUtils;
 import com.demo.coupon.domain.AccountCoupon;
 import com.demo.coupon.mapper.AccountCouponMapper;
+import com.demo.coupon.support.CouponScopeSupport;
 import com.demo.mall.apiParams.MallOrderApiParams;
 import com.demo.mall.apiParams.MallOrderCancelApiParams;
 import com.demo.mall.apiParams.MallOrderItemApiParams;
@@ -515,6 +516,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
         OrderLine line = new OrderLine();
         line.skuId = sku.getSkuId();
         line.productId = product.getProductId();
+        line.categoryId = product.getCategoryId();
         line.productName = product.getProductName();
         line.skuName = sku.getSkuName();
         line.salePrice = salePrice;
@@ -542,6 +544,9 @@ public class MallOrderServiceImpl implements IMallOrderService {
         ctx.payAmount = ctx.totalAmount.subtract(ctx.discountAmount).add(ctx.freightAmount).setScale(2, RoundingMode.HALF_UP);
     }
 
+    /**
+     * 校验并核销选用的用户券：归属、未使用、未过期、门槛与适用范围，写入优惠金额
+     */
     private void resolveCoupon(Long accountId, Long accountCouponId, OrderBuildContext ctx) {
         if (accountCouponId == null || accountCouponId <= 0) {
             return;
@@ -553,7 +558,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
         if (!accountId.equals(accountCoupon.getAccountId())) {
             throw new ServiceException("无权使用该优惠券", HttpStatus.FORBIDDEN);
         }
-        if (accountCoupon.getCouponStatus() != null && accountCoupon.getCouponStatus() != 0) {
+        if (accountCoupon.getUseStatus() != null && accountCoupon.getUseStatus() != 0) {
             throw new ServiceException("优惠券不可用");
         }
         Long occupiedOrderId = accountCoupon.getOrderId();
@@ -571,6 +576,20 @@ public class MallOrderServiceImpl implements IMallOrderService {
                 ? accountCoupon.getThresholdAmount() : BigDecimal.ZERO;
         if (ctx.totalAmount.compareTo(threshold) < 0) {
             throw new ServiceException("未达到优惠券使用门槛");
+        }
+        List<Long> productIds = new ArrayList<>();
+        List<Long> categoryIds = new ArrayList<>();
+        for (OrderLine line : ctx.lines) {
+            if (line.productId != null) {
+                productIds.add(line.productId);
+            }
+            if (line.categoryId != null) {
+                categoryIds.add(line.categoryId);
+            }
+        }
+        if (!CouponScopeSupport.matches(accountCoupon.getScopeType(), accountCoupon.getScopeIds(),
+                productIds, categoryIds)) {
+            throw new ServiceException("优惠券不适用于当前商品");
         }
         BigDecimal discount = accountCoupon.getDiscountAmount() != null
                 ? accountCoupon.getDiscountAmount() : BigDecimal.ZERO;
@@ -766,6 +785,7 @@ public class MallOrderServiceImpl implements IMallOrderService {
     private static class OrderLine {
         private Long skuId;
         private Long productId;
+        private Long categoryId;
         private String productName;
         private String skuName;
         private BigDecimal salePrice;

@@ -6,8 +6,8 @@
 -- 订单 7001（待付款）:
 --   明细: 2122×1(198) + 2112×1(99) = totalAmount 297.00
 --   券 6001: couponAmount 10, freight 12, payAmount 299.00
---   account_coupon 6001: order_id=7001, coupon_status=0（占券未核销）
--- 预期: pay 前 coupon_status=0；cancel/关单后 order_id 清空
+--   account_coupon 6001: order_id=7001, use_status=0（占券未核销）
+-- 预期: pay 前 use_status=0；cancel/关单后 order_id 清空
 -- ============================================================================
 
 SET NAMES utf8mb4;

@@ -38,9 +38,7 @@ public class MallOrderSubmitApiParams implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long addressId;
 
-    /**
-     * 账号优惠券 ID（不使用传 0 或不传）
-     */
+    /** 用户券 ID；不使用传 0 或不传 */
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long accountCouponId;
 

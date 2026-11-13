@@ -32,7 +32,7 @@ public class CouponApiController extends ApiController {
     private final ICouponService couponService;
 
     /**
-     * 可领取的券模板列表
+     * 分页查询可领取的券模板
      */
     @GetMapping("/available")
     public R<TableData<CouponApiResult>> available(CouponApiParams params) {
@@ -47,7 +47,7 @@ public class CouponApiController extends ApiController {
     }
 
     /**
-     * 领取优惠券
+     * 领取指定模板优惠券，写入用户券并快照适用范围
      */
     @PostMapping("/{couponId}/receive")
     public R<AccountCouponApiResult> receive(@PathVariable("couponId") Long couponId) {

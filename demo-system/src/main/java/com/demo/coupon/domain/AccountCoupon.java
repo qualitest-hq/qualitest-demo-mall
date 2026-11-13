@@ -66,6 +66,16 @@ public class AccountCoupon extends BaseEntity {
     private BigDecimal discountAmount;
 
     /**
+     * 适用范围：0 全场，1 指定分类，2 指定商品（领取时从模板快照）
+     */
+    private Integer scopeType;
+
+    /**
+     * 适用范围目标 ID，逗号分隔（领取时从模板快照）
+     */
+    private String scopeIds;
+
+    /**
      * 有效开始
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -78,9 +88,9 @@ public class AccountCoupon extends BaseEntity {
     private Date validEndTime;
 
     /**
-     * 状态（0未使用 1已使用 2已过期）
+     * 使用状态：0 未使用，1 已使用（过期不落库，按有效结束时间判断）
      */
-    private Integer couponStatus;
+    private Integer useStatus;
 
     /**
      * 领取时间

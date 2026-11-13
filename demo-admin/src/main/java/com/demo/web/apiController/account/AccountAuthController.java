@@ -12,6 +12,8 @@ import com.demo.common.core.domain.R;
 import com.demo.framework.web.service.AccountLoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @api.group 客户端.账号.认证
  */
+@Validated
 @RestController
 @RequestMapping("/api/account/auth")
 @AllArgsConstructor
@@ -32,29 +35,25 @@ public class AccountAuthController extends ApiController {
     private final AccountLoginService accountLoginService;
 
     /**
-     * 客户端用户注册
+     * 注册；校验手机号格式与密码后创建账号并返回令牌
      *
-     * @param params 注册信息（mobile、password、nickName 可选）
-     * @return accountId 与 token
      * @api.group 客户端.账号.认证
      */
     @Anonymous
     @PostMapping("/register")
-    public R<AccountAuthApiResult> register(@RequestBody AccountRegisterApiParams params) {
+    public R<AccountAuthApiResult> register(@Valid @RequestBody AccountRegisterApiParams params) {
         AccountAuthApiResult result = accountLoginService.register(params.getMobile(), params.getPassword(), params.getNickName());
         return ok(result);
     }
 
     /**
-     * 客户端用户登录
+     * 登录；校验手机号格式与密码后返回令牌
      *
-     * @param params 登录信息（mobile、password）
-     * @return accountId、token、nickName
      * @api.group 客户端.账号.认证
      */
     @Anonymous
     @PostMapping("/login")
-    public R<AccountAuthApiResult> login(@RequestBody AccountLoginApiParams params) {
+    public R<AccountAuthApiResult> login(@Valid @RequestBody AccountLoginApiParams params) {
         AccountAuthApiResult result = accountLoginService.login(params.getMobile(), params.getPassword());
         return ok(result);
     }

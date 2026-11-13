@@ -69,6 +69,16 @@ public class Coupon extends BaseEntity {
     private Integer usedCount;
 
     /**
+     * 适用范围：0 全场，1 指定分类，2 指定商品
+     */
+    private Integer scopeType;
+
+    /**
+     * 适用范围目标 ID，逗号分隔；全场可空
+     */
+    private String scopeIds;
+
+    /**
      * 有效开始时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

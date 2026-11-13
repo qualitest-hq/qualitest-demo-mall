@@ -1,6 +1,8 @@
 package com.demo.account.apiParams;
 
+import com.demo.common.validation.Mobile;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,9 +36,9 @@ public class AccountAddressMySaveApiParams implements Serializable {
      */
     private String receiverName;
 
-    /**
-     * 收货人手机
-     */
+    /** 收货人手机号 */
+    @NotBlank(message = "收货人手机不能为空")
+    @Mobile
     private String receiverPhone;
 
     /**

@@ -12,6 +12,8 @@
         <result property="totalCount" column="total_count"/>
         <result property="receiveCount" column="receive_count"/>
         <result property="usedCount" column="used_count"/>
+        <result property="scopeType" column="scope_type"/>
+        <result property="scopeIds" column="scope_ids"/>
         <result property="validStartTime" column="valid_start_time"/>
         <result property="validEndTime" column="valid_end_time"/>
         <result property="status" column="status"/>
@@ -29,6 +31,8 @@
                total_count,
                receive_count,
                used_count,
+               scope_type,
+               scope_ids,
                valid_start_time,
                valid_end_time,
                status,
@@ -47,6 +51,8 @@
                c.total_count      as totalCount,
                c.receive_count    as receiveCount,
                c.used_count       as usedCount,
+               c.scope_type       as scopeType,
+               c.scope_ids        as scopeIds,
                c.valid_start_time as validStartTime,
                c.valid_end_time   as validEndTime,
                c.status           as status,
@@ -83,6 +89,8 @@
         c.total_count as totalCount,
         c.receive_count as receiveCount,
         c.used_count as usedCount,
+        c.scope_type as scopeType,
+        c.scope_ids as scopeIds,
         c.valid_start_time as validStartTime,
         c.valid_end_time as validEndTime,
         c.status as status,
@@ -109,6 +117,8 @@
                c.total_count      as totalCount,
                c.receive_count    as receiveCount,
                c.used_count       as usedCount,
+               c.scope_type       as scopeType,
+               c.scope_ids        as scopeIds,
                c.valid_start_time as validStartTime,
                c.valid_end_time   as validEndTime,
                c.status           as status,
@@ -130,6 +140,8 @@
                c.total_count       as totalCount,
                c.receive_count     as receiveCount,
                c.used_count        as usedCount,
+               c.scope_type        as scopeType,
+               c.scope_ids         as scopeIds,
                c.valid_start_time  as validStartTime,
                c.valid_end_time    as validEndTime,
                c.status            as status,
@@ -161,6 +173,8 @@
                c.total_count      as totalCount,
                c.receive_count    as receiveCount,
                c.used_count       as usedCount,
+               c.scope_type       as scopeType,
+               c.scope_ids        as scopeIds,
                c.valid_start_time as validStartTime,
                c.valid_end_time   as validEndTime,
                c.status           as status,
@@ -195,6 +209,8 @@
         c.total_count,
         c.receive_count,
         c.used_count,
+        c.scope_type,
+        c.scope_ids,
         c.valid_start_time,
         c.valid_end_time,
         c.status,
@@ -237,6 +253,12 @@
             </if>
             <if test="usedCount != null">
                 used_count,
+            </if>
+            <if test="scopeType != null">
+                scope_type,
+            </if>
+            <if test="scopeIds != null">
+                scope_ids,
             </if>
             <if test="validStartTime != null">
                 valid_start_time,
@@ -282,6 +304,12 @@
             <if test="usedCount != null">
                 #{usedCount},
             </if>
+            <if test="scopeType != null">
+                #{scopeType},
+            </if>
+            <if test="scopeIds != null">
+                #{scopeIds},
+            </if>
             <if test="validStartTime != null">
                 #{validStartTime},
             </if>
@@ -326,6 +354,12 @@
             </if>
             <if test="usedCount != null">
                 used_count = #{usedCount},
+            </if>
+            <if test="scopeType != null">
+                scope_type = #{scopeType},
+            </if>
+            <if test="scopeIds != null">
+                scope_ids = #{scopeIds},
             </if>
             <if test="validStartTime != null">
                 valid_start_time = #{validStartTime},
@@ -386,11 +420,13 @@
           and del_flag = 0
     </update>
 
+    <!-- 领取库存条件自增：total_count=0 表示不限量 -->
     <update id="incrementReceiveCount">
         update coupon
         set receive_count = receive_count + 1,
             update_time = now()
         where coupon_id = #{couponId}
           and del_flag = 0
+          and (total_count = 0 or receive_count &lt; total_count)
     </update>
 </mapper>

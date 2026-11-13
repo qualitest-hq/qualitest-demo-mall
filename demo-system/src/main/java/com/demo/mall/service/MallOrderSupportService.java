@@ -118,7 +118,7 @@ public class MallOrderSupportService {
         AccountCoupon update = new AccountCoupon();
         update.setAccountCouponId(accountCoupon.getAccountCouponId());
         update.setOrderId(0L);
-        update.setCouponStatus(0);
+        update.setUseStatus(0);
         update.setUseTime(null);
         update.setUpdateTime(DateUtils.getNowDate());
         accountCouponMapper.updateAccountCoupon(update);
@@ -138,7 +138,7 @@ public class MallOrderSupportService {
         Date now = DateUtils.getNowDate();
         AccountCoupon update = new AccountCoupon();
         update.setAccountCouponId(accountCoupon.getAccountCouponId());
-        update.setCouponStatus(1);
+        update.setUseStatus(1);
         update.setUseTime(now);
         update.setUpdateTime(now);
         accountCouponMapper.updateAccountCoupon(update);

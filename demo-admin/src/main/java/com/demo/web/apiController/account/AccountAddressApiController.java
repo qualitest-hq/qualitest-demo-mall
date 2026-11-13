@@ -7,7 +7,9 @@ import com.demo.account.service.IAccountAddressService;
 import com.demo.common.core.controller.ApiController;
 import com.demo.common.core.domain.R;
 import com.demo.common.core.page.TableData;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +29,7 @@ import java.util.List;
  * @author demo
  * @date 2026-06-20
  */
+@Validated
 @RestController
 @RequestMapping("/api/account/accountAddress")
 @AllArgsConstructor
@@ -59,19 +62,19 @@ public class AccountAddressApiController extends ApiController {
     }
 
     /**
-     * 新增当前用户地址
+     * 新增收货地址；校验手机号格式，超上限拒绝
      */
     @PostMapping("/my")
-    public R<AccountAddressApiResult> myAdd(@RequestBody AccountAddressMySaveApiParams params) {
+    public R<AccountAddressApiResult> myAdd(@Valid @RequestBody AccountAddressMySaveApiParams params) {
         Long accountId = getAccountId();
         return ok(accountAddressService.saveAccountAddressForAccount(accountId, params));
     }
 
     /**
-     * 修改当前用户地址
+     * 修改收货地址；校验手机号格式
      */
     @PutMapping("/my")
-    public R<Void> myEdit(@RequestBody AccountAddressMySaveApiParams params) {
+    public R<Void> myEdit(@Valid @RequestBody AccountAddressMySaveApiParams params) {
         Long accountId = getAccountId();
         accountAddressService.updateAccountAddressForAccount(accountId, params);
         return ok();

@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.demo.common.utils.SecurityUtils;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import com.demo.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.demo.coupon.apiParams.AccountCouponApiParams;
 import com.demo.coupon.result.AccountCouponResult;
 import com.demo.coupon.apiResult.AccountCouponApiResult;
 import com.demo.coupon.service.IAccountCouponService;
+import com.demo.coupon.support.CouponScopeSupport;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -73,11 +75,26 @@ public class AccountCouponServiceImpl implements IAccountCouponService {
     }
 
     /**
-     * 查询账号优惠券ApiResult列表（客户端）
+     * 查询我的优惠券列表；传入订单金额时可再按商品/分类过滤适用范围
      */
     @Override
     public List<AccountCouponApiResult> selectAccountCouponApiResultList(AccountCouponApiParams params) {
-        return accountCouponMapper.selectAccountCouponApiResultList(params);
+        List<AccountCouponApiResult> list = accountCouponMapper.selectAccountCouponApiResultList(params);
+        if (params == null || params.getOrderAmount() == null) {
+            return list;
+        }
+        boolean filterScope = (params.getProductIds() != null && !params.getProductIds().isEmpty())
+                || (params.getCategoryIds() != null && !params.getCategoryIds().isEmpty());
+        if (!filterScope) {
+            return list;
+        }
+        return list.stream()
+                .filter(item -> CouponScopeSupport.matches(
+                        item.getScopeType(),
+                        item.getScopeIds(),
+                        params.getProductIds(),
+                        params.getCategoryIds()))
+                .collect(Collectors.toList());
     }
 
     /**

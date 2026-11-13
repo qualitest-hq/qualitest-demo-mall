@@ -24,6 +24,6 @@ INSERT INTO `account_address` (`address_id`, `account_id`, `receiver_name`, `rec
 (4002, 30002, '李四', '13800000002', '广东省', '广州市', '天河区', '体育西路100号', '', 1, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed'),
 (4003, 30003, '王五', '13800000003', '北京市', '北京市', '朝阳区', '建国路88号', '', 1, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00', 'seed');
 
--- 账号1 预领 coupon_id=3001（account_coupon_id=6001）
-INSERT INTO `account_coupon` (`account_coupon_id`, `coupon_id`, `account_id`, `coupon_name`, `threshold_amount`, `discount_amount`, `valid_start_time`, `valid_end_time`, `coupon_status`, `receive_time`, `use_time`, `order_id`, `del_flag`, `create_time`, `update_time`) VALUES
-(6001, 3001, 30001, '满100减10', 100.00, 10.00, '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, '2026-06-21 10:00:00', NULL, 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00');
+-- 账号1 预领 coupon_id=3001（account_coupon_id=6001，全场）
+INSERT INTO `account_coupon` (`account_coupon_id`, `coupon_id`, `account_id`, `coupon_name`, `threshold_amount`, `discount_amount`, `scope_type`, `scope_ids`, `valid_start_time`, `valid_end_time`, `use_status`, `receive_time`, `use_time`, `order_id`, `del_flag`, `create_time`, `update_time`) VALUES
+(6001, 3001, 30001, '满100减10', 100.00, 10.00, 0, '', '2026-01-01 00:00:00', '2027-12-31 23:59:59', 0, '2026-06-21 10:00:00', NULL, 0, 0, '2026-06-21 10:00:00', '2026-06-21 10:00:00');
