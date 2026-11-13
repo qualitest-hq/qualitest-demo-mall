@@ -6,6 +6,12 @@ interface ImportMetaEnv {
   readonly VITE_API_BASE_URL: string;
   /** 管理端入口 URL；空则不渲染互跳 */
   readonly VITE_ADMIN_URL: string;
+  /** package.json version，构建时写入 */
+  readonly VITE_APP_VERSION: string;
+  /** 构建时间 ISO 字符串 */
+  readonly VITE_BUILD_TIME: string;
+  /** CI / Docker 注入的 git commit sha；本地可为空 */
+  readonly VITE_GIT_SHA: string;
 }
 
 interface ImportMeta {

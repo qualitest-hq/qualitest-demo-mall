@@ -1,6 +1,9 @@
 import { createSSRApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
+import { logBuildInfo } from "@/utils/buildInfo";
+
+logBuildInfo();
 
 /**
  * 创建 Vue 应用并安装 Pinia 全局状态。

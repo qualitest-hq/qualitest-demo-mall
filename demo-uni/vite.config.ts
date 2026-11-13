@@ -1,12 +1,21 @@
 import { defineConfig } from "vite";
 import uni from "@dcloudio/vite-plugin-uni";
+import { readFileSync } from "node:fs";
 import { fileURLToPath, URL } from "node:url";
 
 /** 源码根目录绝对路径，供别名解析 */
 const srcDir = fileURLToPath(new URL("./src", import.meta.url));
+const pkg = JSON.parse(
+  readFileSync(fileURLToPath(new URL("./package.json", import.meta.url)), "utf-8"),
+);
 
 /** 与 manifest.json h5.router.base、演示站 Nginx /h5/ 一致 */
 const h5Base = "/h5/";
+
+// 构建期写入 import.meta.env（Docker 可再注入 VITE_GIT_SHA）
+process.env.VITE_APP_VERSION = process.env.VITE_APP_VERSION || pkg.version;
+process.env.VITE_BUILD_TIME = process.env.VITE_BUILD_TIME || new Date().toISOString();
+process.env.VITE_GIT_SHA = process.env.VITE_GIT_SHA || process.env.GITHUB_SHA || "";
 
 /**
  * Vite 构建与开发服务器配置。

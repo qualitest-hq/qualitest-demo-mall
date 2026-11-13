@@ -218,6 +218,8 @@ jobs:
           file: ./deploy/docker/Dockerfile.web
           push: true
           platforms: linux/amd64
+          build-args: |
+            VITE_GIT_SHA=${{ github.sha }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=qualitest-demo-mall-web
@@ -255,6 +257,8 @@ jobs:
           platforms: linux/amd64
           provenance: false
           sbom: false
+          build-args: |
+            VITE_GIT_SHA=${{ github.sha }}
           tags: ${{ steps.meta-acr.outputs.tags }}
           labels: ${{ steps.meta-acr.outputs.labels }}
           cache-from: type=gha,scope=qualitest-demo-mall-web

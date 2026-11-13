@@ -1,11 +1,18 @@
 import { defineConfig, loadEnv } from 'vite'
 import path from 'path'
+import { readFileSync } from 'node:fs'
 import createVitePlugins from './vite/plugins'
 
 const baseUrl = 'http://127.0.0.1:8801' // demo-admin 后端接口（与主工程 8800 隔离）
+const pkg = JSON.parse(readFileSync(path.resolve(__dirname, 'package.json'), 'utf-8'))
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
+  // 构建期写入 import.meta.env（Docker 可再注入 VITE_GIT_SHA）
+  process.env.VITE_APP_VERSION = process.env.VITE_APP_VERSION || pkg.version
+  process.env.VITE_BUILD_TIME = process.env.VITE_BUILD_TIME || new Date().toISOString()
+  process.env.VITE_GIT_SHA = process.env.VITE_GIT_SHA || process.env.GITHUB_SHA || ''
+
   const env = loadEnv(mode, process.cwd())
   const { VITE_APP_ENV } = env
   return {

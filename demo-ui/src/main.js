@@ -26,6 +26,7 @@ import elementIcons from '@/components/SvgIcon/svgicon'
 import './permission' // permission control
 
 import { useDict } from '@/utils/dict'
+import { logBuildInfo } from '@/utils/buildInfo'
 import { getConfigKey } from "@/api/system/config"
 import { parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels } from '@/utils/qualitest'
 
@@ -84,4 +85,5 @@ app.use(ElementPlus, {
   size: Cookies.get('size') || 'default'
 })
 
+logBuildInfo()
 app.mount('#app')
