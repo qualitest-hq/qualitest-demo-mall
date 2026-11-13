@@ -92,6 +92,15 @@
         </view>
         <text class="arrow">›</text>
       </view>
+      <!-- #ifdef H5 -->
+      <view v-if="adminUrl" class="item" @click="goAdmin">
+        <view>
+          <text class="item-title">管理端</text>
+          <text class="item-desc">运营后台 · 测试场景</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <!-- #endif -->
     </view>
 
     <wd-button
@@ -106,6 +115,8 @@
     >
       退出登录
     </wd-button>
+
+    <BeianFooter />
   </view>
 </template>
 
@@ -130,10 +141,14 @@ import {
   ROUTES,
 } from "@/constants/routes";
 import { useUserStore } from "@/stores/user";
+import BeianFooter from "@/components/BeianFooter.vue";
+import { openExternalUrl } from "@/utils/openExternal";
 import { toastComingSoon } from "@/utils/toast";
 
 const user = useUserStore();
 const loggingOut = ref(false);
+/** 管理端互跳地址；空则不展示 */
+const adminUrl = (import.meta.env.VITE_ADMIN_URL || "").trim();
 
 /** 登录状态说明文案 */
 const loginHint = computed(() =>
@@ -206,6 +221,11 @@ function goRefunds() {
 /** 进入商家中心（未登录会先跳登录） */
 function goMerchant() {
   openMerchantCenter();
+}
+
+/** 打开管理端（仅 H5；不共享登录态） */
+function goAdmin() {
+  openExternalUrl(adminUrl);
 }
 
 /** 请求服务端退出并清本地登录态 */

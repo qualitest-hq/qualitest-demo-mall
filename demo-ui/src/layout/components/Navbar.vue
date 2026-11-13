@@ -40,6 +40,9 @@
             <router-link to="/user/profile">
               <el-dropdown-item>个人中心</el-dropdown-item>
             </router-link>
+            <el-dropdown-item v-if="h5Url" command="openH5">
+              <span>进入商城 H5</span>
+            </el-dropdown-item>
             <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
                 <span>布局设置</span>
             </el-dropdown-item>
@@ -78,13 +81,22 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const lockStore = useLockStore()
 const settingsStore = useSettingsStore()
+const h5Url = (import.meta.env.VITE_H5_URL || "").trim()
 
 function toggleSideBar() {
   appStore.toggleSideBar()
 }
 
+function openH5() {
+  if (!h5Url) return
+  window.open(h5Url, "_blank", "noopener,noreferrer")
+}
+
 function handleCommand(command) {
   switch (command) {
+    case "openH5":
+      openH5()
+      break
     case "setLayout":
       setLayout()
       break

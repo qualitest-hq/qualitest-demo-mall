@@ -69,5 +69,13 @@
     "uniStatistics": {  
         "enable": false
     },
+    /* H5：生产挂演示站 /h5/（与 vite base 一致）；开发仍用根路径由 vite mode 控制 */
+    "h5" : {
+        "router" : {
+            "mode" : "hash",
+            "base" : "/h5/"
+        },
+        "title" : "衡物"
+    },
     "vueVersion" : "3"
 }

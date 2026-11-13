@@ -46,6 +46,10 @@
     </view>
 
     <text class="foot">演示账号已预填，勾选协议后即可登录</text>
+    <!-- #ifdef H5 -->
+    <text v-if="adminUrl" class="cross-link" @click="goAdmin">进入管理端</text>
+    <!-- #endif -->
+    <BeianFooter />
   </view>
 </template>
 
@@ -61,6 +65,8 @@ import { appConfig } from "@/config/app";
 import { DEMO_ACCOUNT } from "@/constants/demo";
 import { openLegalPrivacy, openLegalUserAgreement, ROUTES } from "@/constants/routes";
 import { useUserStore } from "@/stores/user";
+import BeianFooter from "@/components/BeianFooter.vue";
+import { openExternalUrl } from "@/utils/openExternal";
 
 /** 登录方式：密码或短信验证码 */
 type LoginMode = "password" | "sms";
@@ -78,6 +84,12 @@ const smsCode = ref("");
 const agreed = ref(true);
 /** 提交中，用于禁用重复点击 */
 const submitting = ref(false);
+/** 管理端互跳地址；空则不展示 */
+const adminUrl = (import.meta.env.VITE_ADMIN_URL || "").trim();
+
+function goAdmin() {
+  openExternalUrl(adminUrl);
+}
 
 /** 协议链接占位：正式协议页尚未接入时只提示 */
 function toastLegal(name: string) {
@@ -252,5 +264,13 @@ async function onSubmit() {
   font-size: 22rpx;
   color: #aaa;
   line-height: 1.5;
+}
+
+.cross-link {
+  display: block;
+  margin-top: 20rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: $color-brand;
 }
 </style>

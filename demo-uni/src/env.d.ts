@@ -4,6 +4,8 @@
 interface ImportMetaEnv {
   /** 后端接口根地址，请求封装拼在相对路径前面 */
   readonly VITE_API_BASE_URL: string;
+  /** 管理端入口 URL；空则不渲染互跳 */
+  readonly VITE_ADMIN_URL: string;
 }
 
 interface ImportMeta {

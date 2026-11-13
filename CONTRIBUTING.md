@@ -19,7 +19,7 @@
 
 ## 开发摘要
 
-- JDK 17+、Maven 3+、MySQL 8+、Redis；前端见 `demo-ui/`（Node / pnpm）  
+- JDK 17+、Maven 3+、MySQL 8+、Redis；管理端 `demo-ui/`、C 端 `demo-uni/`（Node / pnpm）  
 - 一键：`scripts/quick-start`（见 README）；细节见 [`docs/deploy.md`](./docs/deploy.md)  
 - 请勿提交 `.env`、密钥、构建产物
 

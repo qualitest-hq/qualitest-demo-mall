@@ -25,7 +25,9 @@ scripts\quick-start.bat
 chmod +x scripts/quick-start.sh && ./scripts/quick-start.sh
 ```
 
-- 管理端 UI：**http://localhost:5181**（账号 **`admin` / `admin123`**，仅本地）。公网靶场：[https://demo.qualitesthq.cn/](https://demo.qualitesthq.cn/)（访客账号与质衡演示站相同：`demo` / `demo123`）
+- 管理端 UI：**http://localhost:5181**（账号 **`admin` / `admin123`**，仅本地）
+- 商城 H5：**http://localhost:5181/h5/**（与管理端同 Nginx；登录页 / 登录后可互跳）
+- 公网靶场：管理端 [https://demo.qualitesthq.cn/](https://demo.qualitesthq.cn/) · 商城 H5 [https://demo.qualitesthq.cn/h5/](https://demo.qualitesthq.cn/h5/)（访客账号与质衡演示站相同：`demo` / `demo123`；C 端买家见 `demo-uni` 预填）
 - Swagger / 质衡 `baseUrl`：**http://localhost:8801**
 - 默认宿主机端口避开主仓：Web **5181**、MySQL **3307**、Redis **6380**（容器内 Web Nginx 同为 5181）
 - 仅依赖：`docker compose up -d mysql redis`
@@ -99,7 +101,6 @@ curl -s -X POST "$BASE/web/test/scenario/load/S01" -H "Authorization: Bearer $TO
 ## 参考
 
 - Compose 部署：[docs/deploy.md](./docs/deploy.md)
-- Compose 测试指南：[docs/compose-测试指南.md](./docs/compose-测试指南.md)
 - 商城靶场前后端联合路线图：[docs/roadmap.md](./docs/roadmap.md)
 - [AI 测试流提示集](docs/ai-test-flow-prompts.md)
 - 场景元数据：`sql/seed/scenarios/manifest.json`

@@ -27,6 +27,7 @@ on:
       - "demo-system/**"
       - "test-support-starter/**"
       - "demo-ui/**"
+      - "demo-uni/**"
       - "sql/seed/**"
       - ".github/workflows/ghcr.yml"
   workflow_dispatch:
@@ -91,6 +92,7 @@ jobs:
               - 'deploy/nginx/**'
               - 'docker-compose.yml'
               - 'demo-ui/**'
+              - 'demo-uni/**'
               - '.github/workflows/ghcr.yml'
             mysql:
               - 'deploy/docker/Dockerfile.mysql'

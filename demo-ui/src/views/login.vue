@@ -56,6 +56,9 @@
           <router-link class="link-type" :to="'/register'">立即注册</router-link>
         </div>
       </el-form-item>
+      <div v-if="h5Url" class="cross-link">
+        <a :href="h5Url" target="_blank" rel="noopener noreferrer">进入商城 H5</a>
+      </div>
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
@@ -74,6 +77,7 @@ import defaultSettings from '@/settings'
 import IcpBeian from '@/components/IcpBeian/index.vue'
 
 const title = import.meta.env.VITE_APP_TITLE
+const h5Url = (import.meta.env.VITE_H5_URL || "").trim()
 const footerContent = defaultSettings.footerContent
 const userStore = useUserStore()
 const route = useRoute()
@@ -234,6 +238,19 @@ getCookie()
 .login-code-img {
   height: 40px;
   padding-left: 12px;
+}
+.cross-link {
+  width: 100%;
+  margin: 0 0 20px;
+  text-align: center;
+  a {
+    font-size: 13px;
+    color: #409eff;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
 }
 
 html.dark .login {

@@ -6,7 +6,7 @@
 
 | 服务 | 默认端口 |
 |------|----------|
-| 管理端 UI（Nginx） | **5181** |
+| 管理端 UI + 商城 H5（Nginx） | **5181**（H5 路径 **/h5/**） |
 | API / Swagger | **8801** |
 | MySQL | **3307** |
 | Redis | **6380** |
@@ -111,6 +111,7 @@ docker compose pull mysql app web
 docker compose up -d
 docker compose ps
 curl -fsS -D - -o /dev/null http://localhost:5181/
+curl -fsS -D - -o /dev/null http://localhost:5181/h5/
 ```
 
 **Windows PowerShell**
@@ -123,6 +124,7 @@ docker compose pull mysql app web
 docker compose up -d
 docker compose ps
 curl.exe -fsS -D - -o NUL http://localhost:5181/
+curl.exe -fsS -D - -o NUL http://localhost:5181/h5/
 ```
 
 **Windows 命令提示符**
@@ -135,6 +137,7 @@ docker compose pull mysql app web
 docker compose up -d
 docker compose ps
 curl.exe -fsS -D - -o NUL http://localhost:5181/
+curl.exe -fsS -D - -o NUL http://localhost:5181/h5/
 ```
 
 `pull` 失败时执行 `docker compose up -d --build`。响应头为 `HTTP/1.1 200` 后打开 UI。默认镜像（匿名，不用登录）：
@@ -147,8 +150,9 @@ GHCR 备份：`ghcr.io/qualitest-hq/qualitest-demo-mall-app|web|mysql`。
 
 改代码时在仓库目录执行 `docker compose up -d --build`。
 
-- UI：**http://localhost:5181**，账号 **`admin` / `admin123`**（**仅本地 / 私有环境**）；另有 **`demo` / `demo123`**（切场景用）
-- **公网靶场**：[https://demo.qualitesthq.cn/](https://demo.qualitesthq.cn/) · 访客 **`demo` / `demo123`**（勿公布运维账号；运维口令只放私有演示机文档）。登录页生产构建**不预填**账号密码
+- 管理端 UI：**http://localhost:5181**，账号 **`admin` / `admin123`**（**仅本地 / 私有环境**）；另有 **`demo` / `demo123`**（切场景用）
+- 商城 H5：**http://localhost:5181/h5/**（与管理端同镜像；两端登录页 / 登录后可互跳，不共享 Token）
+- **公网靶场**：管理端 [https://demo.qualitesthq.cn/](https://demo.qualitesthq.cn/) · 商城 H5 [https://demo.qualitesthq.cn/h5/](https://demo.qualitesthq.cn/h5/) · 访客 **`demo` / `demo123`**（勿公布运维账号；运维口令只放私有演示机文档）。管理端登录页生产构建**不预填**账号密码
 - Swagger：**http://localhost:8801/swagger-ui.html**
 - 质衡联调 `baseUrl`：本机多为 `http://localhost:8801`（容器内质衡见主仓 deploy）
 - 库初始化：打进 `qualitest-demo-mall-mysql` 镜像（[`01-qualitest-demo-mall.sql`](../deploy/mysql/docker-entrypoint-initdb.d/01-qualitest-demo-mall.sql) + [`02_business_menus.sql`](../deploy/mysql/docker-entrypoint-initdb.d/02_business_menus.sql)）；业务场景用管理端「测试场景」加载，**无 Flyway**
@@ -161,7 +165,7 @@ GHCR 备份：`ghcr.io/qualitest-hq/qualitest-demo-mall-app|web|mysql`。
 | 镜像 | 说明 |
 |------|------|
 | `registry.cn-hangzhou.aliyuncs.com/qualitest-hq/qualitest-demo-mall-app` | 后端（Spring Boot） |
-| `registry.cn-hangzhou.aliyuncs.com/qualitest-hq/qualitest-demo-mall-web` | 前端（Nginx + SPA，反代 `/prod-api` → app） |
+| `registry.cn-hangzhou.aliyuncs.com/qualitest-hq/qualitest-demo-mall-web` | 前端（Nginx：管理端 `/` + 商城 H5 `/h5/`，反代 `/prod-api` → app） |
 | `registry.cn-hangzhou.aliyuncs.com/qualitest-hq/qualitest-demo-mall-mysql` | MySQL 8.0 + 内置库表/种子 initdb |
 
 GHCR：`ghcr.io/qualitest-hq/qualitest-demo-mall-*`。改回 GHCR：`.env` 设 `DEMO_IMAGE_PREFIX=ghcr.io/qualitest-hq`。阿里云公开仓库匿名 pull，不要 login。Packages：https://github.com/orgs/qualitest-hq/packages
@@ -181,6 +185,8 @@ mvn -pl demo-admin -am -DskipTests package
 # 或 demo.bat / demo.sh（需已有 jar）
 
 cd demo-ui && pnpm install && pnpm dev
+# 另开终端：商城 H5（打开 http://localhost:<port>/h5/）
+cd demo-uni && pnpm install && pnpm dev:h5
 ```
 
 本机开发若只需 RustFS（文件 API），可：
@@ -245,7 +251,7 @@ docker compose -f docker-compose.yml -f docker-compose.rustfs.yml --profile rust
 | mysql | qualitest-demo-mall-mysql | 镜像内 initdb（见 `deploy/mysql/`） |
 | redis | qualitest-demo-mall-redis | DB 11 |
 | app | qualitest-demo-mall-app | 默认阿里云镜像；`profile=docker`，端口 8801 |
-| web | qualitest-demo-mall-web | 默认阿里云镜像；Nginx + `/prod-api` → app |
+| web | qualitest-demo-mall-web | 默认阿里云镜像；Nginx：管理端 + `/h5/` + `/prod-api` → app |
 | rustfs（可选） | qualitest-demo-mall-rustfs | `--profile rustfs` + `docker-compose.rustfs.yml` |
 
 ## 常用命令
@@ -266,4 +272,3 @@ docker compose down -v                 # 清空数据卷（含 rustfs_data，慎
 - [`deploy/docker/Dockerfile.web`](../deploy/docker/Dockerfile.web)
 - [`.env.example`](../.env.example)
 - [`application-docker.yml`](../demo-admin/src/main/resources/application-docker.yml)
-- 测试指南：[compose-测试指南.md](./compose-测试指南.md)
