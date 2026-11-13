@@ -12,6 +12,15 @@
 
 > GitHub 为主仓（Issue / PR）；Gitee 为国内只读镜像，请勿向镜像提交代码。
 
+## 演示环境（公网）
+
+| 入口 | 地址 | 账号 |
+|------|------|------|
+| 管理端 | https://demo.qualitesthq.cn/ | `demo` / `demo123` |
+| 商城 H5 | https://demo.qualitesthq.cn/h5/ | C 端买家见 `demo-uni` 预填（如 `13800000001`） |
+
+两端登录页 / 登录后可互跳（不共享 Token）。本地 Compose 部署与端口见下文；细节见 [`docs/deploy.md`](./docs/deploy.md)。
+
 ## 快速启动
 
 ### 方式 A · Docker Compose（推荐）
@@ -25,10 +34,9 @@ scripts\quick-start.bat
 chmod +x scripts/quick-start.sh && ./scripts/quick-start.sh
 ```
 
-- 管理端 UI：**http://localhost:5181**（账号 **`admin` / `admin123`**，仅本地）
-- 商城 H5：**http://localhost:5181/h5/**（与管理端同 Nginx；登录页 / 登录后可互跳）
-- 公网靶场：管理端 [https://demo.qualitesthq.cn/](https://demo.qualitesthq.cn/) · 商城 H5 [https://demo.qualitesthq.cn/h5/](https://demo.qualitesthq.cn/h5/)（访客账号与质衡演示站相同：`demo` / `demo123`；C 端买家见 `demo-uni` 预填）
-- Swagger / 质衡 `baseUrl`：**http://localhost:8801**
+- 管理端 UI：http://localhost:5181 （账号 `admin` / `admin123`，仅本地）
+- 商城 H5：http://localhost:5181/h5/ （与管理端同 Nginx；登录页 / 登录后可互跳）
+- Swagger / 质衡 `baseUrl`：http://localhost:8801
 - 默认宿主机端口避开主仓：Web **5181**、MySQL **3307**、Redis **6380**（容器内 Web Nginx 同为 5181）
 - 仅依赖：`docker compose up -d mysql redis`
 - 可选 RustFS：`scripts\quick-start.bat rustfs`（详见 [`docs/deploy.md`](./docs/deploy.md)）
