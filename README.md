@@ -76,7 +76,7 @@ curl -s -X POST "$BASE/web/test/scenario/load/S01" -H "Authorization: Bearer $TO
 
 **进阶**：
 
-- 被测数据 snapshot/restore（供质衡 checkpoint 联调）见 **[test-support-starter 接入文档](test-support-starter/README.md)**（开启数据还原时，同一环境请串行跑）
+- 被测数据 checkpoint / 还原（供质衡跑流联调）改用平台官方插件 **被测库存档点**（CLI `sdap`），见 [qualitest-plugin-sut-db-archive-point 设计说明](https://github.com/qualitest-hq/qualitest-plugin-sut-db-archive-point/blob/main/docs/design.md) 与主仓 [platform-plugins.md](https://github.com/qualitest-hq/qualitest/blob/main/docs/platform-plugins.md)（同一环境请串行跑）
 - **进阶 · 文件存储**（`/common/upload` 与 `/api/file` 同策略；yml：`demo.storage.type`）：
   1. 默认 `RUSTFS`（三选一，不能同时开）。不可达直接报错，不静默换 `LOCAL`。无 RustFS 时显式设 `DEMO_STORAGE_TYPE=LOCAL`；个人本机可复制 `application-local.yml.example` 设 `type=QINIU`（密钥勿提交）
   2. 启动 RustFS：`scripts\quick-start.bat rustfs` 或 `docker compose --profile rustfs up -d rustfs`（`http://127.0.0.1:9000`，`rustfsadmin` / `rustfsadmin`，bucket `qualitest-demo-mall`）
@@ -91,7 +91,7 @@ curl -s -X POST "$BASE/web/test/scenario/load/S01" -H "Authorization: Bearer $TO
 | 管理端 | `/web/**`、`/system/**` 等 | `POST /login` → Bearer **adminToken** |
 | 客户端 | `/api/**` | `POST /api/account/auth/login` → Bearer **accountToken**（质衡里常用 `flow.token`） |
 
-两端 Token **不可混用**；客户端接口从 Token 取 `accountId`，勿信请求体里的账号 ID。免登录：方法/类 `@Anonymous`，另有 `/login`、`/register`、`/captchaImage`、`/test-support/**` 等 path 白名单。
+两端 Token **不可混用**；客户端接口从 Token 取 `accountId`，勿信请求体里的账号 ID。免登录：方法/类 `@Anonymous`，另有 `/login`、`/register`、`/captchaImage` 等 path 白名单。
 
 **联调质衡时注意**：插件「项目级上传」在质衡 `auth_config` 为空时只会种子**通用单套** Bearer（不分端、不带匿名 path）。本靶场双端 JWT 请到测试项目鉴权配置手工贴双端 Profile：`/api/` → `flow.token`，`/system|/monitor|/tool|/web/` → `flow.adminToken`，并带上上述匿名 path。说明见质衡 [`project-summary.md` §4](https://github.com/qualitest-hq/qualitest/blob/main/docs/project-summary.md) · [`project-template.md`](https://github.com/qualitest-hq/qualitest/blob/main/docs/project-template.md)（建项建议勾「管理端 Bearer」+「客户端 Bearer」）。
 
@@ -113,5 +113,5 @@ curl -s -X POST "$BASE/web/test/scenario/load/S01" -H "Authorization: Bearer $TO
 - [AI 测试流提示集](docs/ai-test-flow-prompts.md)
 - 场景元数据：`sql/seed/scenarios/manifest.json`
 - 状态枚举、金额公式、验收用例链：见各场景 SQL 头部注释与 Swagger 字段说明
-- test-support 快照/还原：[test-support-starter/README.md](test-support-starter/README.md)
+- 被测库存档点（`sdap`）：[qualitest-plugin-sut-db-archive-point](https://github.com/qualitest-hq/qualitest-plugin-sut-db-archive-point/blob/main/docs/design.md)
 - [贡献指南](./CONTRIBUTING.md) · [行为准则](./CODE_OF_CONDUCT.md) · [安全策略](./SECURITY.md)

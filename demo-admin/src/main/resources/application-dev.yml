@@ -202,11 +202,3 @@ xss:
   excludes: /system/notice      # 跳过的路径
   urlPatterns: /system/*,/monitor/*,/tool/*
 
-# -----------------------------------------------------------------------------
-# 被测数据快照端点（POST /test-support/snapshot、/restore）
-# 默认整库 mysqldump；实现见 MysqldumpSnapshotStrategy
-# -----------------------------------------------------------------------------
-qualitest:
-  test-support:
-    enabled: true               # 开启端点（非 prod/production/prd profile）
-    default-timeout-ms: 360000  # HTTP 等待 Strategy 完成的最长时间，整库备份宜适当加大

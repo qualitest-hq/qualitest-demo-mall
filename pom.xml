@@ -187,13 +187,6 @@
                 <version>${demo.version}</version>
             </dependency>
 
-            <!-- 被测数据 snapshot/restore 端点 Starter，供 demo-system 实现 SnapshotStrategy；版本与靶场解耦 -->
-            <dependency>
-                <groupId>com.qualitest</groupId>
-                <artifactId>qualitest-test-support-spring-boot-starter</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-
             <!-- AWS SDK v2（RustFS / S3 兼容对象存储） -->
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
@@ -214,8 +207,6 @@
     </dependencyManagement>
 
     <modules>
-        <!-- 被测数据 snapshot/restore HTTP 端点 Starter -->
-        <module>test-support-starter</module>
         <module>demo-admin</module>
         <module>demo-framework</module>
         <module>demo-system</module>

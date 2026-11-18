@@ -41,12 +41,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- 被测数据快照端点 Starter；MysqldumpSnapshotStrategy 在本模块实现 -->
-        <dependency>
-            <groupId>com.qualitest</groupId>
-            <artifactId>qualitest-test-support-spring-boot-starter</artifactId>
-        </dependency>
-
         <!-- AWS S3 SDK（访问 RustFS） -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>

@@ -162,7 +162,3 @@ xss:
   excludes: /system/notice
   urlPatterns: /system/*,/monitor/*,/tool/*
 
-qualitest:
-  test-support:
-    enabled: false
-    default-timeout-ms: 30000

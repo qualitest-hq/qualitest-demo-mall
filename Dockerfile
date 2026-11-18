@@ -5,7 +5,6 @@ FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /src
 
 COPY pom.xml .
-COPY test-support-starter/pom.xml test-support-starter/
 COPY demo-admin/pom.xml demo-admin/
 COPY demo-common/pom.xml demo-common/
 COPY demo-framework/pom.xml demo-framework/
@@ -15,7 +14,6 @@ COPY demo-generator/pom.xml demo-generator/
 
 RUN mvn -B -q -DskipTests dependency:go-offline || true
 
-COPY test-support-starter test-support-starter
 COPY demo-admin demo-admin
 COPY demo-common demo-common
 COPY demo-framework demo-framework

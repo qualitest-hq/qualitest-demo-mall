@@ -101,8 +101,6 @@ public class SecurityConfig {
                             // 静态资源，可匿名访问
                             .requestMatchers(HttpMethod.GET, "/", "/*.html", "/**.html", "/**.css", "/**.js", "/profile/**").permitAll()
                             .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/v3/api-docs.yaml/**", "/swagger-ui/**", "/druid/**").permitAll()
-                            // 被测数据 snapshot/restore 端点：不走 JWT，仅非生产 profile 下由 Starter 注册
-                            .requestMatchers("/test-support/**").permitAll()
                             // 除上面外的所有请求全部需要鉴权认证
                             .anyRequest().authenticated();
                 })

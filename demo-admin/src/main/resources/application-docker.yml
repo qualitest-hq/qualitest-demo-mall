@@ -165,8 +165,3 @@ xss:
   excludes: /system/notice
   urlPatterns: /system/*,/monitor/*,/tool/*
 
-# docker profile 非 prod，test-support 可开（供质衡 checkpoint 联调）
-qualitest:
-  test-support:
-    enabled: ${QUALITEST_TEST_SUPPORT_ENABLED:true}
-    default-timeout-ms: 360000

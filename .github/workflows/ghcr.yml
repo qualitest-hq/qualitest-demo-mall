@@ -25,7 +25,6 @@ on:
       - "demo-generator/**"
       - "demo-quartz/**"
       - "demo-system/**"
-      - "test-support-starter/**"
       - "demo-ui/**"
       - "demo-uni/**"
       - "sql/seed/**"
@@ -84,7 +83,6 @@ jobs:
               - 'demo-generator/**'
               - 'demo-quartz/**'
               - 'demo-system/**'
-              - 'test-support-starter/**'
               - 'sql/seed/**'
               - '.github/workflows/ghcr.yml'
             web:

@@ -1020,18 +1020,6 @@
     "file": "demo-admin/src/main/java/com/demo/web/controller/system/SysUserController.java"
   },
   {
-    "method": "POST",
-    "path": "/test-support/restore",
-    "controller": "TestSupportController",
-    "file": "test-support-starter/src/main/java/com/qualitest/testsupport/web/TestSupportController.java"
-  },
-  {
-    "method": "POST",
-    "path": "/test-support/snapshot",
-    "controller": "TestSupportController",
-    "file": "test-support-starter/src/main/java/com/qualitest/testsupport/web/TestSupportController.java"
-  },
-  {
     "method": "GET",
     "path": "/test/user/list",
     "controller": "TestController",
