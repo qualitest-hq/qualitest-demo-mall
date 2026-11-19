@@ -4,6 +4,12 @@
     "autoReset": true,
     "dbName": "qualitest-demo-mall"
   },
+  "baseline": [
+    "00_truncate_business.sql",
+    "01_base_seed.sql",
+    "02_account_seed.sql",
+    "03_trade_seed.sql"
+  ],
   "scenarios": [
     {
       "id": "S01",
